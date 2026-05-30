@@ -75,6 +75,7 @@ h3 { font-family: 'DM Sans', sans-serif; font-weight: 500; font-size: 1rem; }
   height: 180px;
   background: var(--sand);
   clip-path: ellipse(60% 100% at 50% 100%);
+  pointer-events: none;
 }
 
 #screen-welcome .content {
@@ -756,8 +757,21 @@ function availableActivities(isSpecialDay) {
 // ═══════════════════════════════════════════════════════
 //  WELCOME
 // ═══════════════════════════════════════════════════════
-document.getElementById('planner-name').addEventListener('input', function() {
-  document.getElementById('btn-start').disabled = this.value.trim().length < 1;
+const nameInput = document.getElementById('planner-name');
+const startBtn = document.getElementById('btn-start');
+
+function updateStartButtonState() {
+  startBtn.disabled = nameInput.value.trim().length < 1;
+}
+
+['input', 'change', 'keyup', 'paste'].forEach(evt => {
+  nameInput.addEventListener(evt, updateStartButtonState);
+});
+
+nameInput.addEventListener('keydown', function(e) {
+  if (e.key === 'Enter' && !startBtn.disabled) {
+    startPlanning();
+  }
 });
 
 function startPlanning() {
