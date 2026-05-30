@@ -785,10 +785,11 @@ h3 { font-family: 'DM Sans', sans-serif; font-weight: 500; font-size: 1rem; }
   border-radius: 50%;
   box-shadow: 0 4px 10px rgba(0,0,0,0.15);
   cursor: pointer;
-  transition: transform 0.2s, background-color 0.2s;
+  transition: box-shadow 0.15s, border-color 0.15s, background-color 0.15s;
 }
 .custom-map-icon:hover {
-  transform: scale(1.15) !important;
+  box-shadow: 0 6px 18px rgba(0,0,0,0.32);
+  border-color: var(--sea);
   z-index: 2000 !important;
 }
 .custom-map-icon.hotel-icon {
@@ -797,15 +798,27 @@ h3 { font-family: 'DM Sans', sans-serif; font-weight: 500; font-size: 1rem; }
   font-size: 17px;
   z-index: 1000 !important;
 }
+.custom-map-icon.hotel-icon:hover {
+  border-color: var(--gold);
+  box-shadow: 0 6px 18px rgba(201,150,42,0.45);
+}
 .custom-map-icon.active-icon {
   background: var(--sea-light);
   border-color: var(--sea);
-  transform: scale(1.2) !important;
+  border-width: 3px;
+  box-shadow: 0 4px 12px rgba(27,108,168,0.35);
   z-index: 999 !important;
+}
+.custom-map-icon.active-icon:hover {
+  box-shadow: 0 6px 20px rgba(27,108,168,0.55);
 }
 .custom-map-icon.inactive-icon {
   opacity: 0.65;
   filter: grayscale(40%);
+}
+.custom-map-icon.inactive-icon:hover {
+  opacity: 1;
+  filter: grayscale(0%);
 }
 </style>
 </head>
