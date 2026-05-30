@@ -1363,6 +1363,49 @@ h3 { font-family: 'DM Sans', sans-serif; font-weight: 500; font-size: 1rem; }
   flex-shrink: 0;
 }
 .day-sheet-item.done .day-sheet-badge { background: rgba(90,122,58,0.12); color: var(--olive); }
+
+/* ── MENU SHEET (mobiel) ───────────────────────────────── */
+.mobile-menu-btn {
+  background: rgba(201,150,42,0.22);
+  color: var(--gold);
+  font-size: 1.15rem;
+}
+.mobile-menu-btn:active { background: rgba(201,150,42,0.4); }
+.menu-sheet-list {
+  padding: 10px 1.25rem 6px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.menu-sheet-item {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  width: 100%;
+  padding: 13px 14px;
+  background: var(--sand);
+  border: 1.5px solid var(--sand-dark);
+  border-radius: var(--radius);
+  cursor: pointer;
+  text-align: left;
+  font-family: 'DM Sans', sans-serif;
+  -webkit-tap-highlight-color: transparent;
+  transition: background 0.12s, border-color 0.12s;
+}
+.menu-sheet-item:active { background: var(--sand-dark); }
+.menu-sheet-icon {
+  font-size: 1.35rem;
+  width: 44px; height: 44px;
+  flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center;
+  background: var(--white);
+  border-radius: 10px;
+  border: 1px solid var(--sand-dark);
+}
+.menu-sheet-meta { flex: 1; min-width: 0; }
+.menu-sheet-name { font-size: 0.92rem; font-weight: 600; color: var(--ink); }
+.menu-sheet-sub { font-size: 0.74rem; color: var(--muted); margin-top: 2px; line-height: 1.3; }
+.menu-sheet-arrow { color: var(--muted); font-size: 1rem; flex-shrink: 0; }
 </style>
 </head>
 <body>
@@ -1434,6 +1477,7 @@ h3 { font-family: 'DM Sans', sans-serif; font-weight: 500; font-size: 1rem; }
 
   <!-- Mobile bottom navigation bar -->
   <div class="mobile-bottom-bar hidden" id="mobile-bottom-bar">
+    <button class="mobile-nav-btn mobile-menu-btn" id="mobile-menu-btn" onclick="openMenuSheet()" aria-label="Menu">☰</button>
     <button class="mobile-nav-btn" id="mobile-prev-btn" onclick="mobilePrevDay()">←</button>
     <div class="mobile-day-center" onclick="openDaySheet()">
       <div class="mobile-day-label" id="mobile-day-label">Dag 1</div>
@@ -1452,6 +1496,40 @@ h3 { font-family: 'DM Sans', sans-serif; font-weight: 500; font-size: 1rem; }
       <div class="day-sheet-handle"></div>
       <div class="day-sheet-title">Kies een dag</div>
       <div class="day-sheet-list" id="day-sheet-list"></div>
+    </div>
+  </div>
+
+  <!-- Menu bottom sheet (mobiel) -->
+  <div class="day-sheet-backdrop" id="menu-sheet-backdrop" onclick="closeMenuSheet()">
+    <div class="day-sheet" id="menu-sheet" onclick="event.stopPropagation()">
+      <div class="day-sheet-handle"></div>
+      <div class="day-sheet-title">Menu</div>
+      <div class="menu-sheet-list">
+        <button class="menu-sheet-item" onclick="closeMenuSheet(); openDaySheet();">
+          <span class="menu-sheet-icon">📅</span>
+          <div class="menu-sheet-meta">
+            <div class="menu-sheet-name">Kies een dag</div>
+            <div class="menu-sheet-sub">Spring naar een andere dag of de vluchten</div>
+          </div>
+          <span class="menu-sheet-arrow">→</span>
+        </button>
+        <button class="menu-sheet-item" onclick="closeMenuSheet(); showOverview();">
+          <span class="menu-sheet-icon">🗺️</span>
+          <div class="menu-sheet-meta">
+            <div class="menu-sheet-name">Bekijk overzicht</div>
+            <div class="menu-sheet-sub">Volledig plan, kosten, kaart & terugkeer-code</div>
+          </div>
+          <span class="menu-sheet-arrow">→</span>
+        </button>
+        <button class="menu-sheet-item" onclick="closeMenuSheet(); openAddActivityModal();">
+          <span class="menu-sheet-icon">＋</span>
+          <div class="menu-sheet-meta">
+            <div class="menu-sheet-name">Activiteit voorstellen</div>
+            <div class="menu-sheet-sub">Mis je iets? Stuur ons een suggestie</div>
+          </div>
+          <span class="menu-sheet-arrow">→</span>
+        </button>
+      </div>
     </div>
   </div>
 
@@ -2851,6 +2929,14 @@ function openDaySheet() {
 
 function closeDaySheet() {
   document.getElementById('day-sheet-backdrop').classList.remove('open');
+}
+
+function openMenuSheet() {
+  document.getElementById('menu-sheet-backdrop').classList.add('open');
+}
+
+function closeMenuSheet() {
+  document.getElementById('menu-sheet-backdrop').classList.remove('open');
 }
 
 function renderFlightPage(type) {
