@@ -7,6 +7,9 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<!-- Leaflet Map Library -->
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <style>
 :root {
   --sand: #F5EFE3;
@@ -576,6 +579,230 @@ h3 { font-family: 'DM Sans', sans-serif; font-weight: 500; font-size: 1rem; }
 ::-webkit-scrollbar { width: 6px; }
 ::-webkit-scrollbar-track { background: transparent; }
 ::-webkit-scrollbar-thumb { background: var(--sand-dark); border-radius: 100px; }
+
+/* Sleek Flight Tickets & Sidebar Items */
+.day-item.flight-item {
+  background: rgba(27,108,168,0.04);
+  border-left: 3.5px solid var(--sea);
+}
+.day-item.flight-item.current {
+  background: rgba(27,108,168,0.12);
+  border-left-color: var(--gold);
+}
+.day-item.flight-item .day-dot {
+  background: var(--sea-deep);
+  color: white;
+  border-color: var(--sea-deep);
+  font-size: 10px;
+}
+
+.flight-ticket-container {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.flight-ticket {
+  background: var(--white);
+  border: 1.5px dashed var(--sand-dark);
+  border-radius: var(--radius-lg);
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.03);
+}
+
+.flight-ticket::before, .flight-ticket::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  width: 20px;
+  height: 20px;
+  background: var(--sand);
+  border-radius: 50%;
+  transform: translateY(-50%);
+  z-index: 2;
+}
+.flight-ticket::before { left: -10px; border-right: 1.5px dashed var(--sand-dark); }
+.flight-ticket::after { right: -10px; border-left: 1.5px dashed var(--sand-dark); }
+
+.ticket-header {
+  background: var(--sea-deep);
+  color: white;
+  padding: 1.25rem 2rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.ticket-airline {
+  font-weight: 500;
+  font-size: 0.85rem;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.ticket-class {
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  background: rgba(255,255,255,0.15);
+  padding: 3px 8px;
+  border-radius: 4px;
+}
+
+.ticket-body {
+  padding: 2rem;
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
+  gap: 1.5rem;
+  position: relative;
+}
+
+.ticket-airport {
+  display: flex;
+  flex-direction: column;
+}
+.ticket-airport.right { align-items: flex-end; text-align: right; }
+
+.airport-code {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 2.2rem;
+  font-weight: 300;
+  line-height: 1;
+  color: var(--ink);
+}
+.airport-name {
+  font-size: 0.78rem;
+  color: var(--muted);
+  margin-top: 4px;
+}
+.ticket-time {
+  font-size: 1.4rem;
+  font-weight: 600;
+  color: var(--sea);
+  margin-top: 2px;
+}
+
+.ticket-path {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  width: 120px;
+}
+.ticket-path::before {
+  content: '';
+  position: absolute;
+  left: 0; right: 0; top: 50%;
+  height: 1.5px;
+  background: var(--sand-dark);
+  z-index: 1;
+}
+.ticket-arrow {
+  background: var(--white);
+  padding: 4px 10px;
+  border: 1px solid var(--sand-dark);
+  border-radius: 100px;
+  font-size: 12px;
+  z-index: 2;
+  color: var(--sea);
+}
+.ticket-duration {
+  font-size: 0.68rem;
+  color: var(--muted);
+  margin-top: 6px;
+}
+
+.ticket-footer {
+  border-top: 1px dashed var(--sand-dark);
+  padding: 1.25rem 2rem;
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.8rem;
+  color: var(--muted);
+  background: rgba(245,239,227,0.2);
+}
+.ticket-footer strong { color: var(--ink); }
+
+/* Overview Ticket Styling */
+.overview-flights-card {
+  background: var(--white);
+  border: 1.5px solid var(--sand-dark);
+  border-radius: var(--radius-lg);
+  padding: 1.5rem 2rem;
+  margin-bottom: 2.5rem;
+}
+.overview-flights-title {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.5rem;
+  font-weight: 400;
+  margin-bottom: 1.25rem;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: var(--sea-deep);
+}
+.overview-flights-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2rem;
+}
+@media (max-width: 768px) {
+  .overview-flights-grid { grid-template-columns: 1fr; gap: 1.5rem; }
+  .ticket-body { grid-template-columns: 1fr; text-align: center; gap: 1rem; }
+  .ticket-airport.right { align-items: center; text-align: center; }
+  .ticket-path { width: 100%; margin: 8px 0; }
+}
+
+/* Split-screen interactive map */
+.planner-map-container {
+  width: 400px;
+  flex-shrink: 0;
+  height: 100vh;
+  position: sticky;
+  top: 0;
+  border-left: 1.5px solid var(--sand-dark);
+  z-index: 10;
+  background: var(--sand-dark);
+}
+@media (max-width: 1100px) {
+  .planner-map-container {
+    display: none !important;
+  }
+}
+.custom-map-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 15px;
+  background: white;
+  border: 2px solid var(--sea-deep);
+  border-radius: 50%;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+  cursor: pointer;
+  transition: transform 0.2s, background-color 0.2s;
+}
+.custom-map-icon:hover {
+  transform: scale(1.15) !important;
+  z-index: 2000 !important;
+}
+.custom-map-icon.hotel-icon {
+  border-color: var(--gold);
+  background: var(--gold-light);
+  font-size: 17px;
+  z-index: 1000 !important;
+}
+.custom-map-icon.active-icon {
+  background: var(--sea-light);
+  border-color: var(--sea);
+  transform: scale(1.2) !important;
+  z-index: 999 !important;
+}
+.custom-map-icon.inactive-icon {
+  opacity: 0.65;
+  filter: grayscale(40%);
+}
 </style>
 </head>
 <body>
@@ -626,6 +853,11 @@ h3 { font-family: 'DM Sans', sans-serif; font-weight: 500; font-size: 1rem; }
   <main class="planner-main" id="planner-main">
     <!-- injected per day -->
   </main>
+  
+  <!-- Map Column -->
+  <div class="planner-map-container">
+    <div id="map"></div>
+  </div>
 </div>
 
 <!-- ═══════════════════════════════════════════
@@ -643,6 +875,68 @@ h3 { font-family: 'DM Sans', sans-serif; font-weight: 500; font-size: 1rem; }
       <button class="btn-outline" onclick="goBackToPlanner()">Terug naar planner</button>
       <button class="btn-outline" onclick="resetAll()">Opnieuw beginnen</button>
     </div>
+    
+    <div class="overview-flights-card">
+      <div class="overview-flights-title">✈️ Vlucht- & reisinformatie</div>
+      <div class="overview-flights-grid">
+        <!-- Sleek ticket heen -->
+        <div class="flight-ticket">
+          <div class="ticket-header" style="padding:0.75rem 1.25rem;">
+            <div class="ticket-airline" style="font-size:0.78rem;">🟢 Transavia Airlines</div>
+            <div class="ticket-class" style="font-size:0.65rem;">Economy</div>
+          </div>
+          <div class="ticket-body" style="padding:1rem 1.25rem; gap:0.75rem;">
+            <div class="ticket-airport">
+              <span class="airport-code" style="font-size:1.6rem;">AMS</span>
+              <span class="airport-name" style="font-size:0.68rem;">Amsterdam</span>
+              <span class="ticket-time" style="font-size:1.1rem; color:var(--sea);">05:05</span>
+            </div>
+            <div class="ticket-path" style="width:70px;">
+              <span class="ticket-arrow" style="font-size:10px; padding:2px 6px;">✈️</span>
+              <span class="ticket-duration" style="font-size:0.6rem;">4u 00m</span>
+            </div>
+            <div class="ticket-airport right">
+              <span class="airport-code" style="font-size:1.6rem;">EFL</span>
+              <span class="airport-name" style="font-size:0.68rem;">Kefalonia</span>
+              <span class="ticket-time" style="font-size:1.1rem; color:var(--sea);">09:05</span>
+            </div>
+          </div>
+          <div class="ticket-footer" style="padding:0.6rem 1.25rem; font-size:0.72rem;">
+            <div>Vlucht: <strong>HV 6563</strong></div>
+            <div>Za 13 juni 2026</div>
+          </div>
+        </div>
+
+        <!-- Sleek ticket terug -->
+        <div class="flight-ticket">
+          <div class="ticket-header" style="padding:0.75rem 1.25rem; background: var(--sea);">
+            <div class="ticket-airline" style="font-size:0.78rem;">🟢 Transavia Airlines</div>
+            <div class="ticket-class" style="font-size:0.65rem;">Economy</div>
+          </div>
+          <div class="ticket-body" style="padding:1rem 1.25rem; gap:0.75rem;">
+            <div class="ticket-airport">
+              <span class="airport-code" style="font-size:1.6rem;">EFL</span>
+              <span class="airport-name" style="font-size:0.68rem;">Kefalonia</span>
+              <span class="ticket-time" style="font-size:1.1rem; color:var(--sea);">10:05</span>
+            </div>
+            <div class="ticket-path" style="width:70px;">
+              <span class="ticket-arrow" style="font-size:10px; padding:2px 6px;">✈️</span>
+              <span class="ticket-duration" style="font-size:0.6rem;">3u 20m</span>
+            </div>
+            <div class="ticket-airport right">
+              <span class="airport-code" style="font-size:1.6rem;">AMS</span>
+              <span class="airport-name" style="font-size:0.68rem;">Amsterdam</span>
+              <span class="ticket-time" style="font-size:1.1rem; color:var(--sea);">12:25</span>
+            </div>
+          </div>
+          <div class="ticket-footer" style="padding:0.6rem 1.25rem; font-size:0.72rem;">
+            <div>Vlucht: <strong>HV 6564</strong></div>
+            <div>Za 27 juni 2026</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
     <h2 style="margin-bottom: 0.25rem;">Dag voor dag</h2>
     <p style="color:var(--muted);font-size:0.85rem;margin-bottom:1.5rem;">Klik op een dag in de planner om activiteiten te wijzigen.</p>
     <div class="overview-grid" id="ov-grid"></div>
@@ -655,66 +949,67 @@ h3 { font-family: 'DM Sans', sans-serif; font-weight: 500; font-size: 1rem; }
 // ═══════════════════════════════════════════════════════
 
 const DAYS = [
-  { date: '2025-06-13', label: 'Vrijdag 13 juni', short: 'Vr 13/6', name: 'Aankomst & eerste avond' },
-  { date: '2025-06-14', label: 'Zaterdag 14 juni', short: 'Za 14/6', name: 'Dag 2' },
-  { date: '2025-06-15', label: 'Zondag 15 juni', short: 'Zo 15/6', name: 'Haar verjaardag 🎂', special: true },
-  { date: '2025-06-16', label: 'Maandag 16 juni', short: 'Ma 16/6', name: 'Dag 4' },
-  { date: '2025-06-17', label: 'Dinsdag 17 juni', short: 'Di 17/6', name: 'Dag 5' },
-  { date: '2025-06-18', label: 'Woensdag 18 juni', short: 'Wo 18/6', name: 'Dag 6' },
-  { date: '2025-06-19', label: 'Donderdag 19 juni', short: 'Do 19/6', name: 'Dag 7' },
-  { date: '2025-06-20', label: 'Vrijdag 20 juni', short: 'Vr 20/6', name: 'Dag 8' },
-  { date: '2025-06-21', label: 'Zaterdag 21 juni', short: 'Za 21/6', name: 'Dag 9 — zomerzonnewende' },
-  { date: '2025-06-22', label: 'Zondag 22 juni', short: 'Zo 22/6', name: 'Dag 10' },
-  { date: '2025-06-23', label: 'Maandag 23 juni', short: 'Ma 23/6', name: 'Dag 11' },
-  { date: '2025-06-24', label: 'Dinsdag 24 juni', short: 'Di 24/6', name: 'Dag 12' },
-  { date: '2025-06-25', label: 'Woensdag 25 juni', short: 'Wo 25/6', name: 'Dag 13' },
-  { date: '2025-06-26', label: 'Donderdag 26 juni', short: 'Do 26/6', name: 'Laatste avond' },
+  { date: '2026-06-13', label: 'Zaterdag 13 juni', short: 'Za 13/6', name: 'Aankomst & eerste avond' },
+  { date: '2026-06-14', label: 'Zondag 14 juni', short: 'Zo 14/6', name: 'Dag 2' },
+  { date: '2026-06-15', label: 'Maandag 15 juni', short: 'Ma 15/6', name: 'Haar verjaardag 🎂', special: true },
+  { date: '2026-06-16', label: 'Dinsdag 16 juni', short: 'Di 16/6', name: 'Dag 4' },
+  { date: '2026-06-17', label: 'Woensdag 17 juni', short: 'Wo 17/6', name: 'Dag 5' },
+  { date: '2026-06-18', label: 'Donderdag 18 juni', short: 'Do 18/6', name: 'Dag 6' },
+  { date: '2026-06-19', label: 'Vrijdag 19 juni', short: 'Vr 19/6', name: 'Dag 7' },
+  { date: '2026-06-20', label: 'Zaterdag 20 juni', short: 'Za 20/6', name: 'Dag 8' },
+  { date: '2026-06-21', label: 'Zondag 21 juni', short: 'Zo 21/6', name: 'Dag 9 — zomerzonnewende' },
+  { date: '2026-06-22', label: 'Maandag 22 juni', short: 'Ma 22/6', name: 'Dag 10' },
+  { date: '2026-06-23', label: 'Dinsdag 23 juni', short: 'Di 23/6', name: 'Dag 11' },
+  { date: '2026-06-24', label: 'Woensdag 24 juni', short: 'Wo 24/6', name: 'Dag 12' },
+  { date: '2026-06-25', label: 'Donderdag 25 juni', short: 'Do 25/6', name: 'Dag 13' },
+  { date: '2026-06-26', label: 'Vrijdag 26 juni', short: 'Vr 26/6', name: 'Laatste avond' },
 ];
 
 const ACTIVITIES = [
   // ── STRANDEN ──────────────────────────────────────
-  { id: 's1', cat: 'stranden', icon: '🏖️', title: 'Myrtos Beach', why: 'Intens blauw water en spierwit kiezels. Het iconische uithangbord van Kefalonia — onontkoombaar mooi.', tip: 'Ga vóór 10:30 of nà 18:00. Waterschoenen zijn een must.' },
-  { id: 's2', cat: 'stranden', icon: '🌴', title: 'Antisamos Beach', why: 'Weelderig groen omringd strand, bekend van Captain Corelli\'s Mandolin. Ideaal om te snorkelen.', tip: 'Consumptie bij beachclub = gratis ligbedden. Mooiste weg via Sami.' },
-  { id: 's3', cat: 'stranden', icon: '🌅', title: 'Petani Beach', why: 'Het intimere broertje van Myrtos op Paliki. De zonsondergang hier is ronduit spektakulair.', tip: 'Blijf voor het avondeten bij Erasmia Taverna direct aan het strand.' },
-  { id: 's4', cat: 'stranden', icon: '🏺', title: 'Xi Beach', why: 'Uniek roodbruin zand met witte kleiklippen. Het gratis moddermasker van de kliffen is goed voor je huid én onvergetelijk.', tip: 'Het water is lang ondiep — relaxt en kalm. Ideaal voor lui dagje.' },
-  { id: 's5', cat: 'stranden', icon: '⛵', title: 'Fteri Beach', why: 'Ongerept paradijs — alléén bereikbaar per boot. Ultieme verlaten eiland-vibe.', tip: 'Taxiboot vanuit haven Zola (~10 min). Meenemen: water, snacks, zonnebrand. Geen faciliteiten!' },
-  { id: 's6', cat: 'stranden', icon: '🐠', title: 'Kimilia Beach (nabij Fiskardo)', why: 'Schaduwrijke kiezelbaai in het noorden omringd door cipressen. Zwembadhelder water vol vis.', tip: 'Snorkelset mee! Korte wandeling door bos houdt het rustig.' },
-  { id: 's7', cat: 'stranden', icon: '🦭', title: 'Dafnoudi Beach', why: 'Na 15 min wandelen door een groen dal openbaart zich een piepkleine beschutte baai. Kans op Monniksrob!', tip: 'Stevige schoenen verplicht. Neem meer water mee dan je denkt nodig te hebben.' },
-  { id: 's8', cat: 'stranden', icon: '🌊', title: 'Lourdas Beach', why: 'Breed, rustig strand aan de zuidkust met uitzicht op Zakynthos. Minder druk dan de noordkust.', tip: 'Op heldere dagen zie je Zakynthos — verrekijker meenemen! Goede taverna\'s vlakbij.' },
-  { id: 's9', cat: 'stranden', icon: '🤿', title: 'Makris Gialos & Platys Gialos', why: 'Twee naast elkaar gelegen stranden bij Lassi, met organisatie, sfeer en watersportmogelijkheden.', tip: 'Hier vertrekken ook kajakexcursies langs de kliffen. Makkelijkst bereikbaar vanuit Argostoli.' },
+  { id: 's1', cat: 'stranden', icon: '🏖️', title: 'Myrtos Beach', why: 'Intens blauw water en spierwit kiezels. Het iconische uithangbord van Kefalonia — onontkoombaar mooi.', tip: 'Ga vóór 10:30 of nà 18:00. Waterschoenen zijn een must.', location: 'Myrtos Beach, Pylaros, Kefalonia', mapUrl: 'https://www.google.com/maps/search/?api=1&query=Myrtos+Beach+Kefalonia', lat: 38.343, lng: 20.535 },
+  { id: 's2', cat: 'stranden', icon: '🌴', title: 'Antisamos Beach', why: 'Weelderig groen omringd strand, bekend van Captain Corelli\'s Mandolin. Ideaal om te snorkelen.', tip: 'Consumptie bij beachclub = gratis ligbedden. Mooiste weg via Sami.', location: 'Antisamos Beach, Sami, Kefalonia', mapUrl: 'https://www.google.com/maps/search/?api=1&query=Antisamos+Beach+Kefalonia', lat: 38.259, lng: 20.673 },
+  { id: 's3', cat: 'stranden', icon: '🌅', title: 'Petani Beach', why: 'Het intimere broertje van Myrtos op Paliki. De zonsondergang hier is ronduit spektakulair.', tip: 'Blijf voor het avondeten bij Erasmia Taverna direct aan het strand.', location: 'Petani Beach, Paliki, Kefalonia', mapUrl: 'https://www.google.com/maps/search/?api=1&query=Petani+Beach+Kefalonia', lat: 38.261, lng: 20.378 },
+  { id: 's4', cat: 'stranden', icon: '🏺', title: 'Xi Beach', why: 'Uniek roodbruin zand met witte kleiklippen. Het gratis moddermasker van de kliffen is goed voor je huid én onvergetelijk.', tip: 'Het water is lang ondiep — relaxt en kalm. Ideaal voor lui dagje.', location: 'Xi Beach, Lixouri, Kefalonia', mapUrl: 'https://www.google.com/maps/search/?api=1&query=Xi+Beach+Kefalonia', lat: 38.163, lng: 20.414 },
+  { id: 's5', cat: 'stranden', icon: '⛵', title: 'Fteri Beach', why: 'Ongerept paradijs — alléén bereikbaar per boot. Ultieme verlaten eiland-vibe.', tip: 'Taxiboot vanuit haven Zola (~10 min). Meenemen: water, snacks, zonnebrand. Geen faciliteiten!', location: 'Fteri Beach, Zola (taxiboot), Kefalonia', mapUrl: 'https://www.google.com/maps/search/?api=1&query=Fteri+Beach+Kefalonia', lat: 38.307, lng: 20.477 },
+  { id: 's6', cat: 'stranden', icon: '🐠', title: 'Kimilia Beach (nabij Fiskardo)', why: 'Schaduwrijke kiezelbaai in het noorden omringd door cipressen. Zwembadhelder water vol vis.', tip: 'Snorkelset mee! Korte wandeling door bos houdt het rustig.', location: 'Kimilia Beach, Germenata, Kefalonia', mapUrl: 'https://www.google.com/maps/search/?api=1&query=Kimilia+Beach+Kefalonia', lat: 38.455, lng: 20.554 },
+  { id: 's7', cat: 'stranden', icon: '🦭', title: 'Dafnoudi Beach', why: 'Na 15 min wandelen door een groen dal openbaart zich een piepkleine beschutte baai. Kans op Monniksrob!', tip: 'Stevige schoenen verplicht. Neem meer water mee dan je denkt nodig te hebben.', location: 'Dafnoudi Beach, Antipata, Kefalonia', mapUrl: 'https://www.google.com/maps/search/?api=1&query=Dafnoudi+Beach+Kefalonia', lat: 38.458, lng: 20.563 },
+  { id: 's8', cat: 'stranden', icon: '🌊', title: 'Lourdas Beach', why: 'Breed, rustig strand aan de zuidkust met uitzicht op Zakynthos. Minder druk dan de noordkust.', tip: 'Op heldere dagen zie je Zakynthos — verrekijker meenemen! Goede taverna\'s vlakbij.', location: 'Lourdas Beach, Lourdata, Kefalonia', mapUrl: 'https://www.google.com/maps/search/?api=1&query=Lourdas+Beach+Kefalonia', lat: 38.117, lng: 20.635 },
+  { id: 's9', cat: 'stranden', icon: '🤿', title: 'Makris Gialos & Platys Gialos', why: 'Twee naast elkaar gelegen stranden bij Lassi, met organisatie, sfeer en watersportmogelijkheden.', tip: 'Hier vertrekken ook kajakexcursies langs de kliffen. Makkelijkst bereikbaar vanuit Argostoli.', location: 'Makris Gialos Beach, Lassi, Kefalonia', mapUrl: 'https://www.google.com/maps/search/?api=1&query=Makris+Gialos+Beach+Kefalonia', lat: 38.157, lng: 20.48 },
   // ── CULTUUR ──────────────────────────────────────
-  { id: 'c1', cat: 'cultuur', icon: '🏡', title: 'Fiskardo verkennen', why: 'Het enige dorp dat de aardbeving van 1953 overleefde. Pastelkleurige Venetiaanse huizen en een sfeervolle jachthaven.', tip: 'Parkeer gratis net buiten het dorp en loop er laat in de middag naartoe — dan zijn de dagjesmensen weg.' },
-  { id: 'c2', cat: 'cultuur', icon: '🏰', title: 'Assos & Venetiaans kasteel', why: 'Schilderachtig dorpje op een smalle landtong. Het uitzicht op de hoefijzervormige baai is ronduit magisch.', tip: 'Vroeg beginnen vanwege de hitte. Toegang kasteel gratis. Daarna duik in de baai beneden.' },
-  { id: 'c3', cat: 'cultuur', icon: '🛶', title: 'Melissani Cave (binnenmeer)', why: 'Ondergronds meer met ingestort dak. Rond het middaguur lijken de bootjes te zweven in turquoise lucht.', tip: 'Bezoek tussen 11:30 en 13:30 voor het magische lichteffect.' },
-  { id: 'c4', cat: 'cultuur', icon: '💎', title: 'Drogarati Cave', why: 'Indrukwekkende druipsteengrot van miljoenen jaar oud. Fenomenale akoestiek — hier werden concerten gegeven.', tip: 'Binnen altijd 18°C — dunne laag meenemen. Combineer met Melissani op dezelfde dag.' },
-  { id: 'c5', cat: 'cultuur', icon: '⛪', title: 'Agios Gerasimos klooster', why: 'Spiritueel hart van het eiland. Prachtige fresco\'s en een ondergrondse grot waar de heilige leefde.', tip: 'Gepaste kleding verplicht (schouders/knieën bedekt). Sjaals liggen aan de ingang.' },
-  { id: 'c6', cat: 'cultuur', icon: '🗺️', title: 'Kasteel van Agios Georgios', why: 'Middeleeuwse hoofdstad op een heuvel. 360-graden uitzicht over vlaktes én zee. Prachtige ruïnes.', tip: 'Erna: ijskoffie bij Kastro Cafe vlak naast de ingang — geweldig uitzicht op het kasteel.' },
-  { id: 'c7', cat: 'cultuur', icon: '🌉', title: 'Argostoli & De Bosset-brug', why: 'De langste stenen zeebrug ter wereld, gevolgd door het ultieme Griekse stadsplein. Levendige sfeer.', tip: 'Combineer met schildpaddenspoттen op de kade (\'s ochtends vroeg).' },
-  { id: 'c8', cat: 'cultuur', icon: '⛵', title: 'Lixouri & schiereiland Paliki', why: 'De tweede stad van Kefalonia, bijna zonder toeristen. Authentieke Griekse sfeer en mooie pleinen.', tip: 'Neem het kleine veerbootje vanuit Argostoli (20 min, leuke ervaring) in plaats van de omweg over de weg.' },
-  { id: 'c9', cat: 'cultuur', icon: '🏛️', title: 'Korgialeneios Museum Argostoli', why: 'Het verhaal van de aardbeving van 1953, plus rijke archeologische vondsten. Aangrijpende historische foto\'s.', tip: 'Ideaal voor een bewolkte ochtend of het hete middaguur — airconditioned én interessant.' },
+  { id: 'c1', cat: 'cultuur', icon: '🏡', title: 'Fiskardo verkennen', why: 'Het enige dorp dat de aardbeving van 1953 overleefde. Pastelkleurige Venetiaanse huizen en een sfeervolle jachthaven.', tip: 'Parkeer gratis net buiten het dorp en loop er laat in de middag naartoe — dan zijn de dagjesmensen weg.', location: 'Fiskardo Haven, Erisos, Kefalonia', mapUrl: 'https://www.google.com/maps/search/?api=1&query=Fiskardo+Kefalonia', lat: 38.461, lng: 20.578 },
+  { id: 'c2', cat: 'cultuur', icon: '🏰', title: 'Assos & Venetiaans kasteel', why: 'Schilderachtig dorpje op een smalle landtong. Het uitzicht op de hoefijzervormige baai is ronduit magisch.', tip: 'Vroeg beginnen vanwege de hitte. Toegang kasteel gratis. Daarna duik in de baai beneden.', location: 'Assos Castle, Assos, Kefalonia', mapUrl: 'https://www.google.com/maps/search/?api=1&query=Assos+Castle+Kefalonia', lat: 38.38, lng: 20.536 },
+  { id: 'c3', cat: 'cultuur', icon: '🛶', title: 'Melissani Cave (binnenmeer)', why: 'Ondergronds meer met ingestort dak. Rond het middaguur lijken de bootjes te zweven in turquoise lucht.', tip: 'Bezoek tussen 11:30 en 13:30 voor het magische lichteffect.', location: 'Melissani Cave, Karavomylos, Kefalonia', mapUrl: 'https://www.google.com/maps/search/?api=1&query=Melissani+Cave+Kefalonia', lat: 38.262, lng: 20.623 },
+  { id: 'c4', cat: 'cultuur', icon: '💎', title: 'Drogarati Cave', why: 'Indrukwekkende druipsteengrot van miljoenen jaar oud. Fenomenale akoestiek — hier werden concerten gegeven.', tip: 'Binnen altijd 18°C — dunne laag meenemen. Combineer met Melissani op dezelfde dag.', location: 'Drogarati Cave, Chaliotata, Kefalonia', mapUrl: 'https://www.google.com/maps/search/?api=1&query=Drogarati+Cave+Kefalonia', lat: 38.228, lng: 20.627 },
+  { id: 'c5', cat: 'cultuur', icon: '⛪', title: 'Agios Gerasimos klooster', why: 'Spiritueel hart van het eiland. Prachtige fresco\'s en een ondergrondse grot waar de heilige leefde.', tip: 'Gepaste kleding verplicht (schouders/knieën bedekt). Sjaals liggen aan de ingang.', location: 'Monastery of Agios Gerasimos, Omala, Kefalonia', mapUrl: 'https://www.google.com/maps/search/?api=1&query=Monastery+of+Agios+Gerasimos+Kefalonia', lat: 38.167, lng: 20.588 },
+  { id: 'c6', cat: 'cultuur', icon: '🗺️', title: 'Kasteel van Agios Georgios', why: 'Middeleeuwse hoofdstad op een heuvel. 360-graden uitzicht over vlaktes én zee. Prachtige ruïnes.', tip: 'Erna: ijskoffie bij Kastro Cafe vlak naast de ingang — geweldig uitzicht op het kasteel.', location: 'Castle of Saint George, Kastro, Kefalonia', mapUrl: 'https://www.google.com/maps/search/?api=1&query=Castle+of+Saint+George+Kefalonia', lat: 38.139, lng: 20.562 },
+  { id: 'c7', cat: 'cultuur', icon: '🌉', title: 'Argostoli & De Bosset-brug', why: 'De langste stenen zeebrug ter wereld, gevolgd door het ultieme Griekse stadsplein. Levendige sfeer.', tip: 'Combineer met schildpaddenspoттen op de kade (\'s ochtends vroeg).', location: 'De Bosset Bridge, Argostoli, Kefalonia', mapUrl: 'https://www.google.com/maps/search/?api=1&query=De+Bosset+Bridge+Argostoli', lat: 38.175, lng: 20.493 },
+  { id: 'c8', cat: 'cultuur', icon: '⛵', title: 'Lixouri & schiereiland Paliki', why: 'De tweede stad van Kefalonia, bijna zonder toeristen. Authentieke Griekse sfeer en mooie pleinen.', tip: 'Neem het kleine veerbootje vanuit Argostoli (20 min, leuke ervaring) in plaats van de omweg over de weg.', location: 'Lixouri Haven, Paliki, Kefalonia', mapUrl: 'https://www.google.com/maps/search/?api=1&query=Lixouri+Kefalonia', lat: 38.201, lng: 20.438 },
+  { id: 'c9', cat: 'cultuur', icon: '🏛️', title: 'Korgialeneios Museum Argostoli', why: 'Het verhaal van de aardbeving van 1953, plus rijke archeologische vondsten. Aangrijpende historische foto\'s.', tip: 'Ideaal voor een bewolkte ochtend of het hete middaguur — airconditioned én interessant.', location: 'Korgialenio Historic and Cultural Museum, Argostoli, Kefalonia', mapUrl: 'https://www.google.com/maps/search/?api=1&query=Korgialenio+Museum+Argostoli', lat: 38.177, lng: 20.489 },
   // ── NATUUR & ACTIEF ──────────────────────────────────────
-  { id: 'n1', cat: 'natuur', icon: '🐢', title: 'Caretta Caretta schildpadden spotten', why: 'Grote zeeschildpadden in de haven van Argostoli — van heel dichtbij, gratis en ontroerend.', tip: 'Ga tussen 9:00 en 11:00 naar de vissersboten op de kade. Hoe eerder, hoe meer schildpadden.' },
-  { id: 'n2', cat: 'natuur', icon: '⛰️', title: 'Mount Ainos National Park', why: 'Top van de Ionische eilanden (1628m). Op heldere dagen zie je Zakynthos, Ithaka én het vasteland.', tip: 'Asfaltweg tot de telecomtorens, dan korte wandeling. Altijd warme trui meenemen — het waait fors.' },
-  { id: 'n3', cat: 'natuur', icon: '🥾', title: 'Wandelen op kalderimia (ezelspaden)', why: 'Historische paden door olijfgaarden, langs ruïnes. Het echte eiland ontdekken weg van de kust.', tip: 'Gebruik Wikiloc of AllTrails. Start uiterlijk 8:00 uur — het wordt snel heet in juni.' },
-  { id: 'n4', cat: 'natuur', icon: '🚤', title: 'Motorboot huren (zonder vaarbewijs)', why: 'Ultieme vrijheid: verborgen baaitjes bereiken die alleen per boot toegankelijk zijn. Dé topdag.', tip: 'Boek vroeg in de vakantie zodat je bij slecht weer kunt verzetten. Huren mag tot 30 pk.' },
-  { id: 'n5', cat: 'natuur', icon: '🚣', title: 'Kajakken langs de kust van Lassi', why: 'Zeekajak langs kalksteenkliffen en verborgen zeegrotten. Uniek perspectief dat je van het strand nooit krijgt.', tip: 'Begeleide tours vanuit Minies of Antisamos — de gids kent alle beste grotten.' },
-  { id: 'n6', cat: 'natuur', icon: '🗺️', title: 'Dagtrip naar Ithaka', why: 'Het eiland van Odysseus — nóg rustiger en met een haast mystieke sfeer. Havenstadje Vathy is tijdloos.', tip: 'Vroege autoveerboot vanuit Sami. Check bij verhuurder of de verzekering de overtocht dekt.' },
-  { id: 'n7', cat: 'natuur', icon: '🐡', title: 'Snorkelen bij Foki Beach', why: 'Kristalhelder water boven rotsen vol vis, zeeëgels en octopussen. Rustig en nauwelijks bezocht.', tip: 'Bezoek \'s ochtends voor het beste licht. Eigen snorkelset meenemen — geen verhuur ter plekke.' },
-  { id: 'n8', cat: 'natuur', icon: '🦩', title: 'Vogels kijken in de Koutavos Lagune', why: 'Beschermd lagune-ecosysteem vol flamingo\'s en reigers. Wandelpad omheen voor een ontspannen ochtend.', tip: 'Vroeg \'s ochtends voor de meeste activiteit. Gratis en goed bereikbaar vanuit Argostoli.' },
+  { id: 'n1', cat: 'natuur', icon: '🐢', title: 'Caretta Caretta schildpadden spotten', why: 'Grote zeeschildpadden in de haven van Argostoli — van heel dichtbij, gratis en ontroerend.', tip: 'Ga tussen 9:00 en 11:00 naar de vissersboten op de kade. Hoe eerder, hoe meer schildpadden.', location: 'Kade van Argostoli (bij de vissersboten), Argostoli, Kefalonia', mapUrl: 'https://www.google.com/maps/search/?api=1&query=Argostoli+Harbour+Kefalonia', lat: 38.169, lng: 20.499 },
+  { id: 'n2', cat: 'natuur', icon: '⛰️', title: 'Mount Ainos National Park', why: 'Top van de Ionische eilanden (1628m). Op heldere dagen zie je Zakynthos, Ithaka én het vasteland.', tip: 'Asfaltweg tot de telecomtorens, dan korte wandeling. Altijd warme trui meenemen — het waait fors.', location: 'Mount Ainos National Park, Kefalonia', mapUrl: 'https://www.google.com/maps/search/?api=1&query=Mount+Ainos+National+Park', lat: 38.136, lng: 20.672 },
+  { id: 'n3', cat: 'natuur', icon: '🥾', title: 'Wandelen op kalderimia (ezelspaden)', why: 'Historische paden door olijfgaarden, langs ruïnes. Het echte eiland ontdekken weg van de kust.', tip: 'Gebruik Wikiloc of AllTrails. Start uiterlijk 8:00 uur — het wordt snel heet in juni.', location: 'Sami en omgeving, Kefalonia', mapUrl: 'https://www.google.com/maps/search/?api=1&query=Sami+Kefalonia', lat: 38.251, lng: 20.647 },
+  { id: 'n4', cat: 'natuur', icon: '🚤', title: 'Motorboot huren (zonder vaarbewijs)', why: 'Ultieme vrijheid: verborgen baaitjes bereiken die alleen per boot toegankelijk zijn. Dé topdag.', tip: 'Boek vroeg in de vakantie zodat je bij slecht weer kunt verzetten. Huren mag tot 30 pk.', location: 'Fiskardo of Argostoli Haven, Kefalonia', mapUrl: 'https://www.google.com/maps/search/?api=1&query=Fiskardo+Boat+Rental', lat: 38.461, lng: 20.578 },
+  { id: 'n5', cat: 'natuur', icon: '🚣', title: 'Kajakken langs de kust van Lassi', why: 'Zeekajak langs kalksteenkliffen en verborgen zeegrotten. Uniek perspectief dat je van het strand nooit krijgt.', tip: 'Begeleide tours vanuit Minies of Antisamos — de gids kent alle beste grotten.', location: 'Lassi Coastline, Lassi, Kefalonia', mapUrl: 'https://www.google.com/maps/search/?api=1&query=Lassi+Kefalonia', lat: 38.157, lng: 20.48 },
+  { id: 'n6', cat: 'natuur', icon: '🗺️', title: 'Dagtrip naar Ithaka', why: 'Het eiland van Odysseus — nóg rustiger en met een haast mystieke sfeer. Havenstadje Vathy is tijdloos.', tip: 'Vroege autoveerboot vanuit Sami. Check bij verhuurder of de verzekering de overtocht dekt.', location: 'Ferry Haven Sami, Sami, Kefalonia', mapUrl: 'https://www.google.com/maps/search/?api=1&query=Port+of+Sami+Kefalonia', lat: 38.251, lng: 20.647 },
+  { id: 'n7', cat: 'natuur', icon: '🐡', title: 'Snorkelen bij Foki Beach', why: 'Kristalhelder water boven rotsen vol vis, zeeëgels en octopussen. Rustig en nauwelijks bezocht.', tip: 'Bezoek \'s ochtends voor het beste licht. Eigen snorkelset meenemen — geen verhuur ter plekke.', location: 'Foki Beach, Fiskardo, Kefalonia', mapUrl: 'https://www.google.com/maps/search/?api=1&query=Foki+Beach+Kefalonia', lat: 38.448, lng: 20.584 },
+  { id: 'n8', cat: 'natuur', icon: '🦩', title: 'Vogels kijken in de Koutavos Lagune', why: 'Beschermd lagune-ecosysteem vol flamingo\'s en reigers. Wandelpad omheen voor een ontspannen ochtend.', tip: 'Vroeg \'s ochtends voor de meeste activiteit. Gratis en goed bereikbaar vanuit Argostoli.', location: 'Koutavos Lagoon, Argostoli, Kefalonia', mapUrl: 'https://www.google.com/maps/search/?api=1&query=Koutavos+Lagoon+Argostoli', lat: 38.169, lng: 20.499 },
   // ── ETEN & DRINKEN ──────────────────────────────────────
-  { id: 'e1', cat: 'eten', icon: '🍷', title: 'Wijnproeverij Gentilini Winery', why: 'De beste boetiekwijnmaker van Kefalonia. De frisse Robola-wijn is legendarisch. Relaxte proeverij in schaduwrijke tuin.', tip: 'Geen reservering nodig voor standaardtasting, maar meld je \'s namiddags aan. Proef ook de Muscat.' },
-  { id: 'e2', cat: 'eten', icon: '🌅', title: 'Zonsondergang bij Apolafsi (Lixouri)', why: 'Eten met de voeten in het zand terwijl de lucht roze en oranje kleurt boven de zee. Perfecte vakantiedag.', tip: 'Bestel de Kefalonitiki Kreatopita — de traditionele vleespastei van het eiland. Niet missen.' },
-  { id: 'e3', cat: 'eten', icon: '🫒', title: 'Lokale honing & olijfolie kopen in Pyrgi', why: 'Tijmhoning en koudgeperste olijfolie van Kefalonia behoren tot de beste van heel Griekenland.', tip: 'Altijd contant geld bij (pinnen kan niet). Kraampjes langs de bergwegen rond Mount Ainos.' },
-  { id: 'e4', cat: 'eten', icon: '🍲', title: 'Lunchen in Valsamata of Fragata', why: 'Dorpjes zonder toeristen in de Omala-vallei. Eten wat de pot schaft: stoofpotten, gevulde groenten, zelfgebakken brood.', tip: 'Bestel mezedes om te delen — dé manier waarop locals eten. Veel gezelliger dan elk een groot bord.' },
-  { id: 'e5', cat: 'eten', icon: '☕', title: 'Frappé drinken in Karavomylos', why: 'Rustig kustdorpje waar het water van de Melissani-grot omhoog komt. Heerlijk zitten onder de bomen.', tip: 'Loop na de koffie over het kustpad richting Sami. Combineer met een grottenmiddag.' },
-  { id: 'e6', cat: 'eten', icon: '🐟', title: 'Verse vis bij Taverna Gorgona (Fiskardo)', why: 'De vangst van de dag eten aan de kade. Zo vers dat hij \'s ochtends nog in de boot lag.', tip: 'Vraag de ober mee te lopen naar de koelvitrine om zelf je vis te kiezen — heel gebruikelijk en leuk.' },
-  { id: 'e7', cat: 'eten', icon: '🎉', title: 'Avondwandeling Argostoli (volta)', why: 'De Griekse volta is heilig. Schuif aan op Vallianou-plein met een ouzo en geniet van het leven.', tip: 'Start rond 20:00. Probeer loukoumades (Griekse honing-oliebollen) bij lokale zoetwinkels.' },
-  { id: 'e8', cat: 'eten', icon: '🍇', title: 'Haritatos Vineyard (Paliki)', why: 'Authentiek 19e-eeuws landgoed — tijdloos, sfeervol en bijna onontdekt. Biologische wijnen en rust.', tip: 'Van tevoren bellen voor een exclusieve proeverij met mezze-plank in de tuin.' },
+  { id: 'e1', cat: 'eten', icon: '🍷', title: 'Wijnproeverij Gentilini Winery', why: 'De beste boetiekwijnmaker van Kefalonia. De frisse Robola-wijn is legendarisch. Relaxte proeverij in schaduwrijke tuin.', tip: 'Geen reservering nodig voor standaardtasting, maar meld je \'s namiddags aan. Proef ook de Muscat.', location: 'Gentilini Winery, Minies, Kefalonia', mapUrl: 'https://www.google.com/maps/search/?api=1&query=Gentilini+Winery+Kefalonia', lat: 38.143, lng: 20.505 },
+  { id: 'e2', cat: 'eten', icon: '🌅', title: 'Zonsondergang bij Apolafsi (Lixouri)', why: 'Eten met de voeten in het zand terwijl de lucht roze en oranje kleurt boven de zee. Perfecte vakantiedag.', tip: 'Bestel de Kefalonitiki Kreatopita — de traditionele vleespastei van het eiland. Niet missen.', location: 'Apolafsi Restaurant, Lixouri, Kefalonia', mapUrl: 'https://www.google.com/maps/search/?api=1&query=Apolafsi+Restaurant+Lixouri', lat: 38.19, lng: 20.418 },
+  { id: 'e3', cat: 'eten', icon: '🫒', title: 'Lokale honing & olijfolie kopen in Pyrgi', why: 'Tijmhoning en koudgeperste olijfolie van Kefalonia behoren tot de beste van heel Griekenland.', tip: 'Altijd contant geld bij (pinnen kan niet). Kraampjes langs de bergwegen rond Mount Ainos.', location: 'Pyrgi bergwegen, Pyrgi, Kefalonia', mapUrl: 'https://www.google.com/maps/search/?api=1&query=Pyrgi+Kefalonia', lat: 38.176, lng: 20.612 },
+  { id: 'e4', cat: 'eten', icon: '🍲', title: 'Lunchen in Valsamata of Fragata', why: 'Dorpjes zonder toeristen in de Omala-vallei. Eten wat de pot schaft: stoofpotten, gevulde groenten, zelfgebakken brood.', tip: 'Bestel mezedes om te delen — dé manier waarop locals eten. Veel gezelliger dan elk een groot bord.', location: 'Valsamata, Omala Valley, Kefalonia', mapUrl: 'https://www.google.com/maps/search/?api=1&query=Valsamata+Kefalonia', lat: 38.174, lng: 20.583 },
+  { id: 'e5', cat: 'eten', icon: '☕', title: 'Frappé drinken in Karavomylos', why: 'Rustig kustdorpje waar het water van de Melissani-grot omhoog komt. Heerlijk zitten onder de bomen.', tip: 'Loop na de koffie over het kustpad richting Sami. Combineer met een grottenmiddag.', location: 'Karavomylos Lake, Karavomylos, Kefalonia', mapUrl: 'https://www.google.com/maps/search/?api=1&query=Karavomylos+Lake+Kefalonia', lat: 38.257, lng: 20.634 },
+  { id: 'e6', cat: 'eten', icon: '🐟', title: 'Verse vis bij Taverna Gorgona (Fiskardo)', why: 'De vangst van de dag eten aan de kade. Zo vers dat hij \'s ochtends nog in de boot lag.', tip: 'Vraag de ober mee te lopen naar de koelvitrine om zelf je vis te kiezen — heel gebruikelijk en leuk.', location: 'Taverna Gorgona, Fiskardo, Kefalonia', mapUrl: 'https://www.google.com/maps/search/?api=1&query=Taverna+Gorgona+Fiskardo', lat: 38.461, lng: 20.579 },
+  { id: 'e7', cat: 'eten', icon: '🎉', title: 'Avondwandeling Argostoli (volta)', why: 'De Griekse volta is heilig. Schuif aan op Vallianou-plein met een ouzo en geniet van het leven.', tip: 'Start rond 20:00. Probeer loukoumades (Griekse honing-oliebollen) bij lokale zoetwinkels.', location: 'Vallianou Square, Argostoli, Kefalonia', mapUrl: 'https://www.google.com/maps/search/?api=1&query=Vallianou+Square+Argostoli', lat: 38.175, lng: 20.493 },
+  { id: 'e8', cat: 'eten', icon: '🍇', title: 'Haritatos Vineyard (Paliki)', why: 'Authentiek 19e-eeuws landgoed — tijdloos, sfeervol en bijna onontdekt. Biologische wijnen en rust.', tip: 'Van tevoren bellen voor een exclusieve proeverij met mezze-plank in de tuin.', location: 'Haritatos Vineyard, Lixouri, Paliki, Kefalonia', mapUrl: 'https://www.google.com/maps/search/?api=1&query=Haritatos+Vineyard+Lixouri', lat: 38.232, lng: 20.395 },
+  { id: 'e9', cat: 'eten', icon: '🏨', title: 'Ontspannen in het hotel', why: 'Genieten van de luxe faciliteiten en de spa van Apollonion Asterias Resort & Spa ***** in Lixouri.', tip: 'Boek vooraf een heerlijke massage of gezichtsbehandeling in de health spa van het resort.', location: 'Apollonion Asterias Resort en Spa *****, Lixouri, Griekenland', mapUrl: 'https://www.google.com/maps/search/?api=1&query=Apollonion+Asterias+Resort+Spa+Lixouri', lat: 38.188, lng: 20.407 },
   // ── VERJAARDAG (speciale pool) ────────────────────────
-  { id: 'b1', cat: 'bday', icon: '⛵', title: 'Privé sunset cruise', why: 'Een privéboot met schipper, verlaten baaitjes, gekoelde Robola-wijn en de zon die in de Ionische Zee wegzakt. Volledige privacy.', tip: 'Vooraf boeken via charterbedrijven in Fiskardo of Argostoli. Vraag om wijn die al koud staat.', special: true },
-  { id: 'b2', cat: 'bday', icon: '🍽️', title: 'Romantisch diner bij Tassia (Fiskardo)', why: 'Het iconische restaurant aan de kade van Fiskardo. Top-tier service, verfijnde Griekse keuken, geluid van de golven.', tip: 'Reserveer voor 20:15. Vraag expliciet om een seafront tafel voor de zonsondergang.', special: true },
-  { id: 'b3', cat: 'bday', icon: '🍇', title: 'Private wine tasting Haritatos Vineyard', why: 'Een romantisch 19e-eeuws landgoed op Paliki. Privérondleiding en proeverij onder de bomen — intiem en tijdloos.', tip: 'Combineer met Petani Beach op 10 min rijden voor een spectaculaire zonsondergangsdip.', special: true },
-  { id: 'b4', cat: 'bday', icon: '💎', title: 'Vroegbezoek Melissani Cave + luxe dag Antisamos', why: 'Betoverende grot nét voor de drukte, gevolgd door een hele dag luxe in een privé-cabana op Antisamos.', tip: 'Grot: 11:30–13:30 voor het licht. Cabana: consumptie = gratis. Boek het premium setje vooraf.', special: true },
+  { id: 'b1', cat: 'bday', icon: '⛵', title: 'Privé sunset cruise', why: 'Een privéboot met schipper, verlaten baaitjes, gekoelde Robola-wijn en de zon die in de Ionische Zee wegzakt. Volledige privacy.', tip: 'Vooraf boeken via charterbedrijven in Fiskardo of Argostoli. Vraag om wijn die al koud staat.', special: true, location: 'Fiskardo of Sami Haven, Kefalonia', mapUrl: 'https://www.google.com/maps/search/?api=1&query=Fiskardo+Harbour', lat: 38.461, lng: 20.578 },
+  { id: 'b2', cat: 'bday', icon: '🍽️', title: 'Romantisch diner bij Tassia (Fiskardo)', why: 'Het iconische restaurant aan de kade van Fiskardo. Top-tier service, verfijnde Griekse keuken, geluid van de golven.', tip: 'Reserveer voor 20:15. Vraag expliciet om een seafront tafel voor de zonsondergang.', special: true, location: 'Tassia Restaurant, Fiskardo Haven, Kefalonia', mapUrl: 'https://www.google.com/maps/search/?api=1&query=Tassia+Restaurant+Fiskardo', lat: 38.461, lng: 20.579 },
+  { id: 'b3', cat: 'bday', icon: '🍇', title: 'Private wine tasting Haritatos Vineyard', why: 'Een romantisch 19e-eeuws landgoed op Paliki. Privérondleiding en proeverij onder de bomen — intiem en tijdloos.', tip: 'Combineer met Petani Beach op 10 min rijden voor een spectaculaire zonsondergangsdip.', special: true, location: 'Haritatos Vineyard, Lixouri, Paliki, Kefalonia', mapUrl: 'https://www.google.com/maps/search/?api=1&query=Haritatos+Vineyard+Lixouri', lat: 38.232, lng: 20.395 },
+  { id: 'b4', cat: 'bday', icon: '💎', title: 'Vroegbezoek Melissani Cave + luxe dag Antisamos', why: 'Betoverende grot nét voor de drukte, gevolgd door een hele dag luxe in een privé-cabana op Antisamos.', tip: 'Grot: 11:30–13:30 voor het licht. Cabana: consumptie = gratis. Boek het premium setje vooraf.', special: true, location: 'Melissani Cave & Antisamos Beach, Sami, Kefalonia', mapUrl: 'https://www.google.com/maps/search/?api=1&query=Antisamos+Beach+Kefalonia', lat: 38.259, lng: 20.673 },
 ];
 
 const CAT_LABELS = {
@@ -776,9 +1071,11 @@ nameInput.addEventListener('keydown', function(e) {
 
 function startPlanning() {
   state.name = document.getElementById('planner-name').value.trim() || 'Jij';
+  state.currentDay = 'heen';
   showScreen('screen-planner');
   renderSidebar();
-  renderPlannerDay(0);
+  renderPlannerDay('heen');
+  setTimeout(() => updateMap('heen'), 50);
 }
 
 // ═══════════════════════════════════════════════════════
@@ -794,6 +1091,20 @@ function renderSidebar() {
 
   const list = document.getElementById('day-list');
   list.innerHTML = '';
+
+  // Heenreis flight item at the top
+  const heenItem = document.createElement('div');
+  heenItem.className = 'day-item flight-item' + (state.currentDay === 'heen' ? ' current' : '');
+  heenItem.onclick = () => { state.currentDay = 'heen'; renderSidebar(); renderPlannerDay('heen'); scrollToTop(); };
+  heenItem.innerHTML = `
+    <div class="day-dot">✈️</div>
+    <div class="day-meta">
+      <div class="day-date">Za 13/6</div>
+      <div class="day-name">Heenreis (AMS → EFL)</div>
+      <div class="day-activity" style="color:var(--sea); font-weight: 500;">Vertrek 05:05 · Transavia</div>
+    </div>
+  `;
+  list.appendChild(heenItem);
 
   DAYS.forEach((day, i) => {
     const d = state.plan[i];
@@ -820,6 +1131,20 @@ function renderSidebar() {
     `;
     list.appendChild(item);
   });
+
+  // Terugreis flight item at the bottom
+  const terugItem = document.createElement('div');
+  terugItem.className = 'day-item flight-item' + (state.currentDay === 'terug' ? ' current' : '');
+  terugItem.onclick = () => { state.currentDay = 'terug'; renderSidebar(); renderPlannerDay('terug'); scrollToTop(); };
+  terugItem.innerHTML = `
+    <div class="day-dot">✈️</div>
+    <div class="day-meta">
+      <div class="day-date">Za 27/6</div>
+      <div class="day-name">Terugreis (EFL → AMS)</div>
+      <div class="day-activity" style="color:var(--sea); font-weight: 500;">Vertrek 10:05 · Transavia</div>
+    </div>
+  `;
+  list.appendChild(terugItem);
 }
 
 function scrollToTop() {
@@ -827,13 +1152,309 @@ function scrollToTop() {
 }
 
 // ═══════════════════════════════════════════════════════
+//  MAP & TRAVEL CALCULATIONS
+// ═══════════════════════════════════════════════════════
+let map = null;
+let mapMarkers = [];
+let routeLines = [];
+const HOTEL_COORDS = [38.188, 20.407];
+
+function calculateTravelStats(lat1, lng1, lat2, lng2) {
+  // Haversine straight-line distance in km
+  const R = 6371; 
+  const dLat = (lat2 - lat1) * Math.PI / 180;
+  const dLng = (lng2 - lng1) * Math.PI / 180;
+  const a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+            Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
+            Math.sin(dLng / 2) * Math.sin(dLng / 2);
+  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+  const straightDist = R * c;
+
+  // Winding roads multiplier
+  let roadDist = straightDist * 1.35;
+  // Speed in mountains ~42 km/h
+  let timeMins = (roadDist / 42) * 60;
+
+  // Lixouri Bay Penalty (crossing to the main body of Kefalonia)
+  const isLixouri1 = lng1 < 20.46;
+  const isLixouri2 = lng2 < 20.46;
+  if (isLixouri1 !== isLixouri2) {
+    roadDist += 28; // km penalty to drive around (or waiting + boarding ferry)
+    timeMins += 35; // mins penalty
+  }
+
+  return {
+    distance: Math.round(roadDist * 10) / 10,
+    time: Math.round(timeMins)
+  };
+}
+
+function initMap() {
+  if (map) return;
+  
+  // Center of Kefalonia
+  map = L.map('map', {
+    zoomControl: false
+  }).setView([38.22, 20.53], 10);
+  
+  L.control.zoom({ position: 'topright' }).addTo(map);
+
+  // CartoDB Positron clean light theme
+  L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
+    attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>',
+    subdomains: 'abcd',
+    maxZoom: 20
+  }).addTo(map);
+  
+  // Hotel marker (static)
+  const hotelIcon = L.divIcon({
+    html: '🏢',
+    className: 'custom-map-icon hotel-icon',
+    iconSize: [26, 26],
+    iconAnchor: [13, 13]
+  });
+  
+  L.marker(HOTEL_COORDS, { icon: hotelIcon })
+    .addTo(map)
+    .bindPopup('<strong>Hotel: Apollonion Asterias Resort & Spa *****</strong><br>Ons start- en eindpunt.');
+}
+
+function updateMap(dayIndex) {
+  initMap();
+  
+  // Clear layers
+  mapMarkers.forEach(m => map.removeLayer(m));
+  mapMarkers = [];
+  routeLines.forEach(l => map.removeLayer(l));
+  routeLines = [];
+
+  if (dayIndex === 'heen' || dayIndex === 'terug') {
+    // Zoom on Kefalonia Airport
+    const airportCoords = [38.115, 20.501];
+    const marker = L.marker(airportCoords, {
+      icon: L.divIcon({
+        html: dayIndex === 'heen' ? '🛬' : '🛫',
+        className: 'custom-map-icon active-icon',
+        iconSize: [28, 28],
+        iconAnchor: [14, 14]
+      })
+    }).bindPopup(dayIndex === 'heen' ? '<strong>Kefallinia Airport (EFL)</strong><br>Welkom op Kefalonia!' : '<strong>Kefallinia Airport (EFL)</strong><br>Goede reis terug!').addTo(map);
+    mapMarkers.push(marker);
+    map.setView(airportCoords, 11);
+    return;
+  }
+
+  const day = DAYS[dayIndex];
+  const plan = state.plan[dayIndex];
+  const activeIds = new Set();
+  if (plan.morning) activeIds.add(plan.morning.id);
+  if (plan.afternoon) activeIds.add(plan.afternoon.id);
+
+  // 1. Draw inactive activities
+  ACTIVITIES.forEach(act => {
+    if (activeIds.has(act.id)) return;
+    const isSpecialDay = !!day.special;
+    if (isSpecialDay && act.cat !== 'bday') return;
+    if (!isSpecialDay && act.cat === 'bday') return;
+
+    const marker = L.marker([act.lat, act.lng], {
+      icon: L.divIcon({
+        html: act.icon,
+        className: 'custom-map-icon inactive-icon',
+        iconSize: [24, 24],
+        iconAnchor: [12, 12]
+      })
+    }).addTo(map);
+
+    const popupContent = `
+      <div style="font-family:'DM Sans',sans-serif; width:180px;">
+        <strong style="font-size:0.85rem;">${act.icon} ${act.title}</strong>
+        <p style="font-size:0.75rem; color:var(--muted); margin:4px 0 8px;">${act.location.split(',')[0]}</p>
+        <div style="display:flex; gap:6px;">
+          <button onclick="selectActivityFromMap(${dayIndex}, '${act.id}', 'morning')" style="flex:1; font-size:0.65rem; padding:4px 8px; background:var(--sea); color:white; border:none; border-radius:4px; cursor:pointer; font-weight:500;">+ Ochtend</button>
+          <button onclick="selectActivityFromMap(${dayIndex}, '${act.id}', 'afternoon')" style="flex:1; font-size:0.65rem; padding:4px 8px; background:var(--sea-deep); color:white; border:none; border-radius:4px; cursor:pointer; font-weight:500;">+ Middag</button>
+        </div>
+      </div>
+    `;
+    marker.bindPopup(popupContent);
+    mapMarkers.push(marker);
+  });
+
+  // 2. Hotel
+  const hotelMarker = L.marker(HOTEL_COORDS, {
+    icon: L.divIcon({
+      html: '🏢',
+      className: 'custom-map-icon hotel-icon',
+      iconSize: [26, 26],
+      iconAnchor: [13, 13]
+    })
+  }).bindPopup('<strong>Hotel: Apollonion Asterias Resort & Spa *****</strong>').addTo(map);
+  mapMarkers.push(hotelMarker);
+
+  // 3. Active coords list
+  const coords = [HOTEL_COORDS];
+
+  if (plan.morning) {
+    coords.push([plan.morning.lat, plan.morning.lng]);
+    const mMarker = L.marker([plan.morning.lat, plan.morning.lng], {
+      icon: L.divIcon({
+        html: plan.morning.icon,
+        className: 'custom-map-icon active-icon',
+        iconSize: [28, 28],
+        iconAnchor: [14, 14]
+      })
+    }).bindPopup(`<strong>🌅 Ochtend: ${plan.morning.title}</strong>`).addTo(map);
+    mapMarkers.push(mMarker);
+  }
+
+  if (plan.afternoon) {
+    coords.push([plan.afternoon.lat, plan.afternoon.lng]);
+    const aMarker = L.marker([plan.afternoon.lat, plan.afternoon.lng], {
+      icon: L.divIcon({
+        html: plan.afternoon.icon,
+        className: 'custom-map-icon active-icon',
+        iconSize: [28, 28],
+        iconAnchor: [14, 14]
+      })
+    }).bindPopup(`<strong>🌌 Middag/avond: ${plan.afternoon.title}</strong>`).addTo(map);
+    mapMarkers.push(aMarker);
+  }
+
+  coords.push(HOTEL_COORDS);
+
+  // 4. Draw route polyline
+  if (coords.length > 2) {
+    const route = L.polyline(coords, {
+      color: 'var(--sea)',
+      weight: 3.5,
+      dashArray: '6, 8',
+      opacity: 0.85
+    }).addTo(map);
+    routeLines.push(route);
+    map.fitBounds(route.getBounds(), { padding: [50, 50] });
+  } else {
+    map.setView([38.22, 20.48], 11);
+  }
+}
+
+window.selectActivityFromMap = function(dayIndex, actId, slot) {
+  const act = ACTIVITIES.find(a => a.id === actId);
+  const plan = state.plan[dayIndex];
+  let justFilledDay = false;
+  
+  if (slot === 'morning') {
+    if (plan.morning && plan.morning.id === actId) {
+      plan.morning = null;
+    } else {
+      plan.morning = act;
+      if (plan.afternoon) {
+        justFilledDay = true;
+      }
+    }
+  } else {
+    if (plan.afternoon && plan.afternoon.id === actId) {
+      plan.afternoon = null;
+    } else {
+      plan.afternoon = act;
+      if (plan.morning) {
+        justFilledDay = true;
+      }
+    }
+  }
+  
+  if (plan.morning && plan.afternoon) {
+    fireConfetti();
+  }
+  
+  map.closePopup();
+  renderPlannerDay(dayIndex);
+  renderSidebar();
+  setTimeout(() => updateMap(dayIndex), 50);
+
+  if (justFilledDay) {
+    setTimeout(() => {
+      if (state.currentDay !== dayIndex) return;
+
+      if (dayIndex < 13) {
+        goDay(dayIndex + 1);
+      } else {
+        goDay('terug');
+      }
+    }, 900);
+  }
+};
+
+// ═══════════════════════════════════════════════════════
 //  PLANNER DAY
 // ═══════════════════════════════════════════════════════
 function renderPlannerDay(i) {
+  if (i === 'heen' || i === 'terug') {
+    renderFlightPage(i);
+    return;
+  }
   const day = DAYS[i];
   const plan = state.plan[i];
   const isSpecial = !!day.special;
   const avail = availableActivities(isSpecial);
+
+  // Calculate travel stats for the day
+  let totalDistance = 0;
+  let totalTime = 0;
+  let statsHtml = '';
+  let regionTip = '';
+
+  if (plan.morning || plan.afternoon) {
+    const hotelLat = 38.188;
+    const hotelLng = 20.407;
+    
+    if (plan.morning && plan.afternoon) {
+      // Route: Hotel -> Morning -> Afternoon -> Hotel
+      const s1 = calculateTravelStats(hotelLat, hotelLng, plan.morning.lat, plan.morning.lng);
+      const s2 = calculateTravelStats(plan.morning.lat, plan.morning.lng, plan.afternoon.lat, plan.afternoon.lng);
+      const s3 = calculateTravelStats(plan.afternoon.lat, plan.afternoon.lng, hotelLat, hotelLng);
+      totalDistance = s1.distance + s2.distance + s3.distance;
+      totalTime = s1.time + s2.time + s3.time;
+      
+      const crossing = (plan.morning.lng < 20.46) !== (plan.afternoon.lng < 20.46);
+      if (crossing) {
+        regionTip = `<div style="font-size:0.75rem; color:var(--terracotta); font-weight:500; margin-top:6px;">⚠️ Tip: Deze twee activiteiten liggen in verschillende regio's van het eiland. Kies activiteiten dichter bij elkaar om reistijd te besparen!</div>`;
+      }
+    } else {
+      // Only one activity selected today
+      const activeAct = plan.morning || plan.afternoon;
+      const s = calculateTravelStats(hotelLat, hotelLng, activeAct.lat, activeAct.lng);
+      totalDistance = s.distance * 2;
+      totalTime = s.time * 2;
+    }
+
+    const hours = Math.floor(totalTime / 60);
+    const mins = totalTime % 60;
+    const totalTimeText = hours > 0 ? `${hours}u ${mins}m` : `${mins}m`;
+
+    statsHtml = `
+      <div class="route-info-card fade-up" style="background:var(--sand-dark); border-radius:var(--radius-lg); padding:1.2rem 1.5rem; margin-bottom:2rem; display:flex; align-items:center; justify-content:space-between; gap:1rem; border:1px solid rgba(0,0,0,0.05);">
+        <div style="display:flex; align-items:center; gap:12px; flex:1;">
+          <span style="font-size:1.8rem; background:rgba(255,255,255,0.6); padding:6px; border-radius:10px; display:inline-block; line-height:1;">🚗</span>
+          <div style="flex:1;">
+            <div style="font-size:0.85rem; font-weight:600; color:var(--ink);">Reistijd & Route Vandaag</div>
+            <div style="font-size:0.75rem; color:var(--muted); margin-top:2px;">Start & eindigt bij <strong>Apollonion Resort</strong> in Lixouri</div>
+            ${regionTip}
+          </div>
+        </div>
+        <div style="text-align:right; flex-shrink:0;">
+          <div style="font-size:1.25rem; font-weight:700; color:var(--sea-deep);">${totalTimeText} reistijd</div>
+          <div style="font-size:0.75rem; color:var(--muted); margin-top:2px;">≈ ${totalDistance.toFixed(1)} km rijden</div>
+        </div>
+      </div>
+    `;
+  } else {
+    statsHtml = `
+      <div class="route-info-card fade-up" style="background:var(--sand-dark); border-radius:var(--radius-lg); padding:1rem 1.5rem; margin-bottom:2rem; display:flex; align-items:center; gap:12px; opacity:0.65;">
+        <span style="font-size:1.5rem;">🚗</span>
+        <div style="font-size:0.8; color:var(--muted); line-height:1.4;">Kies ten minste één activiteit om de reistijd vanaf het hotel te berekenen.</div>
+      </div>
+    `;
+  }
 
   // Group available by category
   const groups = {};
@@ -872,6 +1493,8 @@ function renderPlannerDay(i) {
         </div>
       </div>
     </div>
+
+    ${statsHtml}
   `;
 
   // Category order
@@ -901,6 +1524,11 @@ function renderPlannerDay(i) {
           <div class="act-check">${isSelected ? '✓' : ''}</div>
           <div class="act-icon">${act.icon}</div>
           <div class="act-title">${act.title}</div>
+          ${act.location ? `
+            <div style="font-size:0.7rem; color:var(--sea); margin: 4px 0 8px; display:flex; align-items:center; gap:4px; font-weight:500;">
+              📍 <a href="${act.mapUrl}" target="_blank" onclick="event.stopPropagation();" style="color:var(--sea); text-decoration:none; border-bottom:1px dashed var(--sea);">${act.location}</a>
+            </div>
+          ` : ''}
           <div class="act-why">${act.why}</div>
           <div class="act-tip">💡 ${act.tip}</div>
           ${slotLabel ? `<div style="margin-top:6px;font-size:0.7rem;font-weight:500;color:${act.special ? 'var(--gold)' : 'var(--sea)'}">→ ${slotLabel}</div>` : ''}
@@ -913,11 +1541,11 @@ function renderPlannerDay(i) {
   // Nav
   html += `
     <div class="planner-nav fade-up">
-      ${i > 0
-        ? `<button class="btn-nav" onclick="goDay(${i - 1})">← Vorige dag</button>`
-        : `<div></div>`}
+      ${i === 0
+        ? `<button class="btn-nav" onclick="goDay('heen')">← Heenreis</button>`
+        : `<button class="btn-nav" onclick="goDay(${i - 1})">← Vorige dag</button>`}
       ${isLast
-        ? `<button class="btn-next btn-nav" onclick="showOverview()">Overzicht bekijken →</button>`
+        ? `<button class="btn-next btn-nav" onclick="goDay('terug')">Terugreis bekijken →</button>`
         : `<button class="btn-next btn-nav" onclick="goDay(${i + 1})">Volgende dag →</button>`}
     </div>`;
 
@@ -929,6 +1557,96 @@ function goDay(i) {
   renderSidebar();
   renderPlannerDay(i);
   scrollToTop();
+  setTimeout(() => updateMap(i), 50);
+}
+
+function renderFlightPage(type) {
+  const isHeen = type === 'heen';
+  const flight = isHeen ? {
+    title: 'Heenreis naar Kefalonia',
+    date: 'Zaterdag 13 juni 2026',
+    depTime: '05:05',
+    arrTime: '09:05',
+    fromCode: 'AMS',
+    fromName: 'Amsterdam Schiphol (AMS)',
+    toCode: 'EFL',
+    toName: 'Kefallinia Airport (EFL)',
+    airline: 'Transavia Airlines',
+    flightNum: 'HV 6563',
+    class: 'Economy',
+    duration: '4u 00m',
+    nextText: 'Eerste dag plannen →'
+  } : {
+    title: 'Terugreis naar Amsterdam',
+    date: 'Zaterdag 27 juni 2026',
+    depTime: '10:05',
+    arrTime: '12:25',
+    fromCode: 'EFL',
+    fromName: 'Kefallinia Airport (EFL)',
+    toCode: 'AMS',
+    toName: 'Amsterdam Schiphol (AMS)',
+    airline: 'Transavia Airlines',
+    flightNum: 'HV 6564',
+    class: 'Economy',
+    duration: '3u 20m',
+    nextText: 'Naar overzicht →'
+  };
+
+  const html = `
+    <div class="planner-day-header fade-up">
+      <div class="planner-day-label">Reisinformatie</div>
+      <h2 class="planner-day-title">${flight.title}</h2>
+      <p class="planner-day-subtitle">${flight.date} — Goede reis! ✈️</p>
+    </div>
+
+    <div class="flight-ticket-container fade-up">
+      <div class="flight-ticket">
+        <div class="ticket-header">
+          <div class="ticket-airline">
+            🟢 <strong>${flight.airline}</strong>
+          </div>
+          <div class="ticket-class">${flight.class}</div>
+        </div>
+        
+        <div class="ticket-body">
+          <div class="ticket-airport">
+            <span class="airport-code">${flight.fromCode}</span>
+            <span class="airport-name">${flight.fromName}</span>
+            <span class="ticket-time">${flight.depTime}</span>
+          </div>
+          
+          <div class="ticket-path">
+            <span class="ticket-arrow">✈️</span>
+            <span class="ticket-duration">${flight.duration}</span>
+          </div>
+          
+          <div class="ticket-airport right">
+            <span class="airport-code">${flight.toCode}</span>
+            <span class="airport-name">${flight.toName}</span>
+            <span class="ticket-time">${flight.arrTime}</span>
+          </div>
+        </div>
+        
+        <div class="ticket-footer">
+          <div>Vluchtnummer: <strong>${flight.flightNum}</strong></div>
+          <div>Klasse: <strong>${flight.class}</strong></div>
+          <div>Datum: <strong>${flight.date}</strong></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="planner-nav fade-up" style="margin-top: 3rem;">
+      ${isHeen 
+        ? `<div></div>`
+        : `<button class="btn-nav" onclick="goDay(13)">← Vorige dag</button>`}
+      
+      ${isHeen
+        ? `<button class="btn-next btn-nav" onclick="goDay(0)">${flight.nextText}</button>`
+        : `<button class="btn-next btn-nav" onclick="showOverview()">${flight.nextText}</button>`}
+    </div>
+  `;
+
+  document.getElementById('planner-main').innerHTML = html;
 }
 
 function selectActivity(dayIndex, actId) {
@@ -940,24 +1658,31 @@ function selectActivity(dayIndex, actId) {
     plan.morning = null;
     renderPlannerDay(dayIndex);
     renderSidebar();
+    setTimeout(() => updateMap(dayIndex), 50);
     return;
   }
   if (plan.afternoon && plan.afternoon.id === actId) {
     plan.afternoon = null;
     renderPlannerDay(dayIndex);
     renderSidebar();
+    setTimeout(() => updateMap(dayIndex), 50);
     return;
   }
 
-  // Fill morning slot first, then afternoon
+  // Fill morning slot first, then afternoon. If both full, overwrite afternoon.
+  let justFilledDay = false;
   if (!plan.morning) {
     plan.morning = act;
+    if (plan.afternoon) {
+      justFilledDay = true;
+    }
   } else if (!plan.afternoon) {
     plan.afternoon = act;
+    justFilledDay = true;
   } else {
-    // Both full — shift: morning becomes new act, afternoon moves to morning
-    plan.morning = plan.afternoon;
+    // Both already full — overwrite the afternoon activity
     plan.afternoon = act;
+    justFilledDay = true;
   }
 
   // Check if both slots now filled → small celebration
@@ -967,6 +1692,21 @@ function selectActivity(dayIndex, actId) {
 
   renderPlannerDay(dayIndex);
   renderSidebar();
+  setTimeout(() => updateMap(dayIndex), 50);
+
+  // Auto-advance to the next day if the day is now complete!
+  if (justFilledDay) {
+    setTimeout(() => {
+      // Safety: don't auto-advance if the user changed the day in the meantime
+      if (state.currentDay !== dayIndex) return;
+
+      if (dayIndex < 13) {
+        goDay(dayIndex + 1);
+      } else {
+        goDay('terug');
+      }
+    }, 900); // 900ms delay is perfect: long enough to see the selection & confetti, short enough to feel fast!
+  }
 }
 
 // ═══════════════════════════════════════════════════════
@@ -998,13 +1738,32 @@ function showOverview() {
     const d = state.plan[i];
     const card = document.createElement('div');
     card.className = 'overview-card' + (day.special ? ' special' : '');
+    
+    const renderOverviewAct = (act) => {
+      if (!act) return '';
+      return `
+        <div class="ov-act" style="display:flex; align-items:flex-start; gap:6px; margin-bottom:4px;">
+          <span class="ov-act-icon">${act.icon}</span>
+          <div style="display:flex; flex-direction:column; line-height:1.2;">
+            <span class="ov-act-name" style="font-weight:500;">${act.title}</span>
+            ${act.location ? `
+              <a href="${act.mapUrl}" target="_blank" onclick="event.stopPropagation();" 
+                 style="font-size:0.65rem; color:var(--sea); text-decoration:none; margin-top:2px; display:inline-flex; align-items:center; gap:2px;">
+                📍 ${act.location.split(',')[0]} ↗
+              </a>
+            ` : ''}
+          </div>
+        </div>
+      `;
+    };
+
     card.innerHTML = `
       <div class="ov-date">${day.short}</div>
       <div class="ov-day">${day.name}</div>
       ${day.special ? '<div class="ov-bday-badge">🎂 Verjaardag</div>' : ''}
-      <div class="ov-activities">
-        ${d.morning ? `<div class="ov-act"><span class="ov-act-icon">${d.morning.icon}</span><span class="ov-act-name">${d.morning.title}</span></div>` : ''}
-        ${d.afternoon ? `<div class="ov-act"><span class="ov-act-icon">${d.afternoon.icon}</span><span class="ov-act-name">${d.afternoon.title}</span></div>` : ''}
+      <div class="ov-activities" style="margin-top:8px; display:flex; flex-direction:column; gap:8px;">
+        ${d.morning ? renderOverviewAct(d.morning) : ''}
+        ${d.afternoon ? renderOverviewAct(d.afternoon) : ''}
         ${!d.morning && !d.afternoon ? '<div class="ov-act-none">Vrij houden</div>' : ''}
       </div>
     `;
@@ -1028,7 +1787,7 @@ function goBackToPlanner() {
 
 function resetAll() {
   if (!confirm('Weet je zeker dat je opnieuw wilt beginnen? Alle keuzes worden gewist.')) return;
-  state = { name: '', currentDay: 0, plan: Array(14).fill(null).map(() => ({ morning: null, afternoon: null })) };
+  state = { name: '', currentDay: 'heen', plan: Array(14).fill(null).map(() => ({ morning: null, afternoon: null })) };
   document.getElementById('planner-name').value = '';
   document.getElementById('btn-start').disabled = true;
   showScreen('screen-welcome');
