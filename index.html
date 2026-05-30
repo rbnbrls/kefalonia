@@ -2260,7 +2260,32 @@ async function submitActivityRequest() {
     return;
   }
 
-  // TODO: webhook implementatie
+  btn.disabled = true;
+  status.style.color = 'var(--muted)';
+  status.textContent = 'Versturen…';
+
+  try {
+    const res = await fetch('https://n8n.7rb.nl/webhook/kefalonia-activiteit', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        titel: title,
+        beschrijving: desc,
+        ingediend_door: state.name || 'Onbekend',
+        tijdstip: new Date().toISOString(),
+      }),
+    });
+
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+
+    status.style.color = 'var(--olive)';
+    status.textContent = '✓ Voorstel verzonden! De beheerder bekijkt het zo snel mogelijk.';
+    setTimeout(closeAddActivityModal, 2200);
+  } catch (err) {
+    status.style.color = 'var(--terracotta)';
+    status.textContent = 'Er ging iets mis bij het versturen. Probeer het opnieuw.';
+    btn.disabled = false;
+  }
 }
 </script>
 </body>
