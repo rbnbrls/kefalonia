@@ -1279,7 +1279,7 @@ function renderSidebar() {
   // Heenreis flight item at the top
   const heenItem = document.createElement('div');
   heenItem.className = 'day-item flight-item' + (state.currentDay === 'heen' ? ' current' : '');
-  heenItem.onclick = () => { state.currentDay = 'heen'; renderSidebar(); renderPlannerDay('heen'); scrollToTop(); };
+  heenItem.onclick = () => { state.currentDay = 'heen'; renderSidebar(); renderPlannerDay('heen'); scrollToTop(); setTimeout(() => updateMap('heen'), 50); };
   heenItem.innerHTML = `
     <div class="day-dot">✈️</div>
     <div class="day-meta">
@@ -1297,7 +1297,7 @@ function renderSidebar() {
 
     const item = document.createElement('div');
     item.className = 'day-item' + (isDone ? ' done' : '') + (isCurrent ? ' current' : '');
-    item.onclick = () => { state.currentDay = i; renderSidebar(); renderPlannerDay(i); scrollToTop(); };
+    item.onclick = () => { state.currentDay = i; renderSidebar(); renderPlannerDay(i); scrollToTop(); setTimeout(() => updateMap(i), 50); };
 
     const checkmark = isDone ? '✓' : (i + 1);
     const morning = d.morning ? d.morning.icon + ' ' + d.morning.title : '';
@@ -1328,7 +1328,7 @@ function renderSidebar() {
   // Terugreis flight item at the bottom
   const terugItem = document.createElement('div');
   terugItem.className = 'day-item flight-item' + (state.currentDay === 'terug' ? ' current' : '');
-  terugItem.onclick = () => { state.currentDay = 'terug'; renderSidebar(); renderPlannerDay('terug'); scrollToTop(); };
+  terugItem.onclick = () => { state.currentDay = 'terug'; renderSidebar(); renderPlannerDay('terug'); scrollToTop(); setTimeout(() => updateMap('terug'), 50); };
   terugItem.innerHTML = `
     <div class="day-dot">✈️</div>
     <div class="day-meta">
@@ -1502,17 +1502,6 @@ function initMap() {
     maxZoom: 20
   }).addTo(map);
   
-  // Hotel marker (static)
-  const hotelIcon = L.divIcon({
-    html: '🏢',
-    className: 'custom-map-icon hotel-icon',
-    iconSize: [26, 26],
-    iconAnchor: [13, 13]
-  });
-  
-  L.marker(HOTEL_COORDS, { icon: hotelIcon })
-    .addTo(map)
-    .bindPopup('<strong>Hotel: Apollonion Asterias Resort & Spa *****</strong><br>Ons start- en eindpunt.');
 }
 
 let mapUpdateToken = 0;
@@ -2271,35 +2260,7 @@ async function submitActivityRequest() {
     return;
   }
 
-  btn.disabled = true;
-  status.style.color = 'var(--muted)';
-  status.textContent = 'Versturen…';
-
-  const body = desc
-    ? `**Voorgesteld door:** ${state.name || 'anoniem'}\n\n**Beschrijving:**\n${desc}`
-    : `**Voorgesteld door:** ${state.name || 'anoniem'}`;
-
-  try {
-    const res = await fetch('https://ijkwtbpzqtbpznzogbts.supabase.co/functions/v1/forgejo-issue-proxy', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ title: `[Activiteit] ${title}`, body }),
-    });
-
-    if (res.ok) {
-      status.style.color = 'var(--olive)';
-      status.textContent = 'Bedankt! Jouw voorstel is verstuurd.';
-      setTimeout(closeAddActivityModal, 1800);
-    } else {
-      throw new Error(`HTTP ${res.status}`);
-    }
-  } catch (e) {
-    status.style.color = 'var(--terracotta)';
-    status.textContent = 'Er ging iets mis. Probeer het later opnieuw.';
-    btn.disabled = false;
-  }
+  // TODO: webhook implementatie
 }
 </script>
 </body>
