@@ -757,8 +757,8 @@ h3 { font-family: 'DM Sans', sans-serif; font-weight: 500; font-size: 1rem; }
 
 /* Split-screen interactive map */
 .planner-map-container {
-  width: 400px;
-  flex-shrink: 0;
+  flex: 1;
+  min-width: 380px;
   height: 100vh;
   position: sticky;
   top: 0;
@@ -1058,8 +1058,23 @@ function usedIds() {
 function availableActivities(isSpecialDay) {
   const used = usedIds();
   return ACTIVITIES.filter(a => {
-    // Hotel activity 'e9' is the only activity that can be selected multiple times on different days
     if (used.has(a.id) && a.id !== 'e9') return false;
+    if (isSpecialDay && a.cat === 'bday') return true;
+    if (!isSpecialDay && a.cat === 'bday') return false;
+    return true;
+  });
+}
+
+// Like availableActivities but includes the current day's own selections
+function availableForDay(dayIndex, isSpecialDay) {
+  const usedElsewhere = new Set();
+  state.plan.forEach((d, i) => {
+    if (i === dayIndex) return;
+    if (d.morning) usedElsewhere.add(d.morning.id);
+    if (d.afternoon) usedElsewhere.add(d.afternoon.id);
+  });
+  return ACTIVITIES.filter(a => {
+    if (usedElsewhere.has(a.id) && a.id !== 'e9') return false;
     if (isSpecialDay && a.cat === 'bday') return true;
     if (!isSpecialDay && a.cat === 'bday') return false;
     return true;
@@ -1359,12 +1374,20 @@ function updateMap(dayIndex) {
   if (plan.morning) activeIds.add(plan.morning.id);
   if (plan.afternoon) activeIds.add(plan.afternoon.id);
 
-  // 1. Draw inactive activities
+  // 1. Draw inactive activities (only when day is not fully planned)
+  const dayFull = !!(plan.morning && plan.afternoon);
+  const availIds = new Set(availableForDay(dayIndex, !!day.special).map(a => a.id));
   ACTIVITIES.forEach(act => {
+    if (dayFull) return;
     if (activeIds.has(act.id)) return;
-    const isSpecialDay = !!day.special;
-    if (isSpecialDay && act.cat !== 'bday') return;
-    if (!isSpecialDay && act.cat === 'bday') return;
+    if (!availIds.has(act.id)) return;
+
+    const morningFree = !plan.morning;
+    const afternoonFree = !plan.afternoon;
+    const btnStyle = 'flex:1; font-size:0.65rem; padding:4px 8px; border:none; border-radius:4px; cursor:pointer; font-weight:500; color:white;';
+    let buttons = '';
+    if (morningFree) buttons += `<button onclick="selectActivityFromMap(${dayIndex}, '${act.id}', 'morning')" style="${btnStyle} background:var(--sea);">🌅 Ochtend</button>`;
+    if (afternoonFree) buttons += `<button onclick="selectActivityFromMap(${dayIndex}, '${act.id}', 'afternoon')" style="${btnStyle} background:var(--sea-deep);">🌌 Middag</button>`;
 
     const marker = L.marker([act.lat, act.lng], {
       icon: L.divIcon({
@@ -1375,17 +1398,13 @@ function updateMap(dayIndex) {
       })
     }).addTo(map);
 
-    const popupContent = `
+    marker.bindPopup(`
       <div style="font-family:'DM Sans',sans-serif; width:180px;">
         <strong style="font-size:0.85rem;">${act.icon} ${act.title}</strong>
         <p style="font-size:0.75rem; color:var(--muted); margin:4px 0 8px;">${act.location.split(',')[0]}</p>
-        <div style="display:flex; gap:6px;">
-          <button onclick="selectActivityFromMap(${dayIndex}, '${act.id}', 'morning')" style="flex:1; font-size:0.65rem; padding:4px 8px; background:var(--sea); color:white; border:none; border-radius:4px; cursor:pointer; font-weight:500;">+ Ochtend</button>
-          <button onclick="selectActivityFromMap(${dayIndex}, '${act.id}', 'afternoon')" style="flex:1; font-size:0.65rem; padding:4px 8px; background:var(--sea-deep); color:white; border:none; border-radius:4px; cursor:pointer; font-weight:500;">+ Middag</button>
-        </div>
+        <div style="display:flex; gap:6px;">${buttons}</div>
       </div>
-    `;
-    marker.bindPopup(popupContent);
+    `);
     mapMarkers.push(marker);
   });
 
@@ -1402,6 +1421,7 @@ function updateMap(dayIndex) {
 
   // 3. Active coords list
   const coords = [HOTEL_COORDS];
+  const rmBtnStyle = 'width:100%; font-size:0.65rem; padding:4px 8px; background:#c53030; color:white; border:none; border-radius:4px; cursor:pointer; font-weight:500; margin-top:6px;';
 
   if (plan.morning) {
     coords.push([plan.morning.lat, plan.morning.lng]);
@@ -1412,7 +1432,13 @@ function updateMap(dayIndex) {
         iconSize: [28, 28],
         iconAnchor: [14, 14]
       })
-    }).bindPopup(`<strong>🌅 Ochtend: ${plan.morning.title}</strong>`).addTo(map);
+    }).bindPopup(`
+      <div style="font-family:'DM Sans',sans-serif; width:160px;">
+        <strong style="font-size:0.8rem;">🌅 Ochtend</strong>
+        <p style="font-size:0.8rem; margin:4px 0 4px;">${plan.morning.title}</p>
+        <button onclick="removeActivityFromMap(${dayIndex}, 'morning')" style="${rmBtnStyle}">✕ Verwijder</button>
+      </div>
+    `).addTo(map);
     mapMarkers.push(mMarker);
   }
 
@@ -1425,7 +1451,13 @@ function updateMap(dayIndex) {
         iconSize: [28, 28],
         iconAnchor: [14, 14]
       })
-    }).bindPopup(`<strong>🌌 Middag/avond: ${plan.afternoon.title}</strong>`).addTo(map);
+    }).bindPopup(`
+      <div style="font-family:'DM Sans',sans-serif; width:160px;">
+        <strong style="font-size:0.8rem;">🌌 Middag/avond</strong>
+        <p style="font-size:0.8rem; margin:4px 0 4px;">${plan.afternoon.title}</p>
+        <button onclick="removeActivityFromMap(${dayIndex}, 'afternoon')" style="${rmBtnStyle}">✕ Verwijder</button>
+      </div>
+    `).addTo(map);
     mapMarkers.push(aMarker);
   }
 
@@ -1493,6 +1525,16 @@ window.selectActivityFromMap = function(dayIndex, actId, slot) {
   }
 };
 
+window.removeActivityFromMap = function(dayIndex, slot) {
+  const plan = state.plan[dayIndex];
+  if (slot === 'morning') plan.morning = null;
+  else plan.afternoon = null;
+  map.closePopup();
+  renderPlannerDay(dayIndex);
+  renderSidebar();
+  setTimeout(() => updateMap(dayIndex), 50);
+};
+
 // ═══════════════════════════════════════════════════════
 //  PLANNER DAY
 // ═══════════════════════════════════════════════════════
@@ -1504,7 +1546,7 @@ function renderPlannerDay(i) {
   const day = DAYS[i];
   const plan = state.plan[i];
   const isSpecial = !!day.special;
-  const avail = availableActivities(isSpecial);
+  const avail = availableForDay(i, isSpecial);
 
   // Build stats card (real distances fetched async after render)
   let statsHtml = '';
@@ -1560,9 +1602,6 @@ function renderPlannerDay(i) {
     groups[a.cat].push(a);
   });
 
-  // Also include already-selected ones for this day (so they stay visible)
-  if (plan.morning) groups[plan.morning.cat] = groups[plan.morning.cat] || [];
-  if (plan.afternoon) groups[plan.afternoon.cat] = groups[plan.afternoon.cat] || [];
 
   const totalDays = 14;
   const isLast = i === totalDays - 1;
