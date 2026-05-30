@@ -1195,9 +1195,9 @@ let mapMarkers = [];
 let routeLines = [];
 const HOTEL_COORDS = [38.188, 20.407];
 
+// Used only for sort-ordering approximation (not displayed as exact distances)
 function calculateTravelStats(lat1, lng1, lat2, lng2) {
-  // Haversine straight-line distance in km
-  const R = 6371; 
+  const R = 6371;
   const dLat = (lat2 - lat1) * Math.PI / 180;
   const dLng = (lng2 - lng1) * Math.PI / 180;
   const a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
@@ -1206,10 +1206,9 @@ function calculateTravelStats(lat1, lng1, lat2, lng2) {
   const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
   const straightDist = R * c;
 
-  // Winding roads multiplier
-  let roadDist = straightDist * 1.35;
-  // Speed in mountains ~42 km/h
-  let timeMins = (roadDist / 42) * 60;
+  // Road multiplier for Kefalonia's winding mountain roads
+  let roadDist = straightDist * 1.5;
+  let timeMins = (roadDist / 40) * 60;
 
   // Lixouri Bay Penalty (crossing to the main body of Kefalonia)
   const isLixouri1 = lng1 < 20.46;
@@ -1223,6 +1222,80 @@ function calculateTravelStats(lat1, lng1, lat2, lng2) {
     distance: Math.round(roadDist * 10) / 10,
     time: Math.round(timeMins)
   };
+}
+
+// ── OSRM real road distances ──────────────────────────
+const routeDistanceCache = {};
+
+async function getRoadSegmentDistance(lat1, lng1, lat2, lng2) {
+  const key = `${lat1.toFixed(4)},${lng1.toFixed(4)}|${lat2.toFixed(4)},${lng2.toFixed(4)}`;
+  if (routeDistanceCache[key]) return routeDistanceCache[key];
+  try {
+    const url = `https://router.project-osrm.org/route/v1/driving/${lng1},${lat1};${lng2},${lat2}?overview=false`;
+    const res = await fetch(url);
+    const data = await res.json();
+    if (data.code === 'Ok' && data.routes && data.routes[0]) {
+      const result = {
+        distance: Math.round(data.routes[0].distance / 100) / 10,
+        time: Math.round(data.routes[0].duration / 60)
+      };
+      routeDistanceCache[key] = result;
+      return result;
+    }
+  } catch (e) {}
+  return calculateTravelStats(lat1, lng1, lat2, lng2);
+}
+
+function buildGoogleMapsUrl(plan) {
+  const hotelLatLng = `${HOTEL_COORDS[0]},${HOTEL_COORDS[1]}`;
+  const waypoints = [];
+  if (plan.morning)   waypoints.push(`${plan.morning.lat},${plan.morning.lng}`);
+  if (plan.afternoon) waypoints.push(`${plan.afternoon.lat},${plan.afternoon.lng}`);
+  let url = `https://www.google.com/maps/dir/?api=1&origin=${hotelLatLng}&destination=${hotelLatLng}&travelmode=driving`;
+  if (waypoints.length > 0) url += `&waypoints=${encodeURIComponent(waypoints.join('|'))}`;
+  return url;
+}
+
+async function updateRouteStatsCard(dayIndex) {
+  const plan = state.plan[dayIndex];
+  const numbersEl = document.getElementById(`route-stats-numbers-${dayIndex}`);
+  if (!numbersEl) return;
+
+  const [hotelLat, hotelLng] = HOTEL_COORDS;
+  let totalDistance = 0, totalTime = 0;
+
+  try {
+    if (plan.morning && plan.afternoon) {
+      const [s1, s2, s3] = await Promise.all([
+        getRoadSegmentDistance(hotelLat, hotelLng, plan.morning.lat, plan.morning.lng),
+        getRoadSegmentDistance(plan.morning.lat, plan.morning.lng, plan.afternoon.lat, plan.afternoon.lng),
+        getRoadSegmentDistance(plan.afternoon.lat, plan.afternoon.lng, hotelLat, hotelLng)
+      ]);
+      totalDistance = s1.distance + s2.distance + s3.distance;
+      totalTime = s1.time + s2.time + s3.time;
+    } else {
+      const act = plan.morning || plan.afternoon;
+      const s = await getRoadSegmentDistance(hotelLat, hotelLng, act.lat, act.lng);
+      totalDistance = s.distance * 2;
+      totalTime = s.time * 2;
+    }
+  } catch (e) {
+    const el = document.getElementById(`route-stats-numbers-${dayIndex}`);
+    if (el) el.innerHTML = `<div style="font-size:0.75rem;color:var(--muted);">Niet beschikbaar</div>`;
+    return;
+  }
+
+  const el = document.getElementById(`route-stats-numbers-${dayIndex}`);
+  if (!el) return;
+
+  const hours = Math.floor(totalTime / 60);
+  const mins  = totalTime % 60;
+  const timeText = hours > 0 ? `${hours}u ${mins}m` : `${mins}m`;
+
+  el.innerHTML = `
+    <div style="font-size:1.25rem; font-weight:700; color:var(--sea-deep);">${timeText} reistijd</div>
+    <div style="font-size:0.75rem; color:var(--muted); margin-top:2px;">${totalDistance.toFixed(1)} km rijden</div>
+  `;
 }
 
 function initMap() {
@@ -1433,53 +1506,41 @@ function renderPlannerDay(i) {
   const isSpecial = !!day.special;
   const avail = availableActivities(isSpecial);
 
-  // Calculate travel stats for the day
-  let totalDistance = 0;
-  let totalTime = 0;
+  // Build stats card (real distances fetched async after render)
   let statsHtml = '';
   let regionTip = '';
 
   if (plan.morning || plan.afternoon) {
-    const hotelLat = 38.188;
-    const hotelLng = 20.407;
-    
     if (plan.morning && plan.afternoon) {
-      // Route: Hotel -> Morning -> Afternoon -> Hotel
-      const s1 = calculateTravelStats(hotelLat, hotelLng, plan.morning.lat, plan.morning.lng);
-      const s2 = calculateTravelStats(plan.morning.lat, plan.morning.lng, plan.afternoon.lat, plan.afternoon.lng);
-      const s3 = calculateTravelStats(plan.afternoon.lat, plan.afternoon.lng, hotelLat, hotelLng);
-      totalDistance = s1.distance + s2.distance + s3.distance;
-      totalTime = s1.time + s2.time + s3.time;
-      
       const crossing = (plan.morning.lng < 20.46) !== (plan.afternoon.lng < 20.46);
       if (crossing) {
         regionTip = `<div style="font-size:0.75rem; color:var(--terracotta); font-weight:500; margin-top:6px;">⚠️ Tip: Deze twee activiteiten liggen in verschillende regio's van het eiland. Kies activiteiten dichter bij elkaar om reistijd te besparen!</div>`;
       }
-    } else {
-      // Only one activity selected today
-      const activeAct = plan.morning || plan.afternoon;
-      const s = calculateTravelStats(hotelLat, hotelLng, activeAct.lat, activeAct.lng);
-      totalDistance = s.distance * 2;
-      totalTime = s.time * 2;
     }
 
-    const hours = Math.floor(totalTime / 60);
-    const mins = totalTime % 60;
-    const totalTimeText = hours > 0 ? `${hours}u ${mins}m` : `${mins}m`;
+    const gmapsUrl = buildGoogleMapsUrl(plan);
 
     statsHtml = `
-      <div class="route-info-card fade-up" style="background:var(--sand-dark); border-radius:var(--radius-lg); padding:1.2rem 1.5rem; margin-bottom:2rem; display:flex; align-items:center; justify-content:space-between; gap:1rem; border:1px solid rgba(0,0,0,0.05);">
-        <div style="display:flex; align-items:center; gap:12px; flex:1;">
-          <span style="font-size:1.8rem; background:rgba(255,255,255,0.6); padding:6px; border-radius:10px; display:inline-block; line-height:1;">🚗</span>
-          <div style="flex:1;">
-            <div style="font-size:0.85rem; font-weight:600; color:var(--ink);">Reistijd & Route Vandaag</div>
-            <div style="font-size:0.75rem; color:var(--muted); margin-top:2px;">Start & eindigt bij <strong>Apollonion Resort</strong> in Lixouri</div>
-            ${regionTip}
+      <div id="route-stats-${i}" class="route-info-card fade-up" style="background:var(--sand-dark); border-radius:var(--radius-lg); padding:1.2rem 1.5rem; margin-bottom:2rem; border:1px solid rgba(0,0,0,0.05);">
+        <div style="display:flex; align-items:flex-start; justify-content:space-between; gap:1rem; flex-wrap:wrap;">
+          <div style="display:flex; align-items:center; gap:12px; flex:1;">
+            <span style="font-size:1.8rem; background:rgba(255,255,255,0.6); padding:6px; border-radius:10px; display:inline-block; line-height:1;">🚗</span>
+            <div style="flex:1;">
+              <div style="font-size:0.85rem; font-weight:600; color:var(--ink);">Reistijd & Route Vandaag</div>
+              <div style="font-size:0.75rem; color:var(--muted); margin-top:2px;">Start & eindigt bij <strong>Apollonion Resort</strong> in Lixouri</div>
+              ${regionTip}
+            </div>
           </div>
-        </div>
-        <div style="text-align:right; flex-shrink:0;">
-          <div style="font-size:1.25rem; font-weight:700; color:var(--sea-deep);">${totalTimeText} reistijd</div>
-          <div style="font-size:0.75rem; color:var(--muted); margin-top:2px;">≈ ${totalDistance.toFixed(1)} km rijden</div>
+          <div style="display:flex; flex-direction:column; align-items:flex-end; gap:10px; flex-shrink:0;">
+            <div id="route-stats-numbers-${i}" style="text-align:right;">
+              <div style="font-size:0.85rem; color:var(--muted); font-style:italic;">Berekenen…</div>
+            </div>
+            <a href="${gmapsUrl}" target="_blank" rel="noopener" onclick="event.stopPropagation();"
+               style="display:inline-flex; align-items:center; gap:6px; background:var(--sea-deep); color:white; text-decoration:none; font-size:0.78rem; font-weight:500; padding:8px 16px; border-radius:100px; white-space:nowrap; transition:background 0.15s;"
+               onmouseover="this.style.background='var(--sea)'" onmouseout="this.style.background='var(--sea-deep)'">
+              🗺️ Open in Google Maps
+            </a>
+          </div>
         </div>
       </div>
     `;
@@ -1487,7 +1548,7 @@ function renderPlannerDay(i) {
     statsHtml = `
       <div class="route-info-card fade-up" style="background:var(--sand-dark); border-radius:var(--radius-lg); padding:1rem 1.5rem; margin-bottom:2rem; display:flex; align-items:center; gap:12px; opacity:0.65;">
         <span style="font-size:1.5rem;">🚗</span>
-        <div style="font-size:0.8; color:var(--muted); line-height:1.4;">Kies ten minste één activiteit om de reistijd vanaf het hotel te berekenen.</div>
+        <div style="font-size:0.8rem; color:var(--muted); line-height:1.4;">Kies ten minste één activiteit om de rijafstand te berekenen en de route te exporteren naar Google Maps.</div>
       </div>
     `;
   }
@@ -1645,6 +1706,10 @@ function renderPlannerDay(i) {
     </div>`;
 
   document.getElementById('planner-main').innerHTML = html;
+
+  if (plan.morning || plan.afternoon) {
+    updateRouteStatsCard(i);
+  }
 }
 
 function goDay(i) {
