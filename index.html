@@ -1004,7 +1004,7 @@ const ACTIVITIES = [
   { id: 'e6', cat: 'eten', icon: '🐟', title: 'Verse vis bij Taverna Gorgona (Fiskardo)', why: 'De vangst van de dag eten aan de kade. Zo vers dat hij \'s ochtends nog in de boot lag.', tip: 'Vraag de ober mee te lopen naar de koelvitrine om zelf je vis te kiezen — heel gebruikelijk en leuk.', location: 'Taverna Gorgona, Fiskardo, Kefalonia', mapUrl: 'https://www.google.com/maps/search/?api=1&query=Taverna+Gorgona+Fiskardo', lat: 38.461, lng: 20.579 },
   { id: 'e7', cat: 'eten', icon: '🎉', title: 'Avondwandeling Argostoli (volta)', why: 'De Griekse volta is heilig. Schuif aan op Vallianou-plein met een ouzo en geniet van het leven.', tip: 'Start rond 20:00. Probeer loukoumades (Griekse honing-oliebollen) bij lokale zoetwinkels.', location: 'Vallianou Square, Argostoli, Kefalonia', mapUrl: 'https://www.google.com/maps/search/?api=1&query=Vallianou+Square+Argostoli', lat: 38.175, lng: 20.493 },
   { id: 'e8', cat: 'eten', icon: '🍇', title: 'Haritatos Vineyard (Paliki)', why: 'Authentiek 19e-eeuws landgoed — tijdloos, sfeervol en bijna onontdekt. Biologische wijnen en rust.', tip: 'Van tevoren bellen voor een exclusieve proeverij met mezze-plank in de tuin.', location: 'Haritatos Vineyard, Lixouri, Paliki, Kefalonia', mapUrl: 'https://www.google.com/maps/search/?api=1&query=Haritatos+Vineyard+Lixouri', lat: 38.232, lng: 20.395 },
-  { id: 'e9', cat: 'eten', icon: '🏨', title: 'Ontspannen in het hotel', why: 'Genieten van de luxe faciliteiten en de spa van Apollonion Asterias Resort & Spa ***** in Lixouri.', tip: 'Boek vooraf een heerlijke massage of gezichtsbehandeling in de health spa van het resort.', location: 'Apollonion Asterias Resort en Spa *****, Lixouri, Griekenland', mapUrl: 'https://www.google.com/maps/search/?api=1&query=Apollonion+Asterias+Resort+Spa+Lixouri', lat: 38.188, lng: 20.407 },
+  { id: 'e9', cat: 'hotel', icon: '🏨', title: 'Ontspannen in het hotel', why: 'Genieten van de luxe faciliteiten en de spa van Apollonion Asterias Resort & Spa ***** in Lixouri.', tip: 'Boek vooraf een heerlijke massage of gezichtsbehandeling in de health spa van het resort.', location: 'Apollonion Asterias Resort en Spa *****, Lixouri, Griekenland', mapUrl: 'https://www.google.com/maps/search/?api=1&query=Apollonion+Asterias+Resort+Spa+Lixouri', lat: 38.188, lng: 20.407 },
   // ── VERJAARDAG (speciale pool) ────────────────────────
   { id: 'b1', cat: 'bday', icon: '⛵', title: 'Privé sunset cruise', why: 'Een privéboot met schipper, verlaten baaitjes, gekoelde Robola-wijn en de zon die in de Ionische Zee wegzakt. Volledige privacy.', tip: 'Vooraf boeken via charterbedrijven in Fiskardo of Argostoli. Vraag om wijn die al koud staat.', special: true, location: 'Fiskardo of Sami Haven, Kefalonia', mapUrl: 'https://www.google.com/maps/search/?api=1&query=Fiskardo+Harbour', lat: 38.461, lng: 20.578 },
   { id: 'b2', cat: 'bday', icon: '🍽️', title: 'Romantisch diner bij Tassia (Fiskardo)', why: 'Het iconische restaurant aan de kade van Fiskardo. Top-tier service, verfijnde Griekse keuken, geluid van de golven.', tip: 'Reserveer voor 20:15. Vraag expliciet om een seafront tafel voor de zonsondergang.', special: true, location: 'Tassia Restaurant, Fiskardo Haven, Kefalonia', mapUrl: 'https://www.google.com/maps/search/?api=1&query=Tassia+Restaurant+Fiskardo', lat: 38.461, lng: 20.579 },
@@ -1013,7 +1013,8 @@ const ACTIVITIES = [
 ];
 
 const CAT_LABELS = {
-  bday:    '🎂 Verjaardagsideeën',
+  hotel:    '🏨 Hotel & Relaxen',
+  bday:     '🎂 Verjaardagsideeën',
   stranden: '🏖️ Stranden & Baaien',
   cultuur:  '🏛️ Cultuur & Dorpjes',
   natuur:   '🌿 Natuur & Actief',
@@ -1029,6 +1030,15 @@ let state = {
   plan: Array(14).fill(null).map(() => ({ morning: null, afternoon: null })),
 };
 
+let collapsedCategories = {
+  hotel: false,
+  bday: false,
+  stranden: false,
+  cultuur: false,
+  natuur: false,
+  eten: false
+};
+
 // Track which activities are used
 function usedIds() {
   const ids = new Set();
@@ -1042,7 +1052,8 @@ function usedIds() {
 function availableActivities(isSpecialDay) {
   const used = usedIds();
   return ACTIVITIES.filter(a => {
-    if (used.has(a.id)) return false;
+    // Hotel activity 'e9' is the only activity that can be selected multiple times on different days
+    if (used.has(a.id) && a.id !== 'e9') return false;
     if (isSpecialDay && a.cat === 'bday') return true;
     if (!isSpecialDay && a.cat === 'bday') return false;
     return true;
@@ -1120,11 +1131,20 @@ function renderSidebar() {
     const afternoon = d.afternoon ? d.afternoon.icon + ' ' + d.afternoon.title : '';
     const actText = [morning, afternoon].filter(Boolean).join(' · ') || '';
 
+    // Check for travel warning on this day
+    let warningIcon = '';
+    if (d.morning && d.afternoon) {
+      const crossing = (d.morning.lng < 20.46) !== (d.afternoon.lng < 20.46);
+      if (crossing) {
+        warningIcon = ' <span title="Let op: Deze activiteiten liggen in verschillende regio\'s!" style="font-size:0.85rem; margin-left:4px; cursor:help;">🚗⚠️</span>';
+      }
+    }
+
     item.innerHTML = `
       <div class="day-dot">${checkmark}</div>
       <div class="day-meta">
         <div class="day-date">${day.short}</div>
-        <div class="day-name">${day.name}</div>
+        <div class="day-name">${day.name}${warningIcon}</div>
         ${actText ? `<div class="day-activity">${actText}</div>` : ''}
       </div>
       ${day.special ? '<div class="special-badge">Verjaardag</div>' : ''}
@@ -1150,6 +1170,11 @@ function renderSidebar() {
 function scrollToTop() {
   document.getElementById('planner-main').scrollTo({ top: 0, behavior: 'smooth' });
 }
+
+window.toggleCategory = function(cat) {
+  collapsedCategories[cat] = !collapsedCategories[cat];
+  renderPlannerDay(state.currentDay);
+};
 
 // ═══════════════════════════════════════════════════════
 //  MAP & TRAVEL CALCULATIONS
@@ -1499,17 +1524,23 @@ function renderPlannerDay(i) {
 
   // Category order
   const order = isSpecial
-    ? ['bday', 'stranden', 'cultuur', 'natuur', 'eten']
-    : ['stranden', 'cultuur', 'natuur', 'eten'];
+    ? ['hotel', 'bday', 'stranden', 'cultuur', 'natuur', 'eten']
+    : ['hotel', 'stranden', 'cultuur', 'natuur', 'eten'];
 
   const slotFull = plan.morning && plan.afternoon;
 
   order.forEach(cat => {
     if (!groups[cat] || groups[cat].length === 0) return;
 
+    const isCollapsed = collapsedCategories[cat];
+    const toggleIcon = isCollapsed ? '▶' : '▼';
+
     html += `<div class="category-section fade-up">
-      <div class="category-label">${CAT_LABELS[cat]}</div>
-      <div class="activity-grid">`;
+      <div class="category-label" onclick="toggleCategory('${cat}')" style="cursor:pointer; display:flex; align-items:center; justify-content:space-between; user-select:none;" title="Klik om deze categorie in/uit te klappen">
+        <span style="display:flex; align-items:center; gap:8px;">${CAT_LABELS[cat]}</span>
+        <span class="collapse-toggle" style="font-size:0.68rem; color:var(--muted); font-weight:normal; letter-spacing:0; text-transform:none; opacity:0.6;">${toggleIcon} Klik om in/uit te klappen</span>
+      </div>
+      <div class="activity-grid" style="${isCollapsed ? 'display:none;' : ''}">`;
 
     groups[cat].forEach(act => {
       const isMorningSelected = plan.morning && plan.morning.id === act.id;
