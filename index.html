@@ -1,0 +1,1059 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Onze Kefalonia — 13–27 juni</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --sand: #F5EFE3;
+  --sand-dark: #EAE0CC;
+  --sea: #1B6CA8;
+  --sea-deep: #0D4A78;
+  --sea-light: #D4E8F5;
+  --olive: #5A7A3A;
+  --olive-light: #E8F0DF;
+  --terracotta: #C4622D;
+  --terracotta-light: #F5E8DF;
+  --gold: #C9962A;
+  --gold-light: #FAF0D7;
+  --ink: #1A1612;
+  --muted: #7A6F60;
+  --white: #FDFAF5;
+  --radius: 12px;
+  --radius-lg: 20px;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: 'DM Sans', sans-serif;
+  background: var(--sand);
+  color: var(--ink);
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+/* ── TYPOGRAPHY ─────────────────────────────────────── */
+.serif { font-family: 'Cormorant Garamond', Georgia, serif; }
+
+h1 { font-family: 'Cormorant Garamond', serif; font-weight: 300; font-style: italic; font-size: clamp(2.2rem, 5vw, 3.5rem); line-height: 1.1; }
+h2 { font-family: 'Cormorant Garamond', serif; font-weight: 400; font-size: clamp(1.6rem, 3vw, 2.2rem); line-height: 1.2; }
+h3 { font-family: 'DM Sans', sans-serif; font-weight: 500; font-size: 1rem; }
+
+/* ── SCREENS ─────────────────────────────────────── */
+.screen { display: none; min-height: 100vh; }
+.screen.active { display: flex; }
+
+/* ── WELCOME SCREEN ─────────────────────────────────────── */
+#screen-welcome {
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 2rem;
+  position: relative;
+  background: var(--sea-deep);
+  overflow: hidden;
+}
+
+.welcome-bg {
+  position: absolute; inset: 0;
+  background:
+    radial-gradient(ellipse 80% 60% at 50% 100%, rgba(27,108,168,0.6) 0%, transparent 70%),
+    radial-gradient(ellipse 60% 40% at 20% 20%, rgba(90,122,58,0.2) 0%, transparent 60%),
+    radial-gradient(ellipse 50% 50% at 80% 10%, rgba(201,150,42,0.15) 0%, transparent 60%);
+  pointer-events: none;
+}
+
+.wave-decoration {
+  position: absolute;
+  bottom: 0; left: 0; right: 0;
+  height: 180px;
+  background: var(--sand);
+  clip-path: ellipse(60% 100% at 50% 100%);
+}
+
+#screen-welcome .content {
+  position: relative; z-index: 2;
+  max-width: 600px;
+}
+
+.welcome-label {
+  font-size: 0.75rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.5);
+  margin-bottom: 1.5rem;
+}
+
+#screen-welcome h1 { color: white; margin-bottom: 1.5rem; }
+
+.welcome-dates {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  background: rgba(255,255,255,0.1);
+  border: 1px solid rgba(255,255,255,0.2);
+  border-radius: 100px;
+  padding: 8px 20px;
+  color: rgba(255,255,255,0.8);
+  font-size: 0.9rem;
+  margin-bottom: 2.5rem;
+}
+
+.welcome-dates span { color: rgba(255,255,255,0.4); }
+
+.name-input-wrap {
+  margin-bottom: 2rem;
+}
+.name-input-wrap label {
+  display: block;
+  color: rgba(255,255,255,0.6);
+  font-size: 0.85rem;
+  margin-bottom: 8px;
+}
+.name-input-wrap input {
+  background: rgba(255,255,255,0.1);
+  border: 1px solid rgba(255,255,255,0.25);
+  border-radius: 100px;
+  padding: 12px 24px;
+  color: white;
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.3rem;
+  font-style: italic;
+  text-align: center;
+  width: 100%;
+  max-width: 280px;
+  outline: none;
+  transition: border-color 0.2s, background 0.2s;
+}
+.name-input-wrap input::placeholder { color: rgba(255,255,255,0.3); }
+.name-input-wrap input:focus { border-color: rgba(255,255,255,0.6); background: rgba(255,255,255,0.15); }
+
+.btn-primary {
+  background: var(--gold);
+  color: white;
+  border: none;
+  border-radius: 100px;
+  padding: 14px 36px;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.95rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: transform 0.15s, box-shadow 0.15s, background 0.15s;
+  letter-spacing: 0.02em;
+}
+.btn-primary:hover { background: #B5841F; transform: translateY(-1px); box-shadow: 0 8px 24px rgba(0,0,0,0.2); }
+.btn-primary:active { transform: translateY(0); }
+.btn-primary:disabled { opacity: 0.4; cursor: not-allowed; transform: none; }
+
+/* ── ONBOARDING PLANNER SCREEN ─────────────────────────── */
+#screen-planner {
+  flex-direction: row;
+  min-height: 100vh;
+}
+
+/* Sidebar */
+.sidebar {
+  width: 320px;
+  flex-shrink: 0;
+  background: var(--sea-deep);
+  display: flex;
+  flex-direction: column;
+  padding: 0;
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  overflow-y: auto;
+}
+
+.sidebar-header {
+  padding: 2rem 1.5rem 1.5rem;
+  border-bottom: 1px solid rgba(255,255,255,0.1);
+}
+
+.sidebar-greeting {
+  font-size: 0.7rem;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.4);
+  margin-bottom: 4px;
+}
+.sidebar-name {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.6rem;
+  font-weight: 300;
+  font-style: italic;
+  color: white;
+  margin-bottom: 1rem;
+}
+
+.progress-bar-wrap {
+  height: 3px;
+  background: rgba(255,255,255,0.1);
+  border-radius: 100px;
+  overflow: hidden;
+  margin-bottom: 6px;
+}
+.progress-bar-fill {
+  height: 100%;
+  background: var(--gold);
+  border-radius: 100px;
+  transition: width 0.4s ease;
+}
+.progress-label {
+  font-size: 0.75rem;
+  color: rgba(255,255,255,0.4);
+}
+
+/* Day list in sidebar */
+.day-list { padding: 1rem 0; flex: 1; }
+
+.day-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 10px 1.5rem;
+  cursor: pointer;
+  transition: background 0.15s;
+  position: relative;
+}
+.day-item:hover { background: rgba(255,255,255,0.05); }
+.day-item.current { background: rgba(255,255,255,0.08); }
+.day-item.done { opacity: 0.6; }
+
+.day-dot {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  border: 1.5px solid rgba(255,255,255,0.2);
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 1px;
+  transition: all 0.2s;
+  font-size: 11px;
+  color: rgba(255,255,255,0.4);
+}
+.day-item.done .day-dot { background: var(--olive); border-color: var(--olive); color: white; }
+.day-item.current .day-dot { border-color: var(--gold); color: var(--gold); }
+
+.day-meta { flex: 1; min-width: 0; }
+.day-date { font-size: 0.7rem; color: rgba(255,255,255,0.35); margin-bottom: 1px; }
+.day-name { font-size: 0.85rem; color: rgba(255,255,255,0.8); font-weight: 500; }
+.day-activity { font-size: 0.75rem; color: rgba(255,255,255,0.4); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-top: 2px; }
+
+.special-badge {
+  font-size: 0.65rem;
+  background: rgba(201,150,42,0.2);
+  color: var(--gold);
+  border: 1px solid rgba(201,150,42,0.3);
+  padding: 2px 6px;
+  border-radius: 4px;
+  flex-shrink: 0;
+  margin-top: 3px;
+}
+
+/* Main planner area */
+.planner-main {
+  flex: 1;
+  padding: 3rem 2.5rem;
+  max-width: 900px;
+  overflow-y: auto;
+}
+
+.planner-day-header {
+  margin-bottom: 2rem;
+}
+.planner-day-label {
+  font-size: 0.72rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 6px;
+}
+.planner-day-title { margin-bottom: 0.5rem; }
+.planner-day-subtitle { color: var(--muted); font-size: 0.9rem; }
+
+.category-section { margin-bottom: 2rem; }
+.category-label {
+  font-size: 0.7rem;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 0.75rem;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.category-label::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: var(--sand-dark);
+}
+
+.activity-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 12px;
+}
+
+/* Activity Card */
+.act-card {
+  background: var(--white);
+  border: 1.5px solid var(--sand-dark);
+  border-radius: var(--radius-lg);
+  padding: 1rem 1.1rem;
+  cursor: pointer;
+  transition: all 0.2s;
+  position: relative;
+  overflow: hidden;
+}
+.act-card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 3px;
+  opacity: 0;
+  transition: opacity 0.2s;
+}
+.act-card:hover { border-color: var(--sea); transform: translateY(-2px); box-shadow: 0 8px 24px rgba(0,0,0,0.08); }
+.act-card:hover::before { opacity: 1; background: var(--sea); }
+.act-card.selected { border-color: var(--sea); background: var(--sea-light); }
+.act-card.selected::before { opacity: 1; background: var(--sea); }
+.act-card.special { border-color: rgba(201,150,42,0.4); }
+.act-card.special:hover { border-color: var(--gold); }
+.act-card.special:hover::before { background: var(--gold); }
+.act-card.special.selected { border-color: var(--gold); background: var(--gold-light); }
+.act-card.special.selected::before { background: var(--gold); }
+
+.act-icon { font-size: 1.5rem; margin-bottom: 6px; }
+.act-title { font-size: 0.9rem; font-weight: 500; margin-bottom: 4px; line-height: 1.3; }
+.act-why { font-size: 0.78rem; color: var(--muted); line-height: 1.5; }
+.act-tip {
+  margin-top: 8px;
+  padding: 6px 8px;
+  background: var(--sand);
+  border-radius: 6px;
+  font-size: 0.72rem;
+  color: var(--muted);
+  line-height: 1.4;
+}
+.act-card.selected .act-tip { background: rgba(255,255,255,0.5); }
+
+.act-check {
+  position: absolute;
+  top: 10px; right: 10px;
+  width: 22px; height: 22px;
+  border-radius: 50%;
+  border: 1.5px solid var(--sand-dark);
+  display: flex; align-items: center; justify-content: center;
+  transition: all 0.2s;
+  font-size: 11px;
+  color: transparent;
+}
+.act-card.selected .act-check { background: var(--sea); border-color: var(--sea); color: white; }
+.act-card.special.selected .act-check { background: var(--gold); border-color: var(--gold); }
+
+/* Day slot summary */
+.day-slots {
+  background: var(--white);
+  border: 1.5px solid var(--sand-dark);
+  border-radius: var(--radius-lg);
+  padding: 1.2rem 1.5rem;
+  margin-bottom: 2rem;
+  display: flex;
+  gap: 1.5rem;
+  flex-wrap: wrap;
+  align-items: center;
+}
+.slot-item { display: flex; align-items: center; gap: 8px; }
+.slot-dot {
+  width: 10px; height: 10px;
+  border-radius: 50%;
+  border: 1.5px solid var(--sand-dark);
+}
+.slot-dot.filled { background: var(--sea); border-color: var(--sea); }
+.slot-dot.special.filled { background: var(--gold); border-color: var(--gold); }
+.slot-label { font-size: 0.8rem; color: var(--muted); }
+.slot-activity { font-size: 0.8rem; font-weight: 500; }
+
+/* Nav buttons */
+.planner-nav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 2.5rem;
+  padding-top: 2rem;
+  border-top: 1px solid var(--sand-dark);
+}
+
+.btn-nav {
+  display: flex; align-items: center; gap: 8px;
+  background: none;
+  border: 1.5px solid var(--sand-dark);
+  border-radius: 100px;
+  padding: 10px 20px;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.85rem;
+  color: var(--muted);
+  cursor: pointer;
+  transition: all 0.15s;
+}
+.btn-nav:hover { border-color: var(--ink); color: var(--ink); }
+.btn-next {
+  background: var(--sea-deep);
+  border-color: var(--sea-deep);
+  color: white;
+}
+.btn-next:hover { background: var(--sea); border-color: var(--sea); color: white; }
+.btn-next:disabled { opacity: 0.3; cursor: not-allowed; }
+
+/* ── OVERVIEW SCREEN ─────────────────────────────────────── */
+#screen-overview {
+  flex-direction: column;
+  background: var(--sand);
+}
+
+.overview-header {
+  background: var(--sea-deep);
+  color: white;
+  padding: 3rem 3rem 2rem;
+  position: relative;
+  overflow: hidden;
+}
+.overview-header::after {
+  content: '';
+  position: absolute;
+  bottom: -1px; left: 0; right: 0;
+  height: 40px;
+  background: var(--sand);
+  clip-path: ellipse(55% 100% at 50% 100%);
+}
+.overview-header h1 { color: white; margin-bottom: 0.5rem; }
+.overview-header p { color: rgba(255,255,255,0.6); font-size: 0.9rem; }
+
+.overview-body { padding: 2rem 3rem 4rem; max-width: 1100px; }
+
+.overview-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 12px;
+  margin-top: 1.5rem;
+}
+
+.overview-card {
+  background: var(--white);
+  border: 1.5px solid var(--sand-dark);
+  border-radius: var(--radius-lg);
+  padding: 1rem;
+  position: relative;
+  overflow: hidden;
+}
+.overview-card.special { border-color: rgba(201,150,42,0.4); }
+.overview-card::before {
+  content: '';
+  position: absolute; top: 0; left: 0; right: 0; height: 3px;
+}
+.overview-card:not(.special)::before { background: var(--sea); }
+.overview-card.special::before { background: var(--gold); }
+
+.ov-date { font-size: 0.68rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); margin-bottom: 3px; }
+.ov-day { font-family: 'Cormorant Garamond', serif; font-size: 1.1rem; font-weight: 400; margin-bottom: 8px; }
+.ov-activities { display: flex; flex-direction: column; gap: 5px; }
+.ov-act { display: flex; align-items: flex-start; gap: 6px; font-size: 0.75rem; }
+.ov-act-icon { flex-shrink: 0; }
+.ov-act-name { line-height: 1.35; color: var(--ink); }
+.ov-act-none { font-size: 0.75rem; color: var(--muted); font-style: italic; }
+
+.ov-bday-badge {
+  display: inline-block;
+  font-size: 0.65rem;
+  background: var(--gold-light);
+  color: var(--gold);
+  border: 1px solid rgba(201,150,42,0.3);
+  padding: 2px 7px;
+  border-radius: 4px;
+  margin-bottom: 6px;
+}
+
+.overview-stats {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 12px;
+  margin-bottom: 2rem;
+}
+.stat-card {
+  background: var(--white);
+  border: 1.5px solid var(--sand-dark);
+  border-radius: var(--radius);
+  padding: 1rem 1.25rem;
+}
+.stat-num {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 2.2rem;
+  font-weight: 300;
+  line-height: 1;
+  margin-bottom: 3px;
+}
+.stat-label { font-size: 0.75rem; color: var(--muted); }
+
+.overview-actions {
+  display: flex; gap: 12px; flex-wrap: wrap;
+  margin-top: 2rem;
+  margin-bottom: 3rem;
+}
+.btn-outline {
+  background: none;
+  border: 1.5px solid var(--ink);
+  border-radius: 100px;
+  padding: 10px 22px;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.85rem;
+  color: var(--ink);
+  cursor: pointer;
+  transition: all 0.15s;
+}
+.btn-outline:hover { background: var(--ink); color: var(--white); }
+
+/* ── PRINT STYLES ─────────────────────────────────────── */
+@media print {
+  #screen-welcome, #screen-planner { display: none !important; }
+  #screen-overview { display: flex !important; }
+  .overview-actions { display: none !important; }
+  .overview-header { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+}
+
+/* ── ANIMATIONS ─────────────────────────────────────── */
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(16px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.fade-up { animation: fadeUp 0.4s ease forwards; }
+
+.act-card { animation: fadeUp 0.3s ease both; }
+.act-card:nth-child(2) { animation-delay: 0.04s; }
+.act-card:nth-child(3) { animation-delay: 0.08s; }
+.act-card:nth-child(4) { animation-delay: 0.12s; }
+.act-card:nth-child(5) { animation-delay: 0.16s; }
+.act-card:nth-child(6) { animation-delay: 0.20s; }
+.act-card:nth-child(7) { animation-delay: 0.24s; }
+.act-card:nth-child(8) { animation-delay: 0.28s; }
+
+/* confetti burst */
+.confetti-wrap {
+  pointer-events: none;
+  position: fixed; inset: 0; z-index: 9999;
+  overflow: hidden;
+}
+.confetti-piece {
+  position: absolute;
+  width: 8px; height: 8px;
+  border-radius: 2px;
+  animation: confettiFall linear forwards;
+}
+@keyframes confettiFall {
+  0% { transform: translateY(-20px) rotate(0deg); opacity: 1; }
+  100% { transform: translateY(110vh) rotate(720deg); opacity: 0; }
+}
+
+/* ── RESPONSIVE ─────────────────────────────────────── */
+@media (max-width: 768px) {
+  .sidebar { display: none; }
+  .planner-main { padding: 1.5rem; }
+  .overview-body { padding: 1rem 1.5rem 3rem; }
+  .overview-header { padding: 2rem 1.5rem 2rem; }
+}
+
+/* Scrollbar */
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--sand-dark); border-radius: 100px; }
+</style>
+</head>
+<body>
+
+<!-- ═══════════════════════════════════════════
+     SCREEN 1: WELCOME
+══════════════════════════════════════════════ -->
+<div id="screen-welcome" class="screen active">
+  <div class="welcome-bg"></div>
+  <div class="wave-decoration"></div>
+  <div class="content fade-up">
+    <div class="welcome-label">Jullie vakantie</div>
+    <h1>Kefalonia,<br>wacht op ons.</h1>
+    <br>
+    <div class="welcome-dates">
+      13 juni <span>·</span> 27 juni <span>·</span> 14 nachten
+    </div>
+    <br>
+    <div class="name-input-wrap">
+      <label>Wie gaat er plannen?</label>
+      <input type="text" id="planner-name" placeholder="Jouw naam…" maxlength="24" autocomplete="off">
+    </div>
+    <button class="btn-primary" id="btn-start" onclick="startPlanning()" disabled>
+      Vakantie plannen →
+    </button>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════
+     SCREEN 2: PLANNER
+══════════════════════════════════════════════ -->
+<div id="screen-planner" class="screen">
+
+  <!-- Sidebar -->
+  <aside class="sidebar">
+    <div class="sidebar-header">
+      <div class="sidebar-greeting">Goeiedag,</div>
+      <div class="sidebar-name" id="sb-name">—</div>
+      <div class="progress-bar-wrap">
+        <div class="progress-bar-fill" id="progress-fill" style="width:0%"></div>
+      </div>
+      <div class="progress-label" id="progress-label">0 van 14 dagen gepland</div>
+    </div>
+    <div class="day-list" id="day-list"></div>
+  </aside>
+
+  <!-- Main -->
+  <main class="planner-main" id="planner-main">
+    <!-- injected per day -->
+  </main>
+</div>
+
+<!-- ═══════════════════════════════════════════
+     SCREEN 3: OVERVIEW
+══════════════════════════════════════════════ -->
+<div id="screen-overview" class="screen">
+  <div class="overview-header">
+    <h1>Onze Kefalonia</h1>
+    <p id="ov-subtitle">Jullie vakantieplan — 13 tot 27 juni</p>
+  </div>
+  <div class="overview-body">
+    <div class="overview-stats" id="ov-stats"></div>
+    <div class="overview-actions">
+      <button class="btn-primary" onclick="printPlan()">Plan opslaan / afdrukken</button>
+      <button class="btn-outline" onclick="goBackToPlanner()">Terug naar planner</button>
+      <button class="btn-outline" onclick="resetAll()">Opnieuw beginnen</button>
+    </div>
+    <h2 style="margin-bottom: 0.25rem;">Dag voor dag</h2>
+    <p style="color:var(--muted);font-size:0.85rem;margin-bottom:1.5rem;">Klik op een dag in de planner om activiteiten te wijzigen.</p>
+    <div class="overview-grid" id="ov-grid"></div>
+  </div>
+</div>
+
+<script>
+// ═══════════════════════════════════════════════════════
+//  DATA
+// ═══════════════════════════════════════════════════════
+
+const DAYS = [
+  { date: '2025-06-13', label: 'Vrijdag 13 juni', short: 'Vr 13/6', name: 'Aankomst & eerste avond' },
+  { date: '2025-06-14', label: 'Zaterdag 14 juni', short: 'Za 14/6', name: 'Dag 2' },
+  { date: '2025-06-15', label: 'Zondag 15 juni', short: 'Zo 15/6', name: 'Haar verjaardag 🎂', special: true },
+  { date: '2025-06-16', label: 'Maandag 16 juni', short: 'Ma 16/6', name: 'Dag 4' },
+  { date: '2025-06-17', label: 'Dinsdag 17 juni', short: 'Di 17/6', name: 'Dag 5' },
+  { date: '2025-06-18', label: 'Woensdag 18 juni', short: 'Wo 18/6', name: 'Dag 6' },
+  { date: '2025-06-19', label: 'Donderdag 19 juni', short: 'Do 19/6', name: 'Dag 7' },
+  { date: '2025-06-20', label: 'Vrijdag 20 juni', short: 'Vr 20/6', name: 'Dag 8' },
+  { date: '2025-06-21', label: 'Zaterdag 21 juni', short: 'Za 21/6', name: 'Dag 9 — zomerzonnewende' },
+  { date: '2025-06-22', label: 'Zondag 22 juni', short: 'Zo 22/6', name: 'Dag 10' },
+  { date: '2025-06-23', label: 'Maandag 23 juni', short: 'Ma 23/6', name: 'Dag 11' },
+  { date: '2025-06-24', label: 'Dinsdag 24 juni', short: 'Di 24/6', name: 'Dag 12' },
+  { date: '2025-06-25', label: 'Woensdag 25 juni', short: 'Wo 25/6', name: 'Dag 13' },
+  { date: '2025-06-26', label: 'Donderdag 26 juni', short: 'Do 26/6', name: 'Laatste avond' },
+];
+
+const ACTIVITIES = [
+  // ── STRANDEN ──────────────────────────────────────
+  { id: 's1', cat: 'stranden', icon: '🏖️', title: 'Myrtos Beach', why: 'Intens blauw water en spierwit kiezels. Het iconische uithangbord van Kefalonia — onontkoombaar mooi.', tip: 'Ga vóór 10:30 of nà 18:00. Waterschoenen zijn een must.' },
+  { id: 's2', cat: 'stranden', icon: '🌴', title: 'Antisamos Beach', why: 'Weelderig groen omringd strand, bekend van Captain Corelli's Mandolin. Ideaal om te snorkelen.', tip: 'Consumptie bij beachclub = gratis ligbedden. Mooiste weg via Sami.' },
+  { id: 's3', cat: 'stranden', icon: '🌅', title: 'Petani Beach', why: 'Het intimere broertje van Myrtos op Paliki. De zonsondergang hier is ronduit spektakulair.', tip: 'Blijf voor het avondeten bij Erasmia Taverna direct aan het strand.' },
+  { id: 's4', cat: 'stranden', icon: '🏺', title: 'Xi Beach', why: 'Uniek roodbruin zand met witte kleiklippen. Het gratis moddermasker van de kliffen is goed voor je huid én onvergetelijk.', tip: 'Het water is lang ondiep — relaxt en kalm. Ideaal voor lui dagje.' },
+  { id: 's5', cat: 'stranden', icon: '⛵', title: 'Fteri Beach', why: 'Ongerept paradijs — alléén bereikbaar per boot. Ultieme verlaten eiland-vibe.', tip: 'Taxiboot vanuit haven Zola (~10 min). Meenemen: water, snacks, zonnebrand. Geen faciliteiten!' },
+  { id: 's6', cat: 'stranden', icon: '🐠', title: 'Kimilia Beach (nabij Fiskardo)', why: 'Schaduwrijke kiezelbaai in het noorden omringd door cipressen. Zwembadhelder water vol vis.', tip: 'Snorkelset mee! Korte wandeling door bos houdt het rustig.' },
+  { id: 's7', cat: 'stranden', icon: '🦭', title: 'Dafnoudi Beach', why: 'Na 15 min wandelen door een groen dal openbaart zich een piepkleine beschutte baai. Kans op Monniksrob!', tip: 'Stevige schoenen verplicht. Neem meer water mee dan je denkt nodig te hebben.' },
+  { id: 's8', cat: 'stranden', icon: '🌊', title: 'Lourdas Beach', why: 'Breed, rustig strand aan de zuidkust met uitzicht op Zakynthos. Minder druk dan de noordkust.', tip: 'Op heldere dagen zie je Zakynthos — verrekijker meenemen! Goede taverna\'s vlakbij.' },
+  { id: 's9', cat: 'stranden', icon: '🤿', title: 'Makris Gialos & Platys Gialos', why: 'Twee naast elkaar gelegen stranden bij Lassi, met organisatie, sfeer en watersportmogelijkheden.', tip: 'Hier vertrekken ook kajakexcursies langs de kliffen. Makkelijkst bereikbaar vanuit Argostoli.' },
+  // ── CULTUUR ──────────────────────────────────────
+  { id: 'c1', cat: 'cultuur', icon: '🏡', title: 'Fiskardo verkennen', why: 'Het enige dorp dat de aardbeving van 1953 overleefde. Pastelkleurige Venetiaanse huizen en een sfeervolle jachthaven.', tip: 'Parkeer gratis net buiten het dorp en loop er laat in de middag naartoe — dan zijn de dagjesmensen weg.' },
+  { id: 'c2', cat: 'cultuur', icon: '🏰', title: 'Assos & Venetiaans kasteel', why: 'Schilderachtig dorpje op een smalle landtong. Het uitzicht op de hoefijzervormige baai is ronduit magisch.', tip: 'Vroeg beginnen vanwege de hitte. Toegang kasteel gratis. Daarna duik in de baai beneden.' },
+  { id: 'c3', cat: 'cultuur', icon: '🛶', title: 'Melissani Cave (binnenmeer)', why: 'Ondergronds meer met ingestort dak. Rond het middaguur lijken de bootjes te zweven in turquoise lucht.', tip: 'Bezoek tussen 11:30 en 13:30 voor het magische lichteffect.' },
+  { id: 'c4', cat: 'cultuur', icon: '💎', title: 'Drogarati Cave', why: 'Indrukwekkende druipsteengrot van miljoenen jaar oud. Fenomenale akoestiek — hier werden concerten gegeven.', tip: 'Binnen altijd 18°C — dunne laag meenemen. Combineer met Melissani op dezelfde dag.' },
+  { id: 'c5', cat: 'cultuur', icon: '⛪', title: 'Agios Gerasimos klooster', why: 'Spiritueel hart van het eiland. Prachtige fresco\'s en een ondergrondse grot waar de heilige leefde.', tip: 'Gepaste kleding verplicht (schouders/knieën bedekt). Sjaals liggen aan de ingang.' },
+  { id: 'c6', cat: 'cultuur', icon: '🗺️', title: 'Kasteel van Agios Georgios', why: 'Middeleeuwse hoofdstad op een heuvel. 360-graden uitzicht over vlaktes én zee. Prachtige ruïnes.', tip: 'Erna: ijskoffie bij Kastro Cafe vlak naast de ingang — geweldig uitzicht op het kasteel.' },
+  { id: 'c7', cat: 'cultuur', icon: '🌉', title: 'Argostoli & De Bosset-brug', why: 'De langste stenen zeebrug ter wereld, gevolgd door het ultieme Griekse stadsplein. Levendige sfeer.', tip: 'Combineer met schildpaddenspoттen op de kade (\'s ochtends vroeg).' },
+  { id: 'c8', cat: 'cultuur', icon: '⛵', title: 'Lixouri & schiereiland Paliki', why: 'De tweede stad van Kefalonia, bijna zonder toeristen. Authentieke Griekse sfeer en mooie pleinen.', tip: 'Neem het kleine veerbootje vanuit Argostoli (20 min, leuke ervaring) in plaats van de omweg over de weg.' },
+  { id: 'c9', cat: 'cultuur', icon: '🏛️', title: 'Korgialeneios Museum Argostoli', why: 'Het verhaal van de aardbeving van 1953, plus rijke archeologische vondsten. Aangrijpende historische foto\'s.', tip: 'Ideaal voor een bewolkte ochtend of het hete middaguur — airconditioned én interessant.' },
+  // ── NATUUR & ACTIEF ──────────────────────────────────────
+  { id: 'n1', cat: 'natuur', icon: '🐢', title: 'Caretta Caretta schildpadden spotten', why: 'Grote zeeschildpadden in de haven van Argostoli — van heel dichtbij, gratis en ontroerend.', tip: 'Ga tussen 9:00 en 11:00 naar de vissersboten op de kade. Hoe eerder, hoe meer schildpadden.' },
+  { id: 'n2', cat: 'natuur', icon: '⛰️', title: 'Mount Ainos National Park', why: 'Top van de Ionische eilanden (1628m). Op heldere dagen zie je Zakynthos, Ithaka én het vasteland.', tip: 'Asfaltweg tot de telecomtorens, dan korte wandeling. Altijd warme trui meenemen — het waait fors.' },
+  { id: 'n3', cat: 'natuur', icon: '🥾', title: 'Wandelen op kalderimia (ezelspaden)', why: 'Historische paden door olijfgaarden, langs ruïnes. Het echte eiland ontdekken weg van de kust.', tip: 'Gebruik Wikiloc of AllTrails. Start uiterlijk 8:00 uur — het wordt snel heet in juni.' },
+  { id: 'n4', cat: 'natuur', icon: '🚤', title: 'Motorboot huren (zonder vaarbewijs)', why: 'Ultieme vrijheid: verborgen baaitjes bereiken die alleen per boot toegankelijk zijn. Dé topdag.', tip: 'Boek vroeg in de vakantie zodat je bij slecht weer kunt verzetten. Huren mag tot 30 pk.' },
+  { id: 'n5', cat: 'natuur', icon: '🚣', title: 'Kajakken langs de kust van Lassi', why: 'Zeekajak langs kalksteenkliffen en verborgen zeegrotten. Uniek perspectief dat je van het strand nooit krijgt.', tip: 'Begeleide tours vanuit Minies of Antisamos — de gids kent alle beste grotten.' },
+  { id: 'n6', cat: 'natuur', icon: '🗺️', title: 'Dagtrip naar Ithaka', why: 'Het eiland van Odysseus — nóg rustiger en met een haast mystieke sfeer. Havenstadje Vathy is tijdloos.', tip: 'Vroege autoveerboot vanuit Sami. Check bij verhuurder of de verzekering de overtocht dekt.' },
+  { id: 'n7', cat: 'natuur', icon: '🐡', title: 'Snorkelen bij Foki Beach', why: 'Kristalhelder water boven rotsen vol vis, zeeëgels en octopussen. Rustig en nauwelijks bezocht.', tip: 'Bezoek \'s ochtends voor het beste licht. Eigen snorkelset meenemen — geen verhuur ter plekke.' },
+  { id: 'n8', cat: 'natuur', icon: '🦩', title: 'Vogels kijken in de Koutavos Lagune', why: 'Beschermd lagune-ecosysteem vol flamingo\'s en reigers. Wandelpad omheen voor een ontspannen ochtend.', tip: 'Vroeg \'s ochtends voor de meeste activiteit. Gratis en goed bereikbaar vanuit Argostoli.' },
+  // ── ETEN & DRINKEN ──────────────────────────────────────
+  { id: 'e1', cat: 'eten', icon: '🍷', title: 'Wijnproeverij Gentilini Winery', why: 'De beste boetiekwijnmaker van Kefalonia. De frisse Robola-wijn is legendarisch. Relaxte proeverij in schaduwrijke tuin.', tip: 'Geen reservering nodig voor standaardtasting, maar meld je \'s namiddags aan. Proef ook de Muscat.' },
+  { id: 'e2', cat: 'eten', icon: '🌅', title: 'Zonsondergang bij Apolafsi (Lixouri)', why: 'Eten met de voeten in het zand terwijl de lucht roze en oranje kleurt boven de zee. Perfecte vakantiedag.', tip: 'Bestel de Kefalonitiki Kreatopita — de traditionele vleespastei van het eiland. Niet missen.' },
+  { id: 'e3', cat: 'eten', icon: '🫒', title: 'Lokale honing & olijfolie kopen in Pyrgi', why: 'Tijmhoning en koudgeperste olijfolie van Kefalonia behoren tot de beste van heel Griekenland.', tip: 'Altijd contant geld bij (pinnen kan niet). Kraampjes langs de bergwegen rond Mount Ainos.' },
+  { id: 'e4', cat: 'eten', icon: '🍲', title: 'Lunchen in Valsamata of Fragata', why: 'Dorpjes zonder toeristen in de Omala-vallei. Eten wat de pot schaft: stoofpotten, gevulde groenten, zelfgebakken brood.', tip: 'Bestel mezedes om te delen — dé manier waarop locals eten. Veel gezelliger dan elk een groot bord.' },
+  { id: 'e5', cat: 'eten', icon: '☕', title: 'Frappé drinken in Karavomylos', why: 'Rustig kustdorpje waar het water van de Melissani-grot omhoog komt. Heerlijk zitten onder de bomen.', tip: 'Loop na de koffie over het kustpad richting Sami. Combineer met een grottenmiddag.' },
+  { id: 'e6', cat: 'eten', icon: '🐟', title: 'Verse vis bij Taverna Gorgona (Fiskardo)', why: 'De vangst van de dag eten aan de kade. Zo vers dat hij \'s ochtends nog in de boot lag.', tip: 'Vraag de ober mee te lopen naar de koelvitrine om zelf je vis te kiezen — heel gebruikelijk en leuk.' },
+  { id: 'e7', cat: 'eten', icon: '🎉', title: 'Avondwandeling Argostoli (volta)', why: 'De Griekse volta is heilig. Schuif aan op Vallianou-plein met een ouzo en geniet van het leven.', tip: 'Start rond 20:00. Probeer loukoumades (Griekse honing-oliebollen) bij lokale zoetwinkels.' },
+  { id: 'e8', cat: 'eten', icon: '🍇', title: 'Haritatos Vineyard (Paliki)', why: 'Authentiek 19e-eeuws landgoed — tijdloos, sfeervol en bijna onontdekt. Biologische wijnen en rust.', tip: 'Van tevoren bellen voor een exclusieve proeverij met mezze-plank in de tuin.' },
+  // ── VERJAARDAG (speciale pool) ────────────────────────
+  { id: 'b1', cat: 'bday', icon: '⛵', title: 'Privé sunset cruise', why: 'Een privéboot met schipper, verlaten baaitjes, gekoelde Robola-wijn en de zon die in de Ionische Zee wegzakt. Volledige privacy.', tip: 'Vooraf boeken via charterbedrijven in Fiskardo of Argostoli. Vraag om wijn die al koud staat.', special: true },
+  { id: 'b2', cat: 'bday', icon: '🍽️', title: 'Romantisch diner bij Tassia (Fiskardo)', why: 'Het iconische restaurant aan de kade van Fiskardo. Top-tier service, verfijnde Griekse keuken, geluid van de golven.', tip: 'Reserveer voor 20:15. Vraag expliciet om een seafront tafel voor de zonsondergang.', special: true },
+  { id: 'b3', cat: 'bday', icon: '🍇', title: 'Private wine tasting Haritatos Vineyard', why: 'Een romantisch 19e-eeuws landgoed op Paliki. Privérondleiding en proeverij onder de bomen — intiem en tijdloos.', tip: 'Combineer met Petani Beach op 10 min rijden voor een spectaculaire zonsondergangsdip.', special: true },
+  { id: 'b4', cat: 'bday', icon: '💎', title: 'Vroegbezoek Melissani Cave + luxe dag Antisamos', why: 'Betoverende grot nét voor de drukte, gevolgd door een hele dag luxe in een privé-cabana op Antisamos.', tip: 'Grot: 11:30–13:30 voor het licht. Cabana: consumptie = gratis. Boek het premium setje vooraf.', special: true },
+];
+
+const CAT_LABELS = {
+  bday:    '🎂 Verjaardagsideeën',
+  stranden: '🏖️ Stranden & Baaien',
+  cultuur:  '🏛️ Cultuur & Dorpjes',
+  natuur:   '🌿 Natuur & Actief',
+  eten:     '🍷 Eten, Drinken & Ervaringen',
+};
+
+// ═══════════════════════════════════════════════════════
+//  STATE
+// ═══════════════════════════════════════════════════════
+let state = {
+  name: '',
+  currentDay: 0,
+  plan: Array(14).fill(null).map(() => ({ morning: null, afternoon: null })),
+};
+
+// Track which activities are used
+function usedIds() {
+  const ids = new Set();
+  state.plan.forEach(d => {
+    if (d.morning) ids.add(d.morning.id);
+    if (d.afternoon) ids.add(d.afternoon.id);
+  });
+  return ids;
+}
+
+function availableActivities(isSpecialDay) {
+  const used = usedIds();
+  return ACTIVITIES.filter(a => {
+    if (used.has(a.id)) return false;
+    if (isSpecialDay && a.cat === 'bday') return true;
+    if (!isSpecialDay && a.cat === 'bday') return false;
+    return true;
+  });
+}
+
+// ═══════════════════════════════════════════════════════
+//  WELCOME
+// ═══════════════════════════════════════════════════════
+document.getElementById('planner-name').addEventListener('input', function() {
+  document.getElementById('btn-start').disabled = this.value.trim().length < 1;
+});
+
+function startPlanning() {
+  state.name = document.getElementById('planner-name').value.trim() || 'Jij';
+  showScreen('screen-planner');
+  renderSidebar();
+  renderPlannerDay(0);
+}
+
+// ═══════════════════════════════════════════════════════
+//  SIDEBAR
+// ═══════════════════════════════════════════════════════
+function renderSidebar() {
+  document.getElementById('sb-name').textContent = state.name;
+
+  const plannedCount = state.plan.filter(d => d.morning || d.afternoon).length;
+  const pct = Math.round((plannedCount / 14) * 100);
+  document.getElementById('progress-fill').style.width = pct + '%';
+  document.getElementById('progress-label').textContent = `${plannedCount} van 14 dagen gepland`;
+
+  const list = document.getElementById('day-list');
+  list.innerHTML = '';
+
+  DAYS.forEach((day, i) => {
+    const d = state.plan[i];
+    const isDone = d.morning || d.afternoon;
+    const isCurrent = i === state.currentDay;
+
+    const item = document.createElement('div');
+    item.className = 'day-item' + (isDone ? ' done' : '') + (isCurrent ? ' current' : '');
+    item.onclick = () => { state.currentDay = i; renderSidebar(); renderPlannerDay(i); scrollToTop(); };
+
+    const checkmark = isDone ? '✓' : (i + 1);
+    const morning = d.morning ? d.morning.icon + ' ' + d.morning.title : '';
+    const afternoon = d.afternoon ? d.afternoon.icon + ' ' + d.afternoon.title : '';
+    const actText = [morning, afternoon].filter(Boolean).join(' · ') || '';
+
+    item.innerHTML = `
+      <div class="day-dot">${checkmark}</div>
+      <div class="day-meta">
+        <div class="day-date">${day.short}</div>
+        <div class="day-name">${day.name}</div>
+        ${actText ? `<div class="day-activity">${actText}</div>` : ''}
+      </div>
+      ${day.special ? '<div class="special-badge">Verjaardag</div>' : ''}
+    `;
+    list.appendChild(item);
+  });
+}
+
+function scrollToTop() {
+  document.getElementById('planner-main').scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+// ═══════════════════════════════════════════════════════
+//  PLANNER DAY
+// ═══════════════════════════════════════════════════════
+function renderPlannerDay(i) {
+  const day = DAYS[i];
+  const plan = state.plan[i];
+  const isSpecial = !!day.special;
+  const avail = availableActivities(isSpecial);
+
+  // Group available by category
+  const groups = {};
+  avail.forEach(a => {
+    if (!groups[a.cat]) groups[a.cat] = [];
+    groups[a.cat].push(a);
+  });
+
+  // Also include already-selected ones for this day (so they stay visible)
+  if (plan.morning) groups[plan.morning.cat] = groups[plan.morning.cat] || [];
+  if (plan.afternoon) groups[plan.afternoon.cat] = groups[plan.afternoon.cat] || [];
+
+  const totalDays = 14;
+  const isLast = i === totalDays - 1;
+
+  let html = `
+    <div class="planner-day-header fade-up">
+      <div class="planner-day-label">Dag ${i + 1} van ${totalDays}</div>
+      <h2 class="planner-day-title">${day.label}</h2>
+      <p class="planner-day-subtitle">${day.name}${isSpecial ? ' — maak er iets onvergetelijks van! ✨' : ''}</p>
+    </div>
+
+    <div class="day-slots fade-up">
+      <div class="slot-item">
+        <div class="slot-dot ${plan.morning ? (isSpecial ? 'special filled' : 'filled') : ''}"></div>
+        <div>
+          <div class="slot-label">Ochtend / overdag</div>
+          ${plan.morning ? `<div class="slot-activity">${plan.morning.icon} ${plan.morning.title}</div>` : '<div class="slot-activity" style="color:var(--muted);font-weight:400">Nog niet gekozen</div>'}
+        </div>
+      </div>
+      <div class="slot-item">
+        <div class="slot-dot ${plan.afternoon ? (isSpecial ? 'special filled' : 'filled') : ''}"></div>
+        <div>
+          <div class="slot-label">Middag / avond</div>
+          ${plan.afternoon ? `<div class="slot-activity">${plan.afternoon.icon} ${plan.afternoon.title}</div>` : '<div class="slot-activity" style="color:var(--muted);font-weight:400">Nog niet gekozen</div>'}
+        </div>
+      </div>
+    </div>
+  `;
+
+  // Category order
+  const order = isSpecial
+    ? ['bday', 'stranden', 'cultuur', 'natuur', 'eten']
+    : ['stranden', 'cultuur', 'natuur', 'eten'];
+
+  const slotFull = plan.morning && plan.afternoon;
+
+  order.forEach(cat => {
+    if (!groups[cat] || groups[cat].length === 0) return;
+
+    html += `<div class="category-section fade-up">
+      <div class="category-label">${CAT_LABELS[cat]}</div>
+      <div class="activity-grid">`;
+
+    groups[cat].forEach(act => {
+      const isMorningSelected = plan.morning && plan.morning.id === act.id;
+      const isAfternoonSelected = plan.afternoon && plan.afternoon.id === act.id;
+      const isSelected = isMorningSelected || isAfternoonSelected;
+      const slotLabel = isMorningSelected ? 'Ochtend' : isAfternoonSelected ? 'Middag/avond' : '';
+
+      html += `
+        <div class="act-card ${isSelected ? 'selected' : ''} ${act.special ? 'special' : ''}"
+             onclick="selectActivity(${i}, '${act.id}')"
+             title="${isSelected ? 'Klik om te deselecteren' : (slotFull ? 'Verwijder eerst een andere activiteit' : 'Klik om te kiezen')}">
+          <div class="act-check">${isSelected ? '✓' : ''}</div>
+          <div class="act-icon">${act.icon}</div>
+          <div class="act-title">${act.title}</div>
+          <div class="act-why">${act.why}</div>
+          <div class="act-tip">💡 ${act.tip}</div>
+          ${slotLabel ? `<div style="margin-top:6px;font-size:0.7rem;font-weight:500;color:${act.special ? 'var(--gold)' : 'var(--sea)'}">→ ${slotLabel}</div>` : ''}
+        </div>`;
+    });
+
+    html += `</div></div>`;
+  });
+
+  // Nav
+  html += `
+    <div class="planner-nav fade-up">
+      ${i > 0
+        ? `<button class="btn-nav" onclick="goDay(${i - 1})">← Vorige dag</button>`
+        : `<div></div>`}
+      ${isLast
+        ? `<button class="btn-next btn-nav" onclick="showOverview()">Overzicht bekijken →</button>`
+        : `<button class="btn-next btn-nav" onclick="goDay(${i + 1})">Volgende dag →</button>`}
+    </div>`;
+
+  document.getElementById('planner-main').innerHTML = html;
+}
+
+function goDay(i) {
+  state.currentDay = i;
+  renderSidebar();
+  renderPlannerDay(i);
+  scrollToTop();
+}
+
+function selectActivity(dayIndex, actId) {
+  const act = ACTIVITIES.find(a => a.id === actId);
+  const plan = state.plan[dayIndex];
+
+  // Deselect if already selected
+  if (plan.morning && plan.morning.id === actId) {
+    plan.morning = null;
+    renderPlannerDay(dayIndex);
+    renderSidebar();
+    return;
+  }
+  if (plan.afternoon && plan.afternoon.id === actId) {
+    plan.afternoon = null;
+    renderPlannerDay(dayIndex);
+    renderSidebar();
+    return;
+  }
+
+  // Fill morning slot first, then afternoon
+  if (!plan.morning) {
+    plan.morning = act;
+  } else if (!plan.afternoon) {
+    plan.afternoon = act;
+  } else {
+    // Both full — shift: morning becomes new act, afternoon moves to morning
+    plan.morning = plan.afternoon;
+    plan.afternoon = act;
+  }
+
+  // Check if both slots now filled → small celebration
+  if (plan.morning && plan.afternoon) {
+    fireConfetti();
+  }
+
+  renderPlannerDay(dayIndex);
+  renderSidebar();
+}
+
+// ═══════════════════════════════════════════════════════
+//  OVERVIEW
+// ═══════════════════════════════════════════════════════
+function showOverview() {
+  // Stats
+  const totalActivities = state.plan.reduce((n, d) => n + (d.morning ? 1 : 0) + (d.afternoon ? 1 : 0), 0);
+  const fullDays = state.plan.filter(d => d.morning && d.afternoon).length;
+  const cats = {};
+  state.plan.forEach(d => {
+    [d.morning, d.afternoon].filter(Boolean).forEach(a => {
+      cats[a.cat] = (cats[a.cat] || 0) + 1;
+    });
+  });
+  const topCat = Object.entries(cats).sort((a,b) => b[1]-a[1])[0];
+
+  document.getElementById('ov-stats').innerHTML = `
+    <div class="stat-card"><div class="stat-num">${totalActivities}</div><div class="stat-label">Geplande activiteiten</div></div>
+    <div class="stat-card"><div class="stat-num">${fullDays}</div><div class="stat-label">Volledig gevulde dagen</div></div>
+    <div class="stat-card"><div class="stat-num">14</div><div class="stat-label">Nachten in Kefalonia</div></div>
+    <div class="stat-card"><div class="stat-num">${topCat ? CAT_LABELS[topCat[0]].split(' ').slice(1).join(' ') : '—'}</div><div class="stat-label">Meest gekozen categorie</div></div>
+  `;
+
+  // Grid
+  const grid = document.getElementById('ov-grid');
+  grid.innerHTML = '';
+  DAYS.forEach((day, i) => {
+    const d = state.plan[i];
+    const card = document.createElement('div');
+    card.className = 'overview-card' + (day.special ? ' special' : '');
+    card.innerHTML = `
+      <div class="ov-date">${day.short}</div>
+      <div class="ov-day">${day.name}</div>
+      ${day.special ? '<div class="ov-bday-badge">🎂 Verjaardag</div>' : ''}
+      <div class="ov-activities">
+        ${d.morning ? `<div class="ov-act"><span class="ov-act-icon">${d.morning.icon}</span><span class="ov-act-name">${d.morning.title}</span></div>` : ''}
+        ${d.afternoon ? `<div class="ov-act"><span class="ov-act-icon">${d.afternoon.icon}</span><span class="ov-act-name">${d.afternoon.title}</span></div>` : ''}
+        ${!d.morning && !d.afternoon ? '<div class="ov-act-none">Vrij houden</div>' : ''}
+      </div>
+    `;
+    card.onclick = () => {
+      goBackToPlanner();
+      setTimeout(() => { state.currentDay = i; renderSidebar(); renderPlannerDay(i); }, 50);
+    };
+    grid.appendChild(card);
+  });
+
+  document.getElementById('ov-subtitle').textContent = `${state.name}'s vakantieplan — 13 tot 27 juni`;
+  showScreen('screen-overview');
+  window.scrollTo({ top: 0 });
+}
+
+function goBackToPlanner() {
+  showScreen('screen-planner');
+  renderSidebar();
+  renderPlannerDay(state.currentDay);
+}
+
+function resetAll() {
+  if (!confirm('Weet je zeker dat je opnieuw wilt beginnen? Alle keuzes worden gewist.')) return;
+  state = { name: '', currentDay: 0, plan: Array(14).fill(null).map(() => ({ morning: null, afternoon: null })) };
+  document.getElementById('planner-name').value = '';
+  document.getElementById('btn-start').disabled = true;
+  showScreen('screen-welcome');
+}
+
+function printPlan() { window.print(); }
+
+// ═══════════════════════════════════════════════════════
+//  CONFETTI
+// ═══════════════════════════════════════════════════════
+function fireConfetti() {
+  const wrap = document.createElement('div');
+  wrap.className = 'confetti-wrap';
+  document.body.appendChild(wrap);
+  const colors = ['#C9962A', '#1B6CA8', '#5A7A3A', '#C4622D', '#F5EFE3'];
+  for (let k = 0; k < 40; k++) {
+    const p = document.createElement('div');
+    p.className = 'confetti-piece';
+    p.style.cssText = `
+      left: ${Math.random() * 100}%;
+      top: -10px;
+      background: ${colors[Math.floor(Math.random() * colors.length)]};
+      animation-duration: ${0.8 + Math.random() * 1.2}s;
+      animation-delay: ${Math.random() * 0.3}s;
+      transform: rotate(${Math.random() * 360}deg);
+      border-radius: ${Math.random() > 0.5 ? '50%' : '2px'};
+    `;
+    wrap.appendChild(p);
+  }
+  setTimeout(() => wrap.remove(), 2500);
+}
+
+// ═══════════════════════════════════════════════════════
+//  UTILS
+// ═══════════════════════════════════════════════════════
+function showScreen(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+}
+</script>
+</body>
+</html>
