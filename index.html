@@ -1097,6 +1097,41 @@ h3 { font-family: 'DM Sans', sans-serif; font-weight: 500; font-size: 1rem; }
   .ticket-path { width: 100%; margin: 8px 0; }
 }
 
+/* Overview Map */
+.overview-map-card {
+  background: var(--white);
+  border: 1.5px solid var(--sand-dark);
+  border-radius: var(--radius-lg);
+  padding: 1.5rem 2rem 2rem;
+  margin-bottom: 2.5rem;
+}
+.overview-map-title {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.5rem;
+  font-weight: 400;
+  margin-bottom: 0.35rem;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: var(--sea-deep);
+}
+.overview-map-sub {
+  color: var(--muted);
+  font-size: 0.85rem;
+  margin-bottom: 1.25rem;
+}
+#overview-map {
+  width: 100%;
+  height: 420px;
+  border-radius: var(--radius);
+  border: 1px solid var(--sand-dark);
+  z-index: 1;
+}
+@media (max-width: 768px) {
+  .overview-map-card { padding: 1.25rem 1.25rem 1.5rem; }
+  #overview-map { height: 320px; }
+}
+
 /* Split-screen interactive map */
 .planner-map-container {
   flex: 1;
@@ -1512,6 +1547,12 @@ h3 { font-family: 'DM Sans', sans-serif; font-weight: 500; font-size: 1rem; }
           </div>
         </div>
       </div>
+    </div>
+
+    <div class="overview-map-card" id="overview-map-card">
+      <div class="overview-map-title">🗺️ Alle activiteiten op de kaart</div>
+      <div class="overview-map-sub" id="overview-map-sub">Een overzicht van alle ingeplande plekken tijdens jullie vakantie.</div>
+      <div id="overview-map"></div>
     </div>
 
     <h2 style="margin-bottom: 0.25rem;">Dag voor dag</h2>
@@ -2002,6 +2043,8 @@ window.setActivitySearch = function(query) {
 // ═══════════════════════════════════════════════════════
 let map = null;
 let mapMarkers = [];
+let overviewMap = null;
+let overviewMapMarkers = [];
 let routeLines = [];
 const HOTEL_COORDS = [38.188, 20.407];
 
@@ -2286,6 +2329,94 @@ function updateMap(dayIndex) {
   } else {
     map.setView([38.22, 20.48], 11);
   }
+}
+
+// Overzichtskaart: alle ingeplande activiteiten als pins (geen route)
+function renderOverviewMap() {
+  // Verzamel unieke ingeplande activiteiten + op welke dagen ze staan
+  const planned = new Map(); // actId -> { act, days: [dayShort] }
+  state.plan.forEach((d, i) => {
+    d.activities.forEach(act => {
+      if (typeof act.lat !== 'number' || typeof act.lng !== 'number') return;
+      if (!planned.has(act.id)) planned.set(act.id, { act, days: [] });
+      planned.get(act.id).days.push(DAYS[i].short);
+    });
+  });
+
+  const card = document.getElementById('overview-map-card');
+
+  // Geen plekken met coördinaten? Verberg de kaart.
+  if (planned.size === 0) {
+    card.style.display = 'none';
+    return;
+  }
+  card.style.display = '';
+
+  // Init kaart (eenmalig)
+  if (!overviewMap) {
+    overviewMap = L.map('overview-map', { zoomControl: false }).setView([38.22, 20.53], 10);
+    L.control.zoom({ position: 'topright' }).addTo(overviewMap);
+    L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
+      attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>',
+      subdomains: 'abcd',
+      maxZoom: 20
+    }).addTo(overviewMap);
+  }
+
+  // Oude markers wissen
+  overviewMapMarkers.forEach(m => overviewMap.removeLayer(m));
+  overviewMapMarkers = [];
+
+  const bounds = [HOTEL_COORDS];
+
+  // Hotel als ankerpunt
+  const hotelMarker = L.marker(HOTEL_COORDS, {
+    icon: L.divIcon({
+      html: '🏢',
+      className: 'custom-map-icon hotel-icon',
+      iconSize: [26, 26],
+      iconAnchor: [13, 13]
+    })
+  }).bindPopup('<strong>Hotel: Apollonion Asterias Resort & Spa *****</strong>').addTo(overviewMap);
+  overviewMapMarkers.push(hotelMarker);
+
+  // Pin per ingeplande activiteit
+  planned.forEach(({ act, days }) => {
+    bounds.push([act.lat, act.lng]);
+    const dayLabel = days.length > 1
+      ? `Ingepland op: ${days.join(', ')}`
+      : `Ingepland op ${days[0]}`;
+    const marker = L.marker([act.lat, act.lng], {
+      icon: L.divIcon({
+        html: act.icon,
+        className: 'custom-map-icon active-icon',
+        iconSize: [28, 28],
+        iconAnchor: [14, 14]
+      })
+    }).bindPopup(`
+      <div style="font-family:'DM Sans',sans-serif; width:180px;">
+        <strong style="font-size:0.85rem;">${act.icon} ${act.title}</strong>
+        <p style="font-size:0.72rem; color:var(--muted); margin:4px 0 4px;">${act.location ? act.location.split(',')[0] : ''}</p>
+        <p style="font-size:0.68rem; color:var(--sea); margin:0;">📅 ${dayLabel}</p>
+      </div>
+    `).addTo(overviewMap);
+    overviewMapMarkers.push(marker);
+  });
+
+  // Tel-tekst bijwerken
+  const sub = document.getElementById('overview-map-sub');
+  if (sub) sub.textContent = `${planned.size} ingeplande ${planned.size === 1 ? 'plek' : 'plekken'} tijdens jullie vakantie.`;
+
+  // De kaart-div was verborgen bij init; herbereken grootte en zoom op alles
+  setTimeout(() => {
+    if (!overviewMap) return;
+    overviewMap.invalidateSize();
+    if (bounds.length > 1) {
+      overviewMap.fitBounds(L.latLngBounds(bounds), { padding: [50, 50], maxZoom: 13 });
+    } else {
+      overviewMap.setView([38.22, 20.48], 11);
+    }
+  }, 80);
 }
 
 window.selectActivityFromMap = function(dayIndex, actId) {
@@ -3040,6 +3171,7 @@ function showOverview() {
 
   document.getElementById('ov-subtitle').textContent = `${state.name}'s vakantieplan — 13 tot 27 juni`;
   showScreen('screen-overview');
+  renderOverviewMap();
   window.scrollTo({ top: 0 });
 }
 
