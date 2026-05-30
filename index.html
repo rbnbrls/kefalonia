@@ -580,6 +580,117 @@ h3 { font-family: 'DM Sans', sans-serif; font-weight: 500; font-size: 1rem; }
 ::-webkit-scrollbar-track { background: transparent; }
 ::-webkit-scrollbar-thumb { background: var(--sand-dark); border-radius: 100px; }
 
+/* ── SIDEBAR ADD-ACTIVITY BUTTON ─────────────────────────── */
+.sidebar-footer {
+  padding: 1rem 1.5rem 1.5rem;
+  border-top: 1px solid rgba(255,255,255,0.08);
+}
+.btn-add-activity {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  background: rgba(255,255,255,0.07);
+  border: 1.5px dashed rgba(255,255,255,0.2);
+  border-radius: var(--radius);
+  padding: 10px 16px;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.82rem;
+  color: rgba(255,255,255,0.55);
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.btn-add-activity:hover {
+  background: rgba(255,255,255,0.12);
+  border-color: rgba(255,255,255,0.35);
+  color: rgba(255,255,255,0.85);
+}
+
+/* ── ADD-ACTIVITY MODAL ─────────────────────────────────── */
+.modal-backdrop {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(26,22,18,0.65);
+  z-index: 10000;
+  align-items: center;
+  justify-content: center;
+  padding: 1.5rem;
+}
+.modal-backdrop.open { display: flex; }
+
+.modal-box {
+  background: var(--white);
+  border-radius: var(--radius-lg);
+  padding: 2rem;
+  width: 100%;
+  max-width: 440px;
+  box-shadow: 0 24px 64px rgba(0,0,0,0.2);
+  animation: fadeUp 0.25s ease forwards;
+}
+.modal-title {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.5rem;
+  font-weight: 400;
+  margin-bottom: 0.3rem;
+}
+.modal-subtitle {
+  font-size: 0.8rem;
+  color: var(--muted);
+  margin-bottom: 1.5rem;
+  line-height: 1.5;
+}
+.modal-field { margin-bottom: 1.1rem; }
+.modal-field label {
+  display: block;
+  font-size: 0.78rem;
+  font-weight: 500;
+  color: var(--ink);
+  margin-bottom: 5px;
+  letter-spacing: 0.02em;
+}
+.modal-field input,
+.modal-field textarea {
+  width: 100%;
+  border: 1.5px solid var(--sand-dark);
+  border-radius: var(--radius);
+  padding: 10px 14px;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.88rem;
+  color: var(--ink);
+  background: var(--white);
+  outline: none;
+  transition: border-color 0.15s;
+  resize: vertical;
+}
+.modal-field input:focus,
+.modal-field textarea:focus { border-color: var(--sea); }
+.modal-actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 1.5rem;
+  justify-content: flex-end;
+}
+.btn-cancel {
+  background: none;
+  border: 1.5px solid var(--sand-dark);
+  border-radius: 100px;
+  padding: 9px 20px;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.85rem;
+  color: var(--muted);
+  cursor: pointer;
+  transition: all 0.15s;
+}
+.btn-cancel:hover { border-color: var(--ink); color: var(--ink); }
+.modal-status {
+  font-size: 0.78rem;
+  margin-top: 0.75rem;
+  min-height: 1.2em;
+  text-align: center;
+}
+
 /* Sleek Flight Tickets & Sidebar Items */
 .day-item.flight-item {
   background: rgba(27,108,168,0.04);
@@ -864,6 +975,11 @@ h3 { font-family: 'DM Sans', sans-serif; font-weight: 500; font-size: 1rem; }
       <div class="progress-label" id="progress-label">0 van 14 dagen gepland</div>
     </div>
     <div class="day-list" id="day-list"></div>
+    <div class="sidebar-footer">
+      <button class="btn-add-activity" onclick="openAddActivityModal()">
+        <span style="font-size:1.1rem;">＋</span> Activiteit toevoegen
+      </button>
+    </div>
   </aside>
 
   <!-- Main -->
@@ -957,6 +1073,29 @@ h3 { font-family: 'DM Sans', sans-serif; font-weight: 500; font-size: 1rem; }
     <h2 style="margin-bottom: 0.25rem;">Dag voor dag</h2>
     <p style="color:var(--muted);font-size:0.85rem;margin-bottom:1.5rem;">Klik op een dag in de planner om activiteiten te wijzigen.</p>
     <div class="overview-grid" id="ov-grid"></div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════
+     MODAL: ACTIVITEIT TOEVOEGEN
+══════════════════════════════════════════════ -->
+<div id="modal-add-activity" class="modal-backdrop" onclick="handleBackdropClick(event)">
+  <div class="modal-box">
+    <div class="modal-title">Activiteit voorstellen</div>
+    <div class="modal-subtitle">Ken jij een geweldige activiteit die er nog niet bij staat? Laat het ons weten — de beheerder voegt het toe!</div>
+    <div class="modal-field">
+      <label for="act-title-input">Titel</label>
+      <input type="text" id="act-title-input" placeholder="bv. Snorkelen bij Emblisi Beach" maxlength="100">
+    </div>
+    <div class="modal-field">
+      <label for="act-desc-input">Beschrijving</label>
+      <textarea id="act-desc-input" rows="4" placeholder="Vertel waarom dit een aanrader is en eventuele handige tips…" maxlength="1000"></textarea>
+    </div>
+    <div class="modal-status" id="modal-status"></div>
+    <div class="modal-actions">
+      <button class="btn-cancel" onclick="closeAddActivityModal()">Annuleren</button>
+      <button class="btn-primary" id="btn-submit-activity" onclick="submitActivityRequest()">Versturen</button>
+    </div>
   </div>
 </div>
 
@@ -2038,6 +2177,73 @@ function fireConfetti() {
 function showScreen(id) {
   document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
   document.getElementById(id).classList.add('active');
+}
+
+// ═══════════════════════════════════════════════════════
+//  ADD-ACTIVITY MODAL
+// ═══════════════════════════════════════════════════════
+function openAddActivityModal() {
+  document.getElementById('act-title-input').value = '';
+  document.getElementById('act-desc-input').value = '';
+  document.getElementById('modal-status').textContent = '';
+  document.getElementById('btn-submit-activity').disabled = false;
+  document.getElementById('modal-add-activity').classList.add('open');
+  setTimeout(() => document.getElementById('act-title-input').focus(), 50);
+}
+
+function closeAddActivityModal() {
+  document.getElementById('modal-add-activity').classList.remove('open');
+}
+
+function handleBackdropClick(e) {
+  if (e.target === document.getElementById('modal-add-activity')) {
+    closeAddActivityModal();
+  }
+}
+
+async function submitActivityRequest() {
+  const title = document.getElementById('act-title-input').value.trim();
+  const desc  = document.getElementById('act-desc-input').value.trim();
+  const status = document.getElementById('modal-status');
+  const btn = document.getElementById('btn-submit-activity');
+
+  if (!title) {
+    status.style.color = 'var(--terracotta)';
+    status.textContent = 'Vul een titel in.';
+    document.getElementById('act-title-input').focus();
+    return;
+  }
+
+  btn.disabled = true;
+  status.style.color = 'var(--muted)';
+  status.textContent = 'Versturen…';
+
+  const body = desc
+    ? `**Voorgesteld door:** ${state.name || 'anoniem'}\n\n**Beschrijving:**\n${desc}`
+    : `**Voorgesteld door:** ${state.name || 'anoniem'}`;
+
+  try {
+    const res = await fetch('WEBHOOK_URL_PLACEHOLDER', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        ,
+      },
+      body: JSON.stringify({ title: `[Activiteit] ${title}`, body }),
+    });
+
+    if (res.ok) {
+      status.style.color = 'var(--olive)';
+      status.textContent = 'Bedankt! Jouw voorstel is verstuurd.';
+      setTimeout(closeAddActivityModal, 1800);
+    } else {
+      throw new Error(`HTTP ${res.status}`);
+    }
+  } catch (e) {
+    status.style.color = 'var(--terracotta)';
+    status.textContent = 'Er ging iets mis. Probeer het later opnieuw.';
+    btn.disabled = false;
+  }
 }
 </script>
 </body>
