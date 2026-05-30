@@ -2280,11 +2280,10 @@ async function submitActivityRequest() {
     : `**Voorgesteld door:** ${state.name || 'anoniem'}`;
 
   try {
-    const res = await fetch('WEBHOOK_URL_PLACEHOLDER', {
+    const res = await fetch('https://ijkwtbpzqtbpznzogbts.supabase.co/functions/v1/forgejo-issue-proxy', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        ,
       },
       body: JSON.stringify({ title: `[Activiteit] ${title}`, body }),
     });
