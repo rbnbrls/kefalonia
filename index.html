@@ -155,6 +155,91 @@ h3 { font-family: 'DM Sans', sans-serif; font-weight: 500; font-size: 1rem; }
 .btn-primary:active { transform: translateY(0); }
 .btn-primary:disabled { opacity: 0.4; cursor: not-allowed; transform: none; }
 
+/* ── WELCOME: terugkeer-code & welkom-terug banner ─────── */
+.welcome-resume {
+  margin-top: 1.75rem;
+}
+.resume-toggle {
+  background: none;
+  border: none;
+  color: rgba(255,255,255,0.6);
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.85rem;
+  cursor: pointer;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  transition: color 0.2s;
+}
+.resume-toggle:hover { color: white; }
+
+.resume-form {
+  display: none;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  margin-top: 1rem;
+}
+.resume-form.open { display: flex; }
+.resume-form input {
+  background: rgba(255,255,255,0.1);
+  border: 1px solid rgba(255,255,255,0.25);
+  border-radius: 100px;
+  padding: 11px 22px;
+  color: white;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.85rem;
+  text-align: center;
+  width: 100%;
+  max-width: 340px;
+  outline: none;
+  transition: border-color 0.2s, background 0.2s;
+}
+.resume-form input::placeholder { color: rgba(255,255,255,0.3); }
+.resume-form input:focus { border-color: rgba(255,255,255,0.6); background: rgba(255,255,255,0.15); }
+.resume-error {
+  min-height: 1.1em;
+  font-size: 0.8rem;
+  color: #F0A89A;
+}
+
+.welcome-banner {
+  display: none;
+  align-items: center;
+  flex-direction: column;
+  gap: 12px;
+  background: rgba(255,255,255,0.12);
+  border: 1px solid rgba(255,255,255,0.25);
+  border-radius: 16px;
+  padding: 18px 22px;
+  margin-bottom: 2rem;
+  max-width: 420px;
+}
+.welcome-banner.open { display: flex; }
+.welcome-banner p {
+  color: white;
+  font-size: 0.95rem;
+  margin: 0;
+  text-align: center;
+}
+.welcome-banner .banner-actions {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+.btn-ghost {
+  background: rgba(255,255,255,0.1);
+  color: white;
+  border: 1px solid rgba(255,255,255,0.3);
+  border-radius: 100px;
+  padding: 10px 22px;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.85rem;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+.btn-ghost:hover { background: rgba(255,255,255,0.2); }
+
 /* ── ONBOARDING PLANNER SCREEN ─────────────────────────── */
 #screen-planner {
   flex-direction: row;
@@ -636,11 +721,47 @@ h3 { font-family: 'DM Sans', sans-serif; font-weight: 500; font-size: 1rem; }
 }
 .btn-outline:hover { background: var(--ink); color: var(--white); }
 
+.code-box {
+  display: none;
+  margin: -1.5rem 0 3rem;
+  padding: 16px 20px;
+  background: var(--sand, #F5EFE3);
+  border: 1px dashed var(--sea, #1B6CA8);
+  border-radius: 12px;
+  max-width: 640px;
+}
+.code-box.open { display: block; }
+.code-box-label {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.8rem;
+  color: var(--muted, #7a7066);
+  margin-bottom: 8px;
+}
+.code-box-value {
+  display: block;
+  font-family: ui-monospace, 'SF Mono', Menlo, monospace;
+  font-size: 0.85rem;
+  color: var(--ink);
+  background: rgba(0,0,0,0.04);
+  border-radius: 8px;
+  padding: 10px 12px;
+  word-break: break-all;
+  user-select: all;
+}
+.code-box-hint {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.8rem;
+  color: var(--olive, #5A7A3A);
+  margin-top: 8px;
+  min-height: 1em;
+}
+
 /* ── PRINT STYLES ─────────────────────────────────────── */
 @media print {
   #screen-welcome, #screen-planner { display: none !important; }
   #screen-overview { display: flex !important; }
   .overview-actions { display: none !important; }
+  .code-box { display: none !important; }
   .overview-header { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
 }
 
@@ -1225,6 +1346,15 @@ h3 { font-family: 'DM Sans', sans-serif; font-weight: 500; font-size: 1rem; }
       13 juni <span>·</span> 27 juni <span>·</span> 14 nachten
     </div>
     <br>
+
+    <div class="welcome-banner" id="welcome-banner">
+      <p>Welkom terug! Je hebt al een plan klaarstaan.</p>
+      <div class="banner-actions">
+        <button class="btn-primary" onclick="resumeSaved()">Verder met mijn plan →</button>
+        <button class="btn-ghost" onclick="startFresh()">Opnieuw beginnen</button>
+      </div>
+    </div>
+
     <div class="name-input-wrap">
       <label>Wie gaat er plannen?</label>
       <input type="text" id="planner-name" placeholder="Jouw naam…" maxlength="24" autocomplete="off">
@@ -1232,6 +1362,15 @@ h3 { font-family: 'DM Sans', sans-serif; font-weight: 500; font-size: 1rem; }
     <button class="btn-primary" id="btn-start" onclick="startPlanning()" disabled>
       Vakantie plannen →
     </button>
+
+    <div class="welcome-resume">
+      <button class="resume-toggle" id="resume-toggle" onclick="toggleResumeForm()">Heb je al een code? Verder met je plan</button>
+      <div class="resume-form" id="resume-form">
+        <input type="text" id="code-input" placeholder="Plak je code (KEF1-…)" autocomplete="off" spellcheck="false">
+        <button class="btn-ghost" onclick="resumeFromCode()">Verder met code</button>
+        <span class="resume-error" id="resume-error"></span>
+      </div>
+    </div>
   </div>
 </div>
 
@@ -1304,10 +1443,16 @@ h3 { font-family: 'DM Sans', sans-serif; font-weight: 500; font-size: 1rem; }
     <div class="overview-stats" id="ov-stats"></div>
     <div class="overview-actions">
       <button class="btn-primary" onclick="printPlan()">Plan opslaan / afdrukken</button>
+      <button class="btn-outline" onclick="copyPlanCode()">📋 Kopieer terugkeer-code</button>
       <button class="btn-outline" onclick="goBackToPlanner()">Terug naar planner</button>
       <button class="btn-outline" onclick="resetAll()">Opnieuw beginnen</button>
     </div>
-    
+    <div class="code-box" id="code-box">
+      <div class="code-box-label">Bewaar deze code om later of op een ander apparaat verder te gaan:</div>
+      <code class="code-box-value" id="code-box-value"></code>
+      <div class="code-box-hint" id="code-box-hint"></div>
+    </div>
+
     <div class="overview-flights-card">
       <div class="overview-flights-title">✈️ Vlucht- & reisinformatie</div>
       <div class="overview-flights-grid">
@@ -1504,6 +1649,92 @@ let state = {
   plan: Array(14).fill(null).map(() => ({ activities: [] })),
 };
 
+// ═══════════════════════════════════════════════════════
+//  OPSLAAN / HERSTELLEN (localStorage + terugkeer-code)
+// ═══════════════════════════════════════════════════════
+const STORAGE_KEY = 'kefalonia_plan_v1';
+
+// Compacte representatie van het plan: alleen naam, huidige dag en
+// per dag de activiteit-id's (activiteiten komen altijd uit ACTIVITIES).
+function serializePlan(s) {
+  return {
+    v: 1,
+    n: s.name,
+    c: s.currentDay,
+    d: s.plan.map(day => day.activities.map(a => a.id)),
+  };
+}
+
+// Bouwt vanuit een compacte representatie een geldig state-object terug.
+function hydratePlan(obj) {
+  if (!obj || typeof obj !== 'object') return null;
+  const days = Array.isArray(obj.d) ? obj.d : [];
+  const plan = Array(14).fill(null).map((_, i) => {
+    const ids = Array.isArray(days[i]) ? days[i] : [];
+    const activities = ids
+      .map(id => ACTIVITIES.find(a => a.id === id))
+      .filter(Boolean);
+    return { activities };
+  });
+  let currentDay = obj.c;
+  const validDay = currentDay === 'heen' || currentDay === 'terug' ||
+    (Number.isInteger(currentDay) && currentDay >= 0 && currentDay <= 13);
+  if (!validDay) currentDay = 'heen';
+  return {
+    name: typeof obj.n === 'string' ? obj.n : 'Jij',
+    currentDay,
+    plan,
+  };
+}
+
+function planHasContent(s) {
+  return !!s && s.plan.some(d => d.activities.length > 0);
+}
+
+function saveState() {
+  try {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(serializePlan(state)));
+  } catch (e) {
+    // private mode / quota — stilletjes negeren
+  }
+}
+
+function loadState() {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (!raw) return null;
+    return hydratePlan(JSON.parse(raw));
+  } catch (e) {
+    return null;
+  }
+}
+
+function clearSavedState() {
+  try {
+    localStorage.removeItem(STORAGE_KEY);
+  } catch (e) {}
+}
+
+// ── Terugkeer-code (zelfbevattend, base64url, geen backend) ──
+function encodePlanCode() {
+  const json = JSON.stringify(serializePlan(state));
+  const b64 = btoa(unescape(encodeURIComponent(json)));
+  return 'KEF1-' + b64.replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
+}
+
+function decodePlanCode(code) {
+  try {
+    const trimmed = (code || '').trim();
+    if (!trimmed.startsWith('KEF1-')) return null;
+    let b64 = trimmed.slice(5).replace(/-/g, '+').replace(/_/g, '/');
+    while (b64.length % 4) b64 += '=';
+    const json = decodeURIComponent(escape(atob(b64)));
+    return hydratePlan(JSON.parse(json));
+  } catch (e) {
+    return null;
+  }
+}
+
 function dayUsedMinutes(dayIndex) {
   return state.plan[dayIndex].activities.reduce((s, a) => s + (a.duration || 0), 0);
 }
@@ -1601,6 +1832,62 @@ function startPlanning() {
   updateMobileBar();
 }
 
+// Open de planner met een (herstelde) state.
+function enterPlanner() {
+  showScreen('screen-planner');
+  renderSidebar();
+  renderPlannerDay(state.currentDay);
+  setTimeout(() => updateMap(state.currentDay), 50);
+  updateMobileBar();
+}
+
+// ── Welkom-terug banner (auto-herstel via localStorage) ──
+let pendingSaved = null;
+
+function resumeSaved() {
+  if (!pendingSaved) return;
+  state = pendingSaved;
+  pendingSaved = null;
+  enterPlanner();
+}
+
+function startFresh() {
+  pendingSaved = null;
+  clearSavedState();
+  document.getElementById('welcome-banner').classList.remove('open');
+}
+
+// ── Terugkeer-code invoeren ──
+function toggleResumeForm() {
+  const form = document.getElementById('resume-form');
+  form.classList.toggle('open');
+  if (form.classList.contains('open')) {
+    setTimeout(() => document.getElementById('code-input').focus(), 50);
+  }
+}
+
+function resumeFromCode() {
+  const input = document.getElementById('code-input');
+  const err = document.getElementById('resume-error');
+  const restored = decodePlanCode(input.value);
+  if (!restored || !planHasContent(restored)) {
+    err.textContent = 'Deze code is niet geldig. Controleer of je hem volledig hebt geplakt.';
+    return;
+  }
+  err.textContent = '';
+  state = restored;
+  enterPlanner();
+}
+
+// Bij het laden: is er een bewaard plan? Toon dan de welkom-terug banner.
+(function initResume() {
+  const saved = loadState();
+  if (saved && planHasContent(saved)) {
+    pendingSaved = saved;
+    document.getElementById('welcome-banner').classList.add('open');
+  }
+})();
+
 // ═══════════════════════════════════════════════════════
 //  SIDEBAR
 // ═══════════════════════════════════════════════════════
@@ -1679,6 +1966,9 @@ function renderSidebar() {
     </div>
   `;
   list.appendChild(terugItem);
+
+  // Bewaar het plan automatisch na elke wijziging (naam/dag/activiteiten)
+  saveState();
 }
 
 function scrollToTop() {
@@ -2762,10 +3052,29 @@ function goBackToPlanner() {
 
 function resetAll() {
   if (!confirm('Weet je zeker dat je opnieuw wilt beginnen? Alle keuzes worden gewist.')) return;
-  state = { name: '', currentDay: 'heen', plan: Array(14).fill(null).map(() => ({ morning: null, afternoon: null })) };
+  state = { name: '', currentDay: 'heen', plan: Array(14).fill(null).map(() => ({ activities: [] })) };
+  clearSavedState();
+  pendingSaved = null;
+  document.getElementById('welcome-banner').classList.remove('open');
+  document.getElementById('code-box').classList.remove('open');
   document.getElementById('planner-name').value = '';
   document.getElementById('btn-start').disabled = true;
   showScreen('screen-welcome');
+}
+
+function copyPlanCode() {
+  const code = encodePlanCode();
+  const box = document.getElementById('code-box');
+  const value = document.getElementById('code-box-value');
+  const hint = document.getElementById('code-box-hint');
+  value.textContent = code;
+  box.classList.add('open');
+  const done = ok => { hint.textContent = ok ? '✓ Code gekopieerd naar het klembord' : 'Selecteer en kopieer de code hierboven handmatig.'; };
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(code).then(() => done(true)).catch(() => done(false));
+  } else {
+    done(false);
+  }
 }
 
 function printPlan() { window.print(); }
