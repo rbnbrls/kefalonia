@@ -1393,6 +1393,7 @@ function calculateTravelStats(lat1, lng1, lat2, lng2) {
 
 // ── OSRM real road distances ──────────────────────────
 const routeDistanceCache = {};
+const roadGeometryCache = {};
 
 async function getRoadSegmentDistance(lat1, lng1, lat2, lng2) {
   const key = `${lat1.toFixed(4)},${lng1.toFixed(4)}|${lat2.toFixed(4)},${lng2.toFixed(4)}`;
@@ -1411,6 +1412,25 @@ async function getRoadSegmentDistance(lat1, lng1, lat2, lng2) {
     }
   } catch (e) {}
   return calculateTravelStats(lat1, lng1, lat2, lng2);
+}
+
+async function fetchRoadRouteGeometry(waypoints) {
+  // waypoints: array of [lat, lng]
+  const key = waypoints.map(w => w.join(',')).join('|');
+  if (roadGeometryCache[key]) return roadGeometryCache[key];
+  try {
+    const coords = waypoints.map(([lat, lng]) => `${lng},${lat}`).join(';');
+    const url = `https://router.project-osrm.org/route/v1/driving/${coords}?overview=full&geometries=geojson`;
+    const res = await fetch(url);
+    const data = await res.json();
+    if (data.code === 'Ok' && data.routes && data.routes[0]) {
+      // GeoJSON is [lng, lat] — convert to Leaflet's [lat, lng]
+      const result = data.routes[0].geometry.coordinates.map(([lng, lat]) => [lat, lng]);
+      roadGeometryCache[key] = result;
+      return result;
+    }
+  } catch (e) {}
+  return null;
 }
 
 function buildGoogleMapsUrl(plan) {
@@ -1495,9 +1515,12 @@ function initMap() {
     .bindPopup('<strong>Hotel: Apollonion Asterias Resort & Spa *****</strong><br>Ons start- en eindpunt.');
 }
 
+let mapUpdateToken = 0;
+
 function updateMap(dayIndex) {
   initMap();
-  
+  const token = ++mapUpdateToken;
+
   // Clear layers
   mapMarkers.forEach(m => map.removeLayer(m));
   mapMarkers = [];
@@ -1615,8 +1638,42 @@ function updateMap(dayIndex) {
 
   coords.push(HOTEL_COORDS);
 
-  // 4. Draw route polyline
-  if (coords.length > 2) {
+  // 4. Draw route
+  if (dayFull) {
+    // Both activities selected: fetch real road geometry from OSRM
+    const waypoints = [
+      HOTEL_COORDS,
+      [plan.morning.lat, plan.morning.lng],
+      [plan.afternoon.lat, plan.afternoon.lng],
+      HOTEL_COORDS
+    ];
+    // Fit bounds immediately using straight-line bounding box as placeholder
+    map.fitBounds(L.latLngBounds(waypoints), { padding: [60, 60] });
+
+    fetchRoadRouteGeometry(waypoints).then(routeCoords => {
+      if (token !== mapUpdateToken) return; // Stale: user switched to another day
+      if (routeCoords) {
+        const roadRoute = L.polyline(routeCoords, {
+          color: '#1B6CA8',
+          weight: 4.5,
+          opacity: 0.9
+        }).addTo(map);
+        routeLines.push(roadRoute);
+        map.fitBounds(roadRoute.getBounds(), { padding: [60, 60] });
+      } else {
+        // Fallback to straight dashed line
+        const route = L.polyline(waypoints, {
+          color: 'var(--sea)',
+          weight: 3.5,
+          dashArray: '6, 8',
+          opacity: 0.85
+        }).addTo(map);
+        routeLines.push(route);
+        map.fitBounds(route.getBounds(), { padding: [60, 60] });
+      }
+    });
+  } else if (coords.length > 2) {
+    // One activity selected: dashed line as planning preview
     const route = L.polyline(coords, {
       color: 'var(--sea)',
       weight: 3.5,
