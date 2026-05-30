@@ -766,6 +766,10 @@ h3 { font-family: 'DM Sans', sans-serif; font-weight: 500; font-size: 1rem; }
   z-index: 10;
   background: var(--sand-dark);
 }
+#map {
+  width: 100%;
+  height: 100%;
+}
 @media (max-width: 1100px) {
   .planner-map-container {
     display: none !important;
@@ -1039,6 +1043,8 @@ let collapsedCategories = {
   eten: false
 };
 
+let sortMode = 'category'; // 'category' | 'distance'
+
 // Track which activities are used
 function usedIds() {
   const ids = new Set();
@@ -1173,6 +1179,11 @@ function scrollToTop() {
 
 window.toggleCategory = function(cat) {
   collapsedCategories[cat] = !collapsedCategories[cat];
+  renderPlannerDay(state.currentDay);
+};
+
+window.setSortMode = function(mode) {
+  sortMode = mode;
   renderPlannerDay(state.currentDay);
 };
 
@@ -1522,52 +1533,105 @@ function renderPlannerDay(i) {
     ${statsHtml}
   `;
 
-  // Category order
-  const order = isSpecial
-    ? ['hotel', 'bday', 'stranden', 'cultuur', 'natuur', 'eten']
-    : ['hotel', 'stranden', 'cultuur', 'natuur', 'eten'];
-
+  // Sort toggle UI
   const slotFull = plan.morning && plan.afternoon;
 
-  order.forEach(cat => {
-    if (!groups[cat] || groups[cat].length === 0) return;
-
-    const isCollapsed = collapsedCategories[cat];
-    const toggleIcon = isCollapsed ? '▶' : '▼';
-
-    html += `<div class="category-section fade-up">
-      <div class="category-label" onclick="toggleCategory('${cat}')" style="cursor:pointer; display:flex; align-items:center; justify-content:space-between; user-select:none;" title="Klik om deze categorie in/uit te klappen">
-        <span style="display:flex; align-items:center; gap:8px;">${CAT_LABELS[cat]}</span>
-        <span class="collapse-toggle" style="font-size:0.68rem; color:var(--muted); font-weight:normal; letter-spacing:0; text-transform:none; opacity:0.6;">${toggleIcon} Klik om in/uit te klappen</span>
+  html += `
+    <div class="sort-toggle fade-up" style="display:flex; align-items:center; gap:10px; margin-bottom:1.5rem; flex-wrap:wrap;">
+      <span style="font-size:0.72rem; text-transform:uppercase; letter-spacing:0.12em; color:var(--muted); flex-shrink:0;">Sorteren op:</span>
+      <div style="display:flex; gap:6px;">
+        <button onclick="setSortMode('category')"
+          style="font-size:0.78rem; padding:5px 14px; border-radius:100px; border:1.5px solid ${sortMode === 'category' ? 'var(--sea-deep)' : 'var(--sand-dark)'}; background:${sortMode === 'category' ? 'var(--sea-deep)' : 'var(--white)'}; color:${sortMode === 'category' ? 'white' : 'var(--muted)'}; cursor:pointer; font-family:\'DM Sans\',sans-serif; font-weight:500; transition:all 0.15s;">
+          📂 Per categorie
+        </button>
+        <button onclick="setSortMode('distance')"
+          style="font-size:0.78rem; padding:5px 14px; border-radius:100px; border:1.5px solid ${sortMode === 'distance' ? 'var(--sea-deep)' : 'var(--sand-dark)'}; background:${sortMode === 'distance' ? 'var(--sea-deep)' : 'var(--white)'}; color:${sortMode === 'distance' ? 'white' : 'var(--muted)'}; cursor:pointer; font-family:\'DM Sans\',sans-serif; font-weight:500; transition:all 0.15s;">
+          📍 Op afstand
+        </button>
       </div>
-      <div class="activity-grid" style="${isCollapsed ? 'display:none;' : ''}">`;
+      ${sortMode === 'distance' ? `<span style="font-size:0.72rem; color:var(--muted); font-style:italic;">Gesorteerd op afstand vanaf ${plan.morning ? '🌅 ' + plan.morning.title : plan.afternoon ? '🌌 ' + plan.afternoon.title : '🏨 het hotel'}</span>` : ''}
+    </div>
+  `;
 
-    groups[cat].forEach(act => {
-      const isMorningSelected = plan.morning && plan.morning.id === act.id;
-      const isAfternoonSelected = plan.afternoon && plan.afternoon.id === act.id;
-      const isSelected = isMorningSelected || isAfternoonSelected;
-      const slotLabel = isMorningSelected ? 'Ochtend' : isAfternoonSelected ? 'Middag/avond' : '';
+  function renderActivityCard(act) {
+    const isMorningSelected = plan.morning && plan.morning.id === act.id;
+    const isAfternoonSelected = plan.afternoon && plan.afternoon.id === act.id;
+    const isSelected = isMorningSelected || isAfternoonSelected;
+    const slotLabel = isMorningSelected ? 'Ochtend' : isAfternoonSelected ? 'Middag/avond' : '';
+    return `
+      <div class="act-card ${isSelected ? 'selected' : ''} ${act.special ? 'special' : ''}"
+           onclick="selectActivity(${i}, '${act.id}')"
+           title="${isSelected ? 'Klik om te deselecteren' : (slotFull ? 'Verwijder eerst een andere activiteit' : 'Klik om te kiezen')}">
+        <div class="act-check">${isSelected ? '✓' : ''}</div>
+        <div class="act-icon">${act.icon}</div>
+        <div class="act-title">${act.title}</div>
+        ${act.distKm !== undefined ? `<div style="font-size:0.7rem; color:var(--olive); font-weight:600; margin-bottom:4px;">📏 ${act.distKm} km vanaf ${act.distFrom}</div>` : ''}
+        ${act.location ? `
+          <div style="font-size:0.7rem; color:var(--sea); margin: 4px 0 8px; display:flex; align-items:center; gap:4px; font-weight:500;">
+            📍 <a href="${act.mapUrl}" target="_blank" onclick="event.stopPropagation();" style="color:var(--sea); text-decoration:none; border-bottom:1px dashed var(--sea);">${act.location}</a>
+          </div>
+        ` : ''}
+        <div class="act-why">${act.why}</div>
+        <div class="act-tip">💡 ${act.tip}</div>
+        ${slotLabel ? `<div style="margin-top:6px;font-size:0.7rem;font-weight:500;color:${act.special ? 'var(--gold)' : 'var(--sea)'}">→ ${slotLabel}</div>` : ''}
+      </div>`;
+  }
 
-      html += `
-        <div class="act-card ${isSelected ? 'selected' : ''} ${act.special ? 'special' : ''}"
-             onclick="selectActivity(${i}, '${act.id}')"
-             title="${isSelected ? 'Klik om te deselecteren' : (slotFull ? 'Verwijder eerst een andere activiteit' : 'Klik om te kiezen')}">
-          <div class="act-check">${isSelected ? '✓' : ''}</div>
-          <div class="act-icon">${act.icon}</div>
-          <div class="act-title">${act.title}</div>
-          ${act.location ? `
-            <div style="font-size:0.7rem; color:var(--sea); margin: 4px 0 8px; display:flex; align-items:center; gap:4px; font-weight:500;">
-              📍 <a href="${act.mapUrl}" target="_blank" onclick="event.stopPropagation();" style="color:var(--sea); text-decoration:none; border-bottom:1px dashed var(--sea);">${act.location}</a>
-            </div>
-          ` : ''}
-          <div class="act-why">${act.why}</div>
-          <div class="act-tip">💡 ${act.tip}</div>
-          ${slotLabel ? `<div style="margin-top:6px;font-size:0.7rem;font-weight:500;color:${act.special ? 'var(--gold)' : 'var(--sea)'}">→ ${slotLabel}</div>` : ''}
-        </div>`;
+  if (sortMode === 'distance') {
+    // Reference point: first chosen activity, or hotel
+    const refAct = plan.morning || plan.afternoon;
+    const refLat = refAct ? refAct.lat : 38.188;
+    const refLng = refAct ? refAct.lng : 20.407;
+    const refName = refAct ? refAct.title : 'hotel';
+
+    // Collect all available activities flat, add distance info
+    const allAvail = avail.map(act => {
+      const stats = calculateTravelStats(refLat, refLng, act.lat, act.lng);
+      return { ...act, distKm: stats.distance, distFrom: refName };
     });
 
+    // Selected activities always show at top regardless of distance
+    const selectedActs = allAvail.filter(a => {
+      return (plan.morning && plan.morning.id === a.id) || (plan.afternoon && plan.afternoon.id === a.id);
+    });
+    const unselectedActs = allAvail
+      .filter(a => !selectedActs.find(s => s.id === a.id))
+      .sort((a, b) => a.distKm - b.distKm);
+
+    if (selectedActs.length > 0) {
+      html += `<div class="category-section fade-up"><div class="category-label"><span>✅ Al gekozen voor vandaag</span></div><div class="activity-grid">`;
+      selectedActs.forEach(act => { html += renderActivityCard(act); });
+      html += `</div></div>`;
+    }
+
+    html += `<div class="category-section fade-up"><div class="category-label"><span>📍 Overige activiteiten op afstand</span></div><div class="activity-grid">`;
+    unselectedActs.forEach(act => { html += renderActivityCard(act); });
     html += `</div></div>`;
-  });
+
+  } else {
+    // Category order
+    const order = isSpecial
+      ? ['hotel', 'bday', 'stranden', 'cultuur', 'natuur', 'eten']
+      : ['hotel', 'stranden', 'cultuur', 'natuur', 'eten'];
+
+    order.forEach(cat => {
+      if (!groups[cat] || groups[cat].length === 0) return;
+
+      const isCollapsed = collapsedCategories[cat];
+      const toggleIcon = isCollapsed ? '▶' : '▼';
+
+      html += `<div class="category-section fade-up">
+        <div class="category-label" onclick="toggleCategory('${cat}')" style="cursor:pointer; display:flex; align-items:center; justify-content:space-between; user-select:none;" title="Klik om deze categorie in/uit te klappen">
+          <span style="display:flex; align-items:center; gap:8px;">${CAT_LABELS[cat]}</span>
+          <span class="collapse-toggle" style="font-size:0.68rem; color:var(--muted); font-weight:normal; letter-spacing:0; text-transform:none; opacity:0.6;">${toggleIcon} Klik om in/uit te klappen</span>
+        </div>
+        <div class="activity-grid" style="${isCollapsed ? 'display:none;' : ''}">`;
+
+      groups[cat].forEach(act => { html += renderActivityCard(act); });
+
+      html += `</div></div>`;
+    });
+  }
 
   // Nav
   html += `
