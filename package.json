@@ -1,0 +1,20 @@
+{
+  "name": "kefalonia",
+  "version": "1.0.0",
+  "description": "Een interactieve vakantie-onboarding app voor jullie trip naar Kefalonia (13–27 juni).",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://git.7rb.nl/ruben/kefalonia.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "devDependencies": {
+    "playwright": "^1.60.0"
+  }
+}

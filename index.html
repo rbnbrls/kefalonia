@@ -931,6 +931,172 @@ h3 { font-family: 'DM Sans', sans-serif; font-weight: 500; font-size: 1rem; }
   opacity: 1;
   filter: grayscale(0%);
 }
+
+/* ── MOBILE BOTTOM BAR ─────────────────────────────────── */
+.mobile-bottom-bar { display: none; }
+.mobile-sticky-budget { display: none; }
+
+@media (max-width: 768px) {
+  .mobile-bottom-bar {
+    display: flex;
+    position: fixed;
+    bottom: 0; left: 0; right: 0;
+    background: var(--ink);
+    border-top: 1px solid rgba(255,255,255,0.1);
+    z-index: 5000;
+    align-items: center;
+    padding: 10px 12px;
+    padding-bottom: calc(10px + env(safe-area-inset-bottom));
+    gap: 10px;
+  }
+  .mobile-bottom-bar.hidden { display: none !important; }
+  .mobile-nav-btn {
+    background: rgba(255,255,255,0.1);
+    border: none;
+    border-radius: 10px;
+    color: white;
+    font-size: 1.2rem;
+    width: 44px; height: 44px;
+    flex-shrink: 0;
+    cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    transition: background 0.15s;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .mobile-nav-btn:active { background: rgba(255,255,255,0.22); }
+  .mobile-nav-btn:disabled { opacity: 0.25; pointer-events: none; }
+  .mobile-day-center {
+    flex: 1;
+    display: flex; flex-direction: column;
+    align-items: center; gap: 4px;
+    cursor: pointer;
+    min-width: 0;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .mobile-day-label {
+    font-size: 0.8rem; font-weight: 600;
+    color: rgba(255,255,255,0.92);
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    max-width: 100%;
+  }
+  .mobile-budget-bar-wrap {
+    width: 100%; height: 5px;
+    background: rgba(255,255,255,0.15);
+    border-radius: 100px; overflow: hidden;
+  }
+  .mobile-budget-bar-fill {
+    height: 100%; border-radius: 100px;
+    transition: width 0.3s, background 0.3s;
+    width: 0%;
+    background: var(--olive);
+  }
+  .mobile-budget-text {
+    font-size: 0.68rem; color: rgba(255,255,255,0.5);
+  }
+  .mobile-day-hint {
+    font-size: 0.58rem; color: rgba(255,255,255,0.28); letter-spacing: 0.03em;
+  }
+
+  /* ruimte onderaan zodat bottom bar content niet overlapt */
+  .planner-main { padding-bottom: 110px; }
+
+  /* verberg prev/next knoppen onderaan op mobiel */
+  .planner-nav { display: none; }
+
+  /* sticky budget bovenaan scrollbare content */
+  .mobile-sticky-budget {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: var(--sand);
+    border-bottom: 1px solid var(--sand-dark);
+    padding: 8px 1.5rem;
+    margin: -1.5rem -1.5rem 1.25rem -1.5rem;
+    display: flex; align-items: center; gap: 10px;
+  }
+  .mobile-sticky-budget-bar-wrap {
+    flex: 1; height: 6px;
+    background: rgba(0,0,0,0.08);
+    border-radius: 100px; overflow: hidden;
+  }
+  .mobile-sticky-budget-fill {
+    height: 100%; border-radius: 100px;
+    transition: width 0.3s, background 0.3s;
+  }
+  .mobile-sticky-budget-text {
+    font-size: 0.75rem; font-weight: 600;
+    white-space: nowrap; flex-shrink: 0;
+  }
+}
+
+/* ── DAY PICKER SHEET ──────────────────────────────────── */
+.day-sheet-backdrop {
+  display: none;
+  position: fixed; inset: 0;
+  background: rgba(0,0,0,0.5);
+  z-index: 6000;
+  align-items: flex-end;
+}
+.day-sheet-backdrop.open { display: flex; }
+.day-sheet {
+  background: var(--white);
+  border-radius: 20px 20px 0 0;
+  width: 100%;
+  max-height: 75vh;
+  overflow-y: auto;
+  padding: 12px 0 calc(16px + env(safe-area-inset-bottom));
+  animation: slideUp 0.25s ease;
+}
+@keyframes slideUp {
+  from { transform: translateY(100%); }
+  to { transform: translateY(0); }
+}
+.day-sheet-handle {
+  width: 36px; height: 4px;
+  background: var(--sand-dark);
+  border-radius: 100px;
+  margin: 0 auto 12px;
+}
+.day-sheet-title {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.1rem; font-weight: 400;
+  text-align: center;
+  padding: 0 1.5rem 12px;
+  border-bottom: 1px solid var(--sand-dark);
+  color: var(--ink);
+}
+.day-sheet-list { padding: 8px 0; }
+.day-sheet-item {
+  display: flex; align-items: center; gap: 12px;
+  padding: 11px 1.5rem;
+  cursor: pointer;
+  transition: background 0.1s;
+  -webkit-tap-highlight-color: transparent;
+}
+.day-sheet-item:active { background: var(--sand); }
+.day-sheet-item.current { background: var(--sand-dark); }
+.day-sheet-dot {
+  width: 32px; height: 32px;
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 0.75rem; font-weight: 600;
+  border: 2px solid var(--sand-dark);
+  flex-shrink: 0;
+  color: var(--muted);
+}
+.day-sheet-item.current .day-sheet-dot { border-color: var(--gold); color: var(--gold); }
+.day-sheet-item.done .day-sheet-dot { background: var(--olive); border-color: var(--olive); color: white; }
+.day-sheet-meta { flex: 1; min-width: 0; }
+.day-sheet-name { font-size: 0.85rem; font-weight: 500; color: var(--ink); }
+.day-sheet-sub { font-size: 0.72rem; color: var(--muted); }
+.day-sheet-badge {
+  font-size: 0.65rem; padding: 2px 8px;
+  border-radius: 100px;
+  background: var(--sand-dark);
+  color: var(--muted);
+  flex-shrink: 0;
+}
+.day-sheet-item.done .day-sheet-badge { background: rgba(90,122,58,0.12); color: var(--olive); }
 </style>
 </head>
 <body>
@@ -981,6 +1147,29 @@ h3 { font-family: 'DM Sans', sans-serif; font-weight: 500; font-size: 1rem; }
       </button>
     </div>
   </aside>
+
+  <!-- Mobile bottom navigation bar -->
+  <div class="mobile-bottom-bar hidden" id="mobile-bottom-bar">
+    <button class="mobile-nav-btn" id="mobile-prev-btn" onclick="mobilePrevDay()">←</button>
+    <div class="mobile-day-center" onclick="openDaySheet()">
+      <div class="mobile-day-label" id="mobile-day-label">Dag 1</div>
+      <div class="mobile-budget-bar-wrap">
+        <div class="mobile-budget-bar-fill" id="mobile-budget-fill"></div>
+      </div>
+      <div class="mobile-budget-text" id="mobile-budget-text">Leeg</div>
+      <div class="mobile-day-hint">tik om dag te wisselen</div>
+    </div>
+    <button class="mobile-nav-btn" id="mobile-next-btn" onclick="mobileNextDay()">→</button>
+  </div>
+
+  <!-- Day picker bottom sheet -->
+  <div class="day-sheet-backdrop" id="day-sheet-backdrop" onclick="closeDaySheet()">
+    <div class="day-sheet" id="day-sheet" onclick="event.stopPropagation()">
+      <div class="day-sheet-handle"></div>
+      <div class="day-sheet-title">Kies een dag</div>
+      <div class="day-sheet-list" id="day-sheet-list"></div>
+    </div>
+  </div>
 
   <!-- Main -->
   <main class="planner-main" id="planner-main">
@@ -1282,6 +1471,7 @@ function startPlanning() {
   renderSidebar();
   renderPlannerDay('heen');
   setTimeout(() => updateMap('heen'), 50);
+  updateMobileBar();
 }
 
 // ═══════════════════════════════════════════════════════
@@ -1810,7 +2000,19 @@ function renderPlannerDay(i) {
     </div>
   `;
 
+  const mobileStickyBudget = `
+    <div class="mobile-sticky-budget">
+      <div class="mobile-sticky-budget-bar-wrap">
+        <div class="mobile-sticky-budget-fill" style="width:${budgetPct}%; background:${budgetColor};"></div>
+      </div>
+      <div class="mobile-sticky-budget-text" style="color:${budgetColor};">
+        ${isFullDayAct ? '✓ Hele dag vol' : usedMin === 0 ? 'Leeg' : `${Math.floor(usedMin / 60)}u${usedMin % 60 > 0 ? ' ' + (usedMin % 60) + 'm' : ''} / 9u${isOverBudget ? ' ⚠️' : ''}`}
+      </div>
+    </div>
+  `;
+
   let html = `
+    ${mobileStickyBudget}
     <div class="planner-day-header fade-up">
       <div class="planner-day-label">Dag ${i + 1} van ${totalDays}</div>
       <h2 class="planner-day-title">${day.label}</h2>
@@ -1978,6 +2180,122 @@ function goDay(i) {
   renderPlannerDay(i);
   scrollToTop();
   setTimeout(() => updateMap(i), 50);
+  updateMobileBar();
+}
+
+// ── MOBILE NAVIGATION ───────────────────────────────────
+
+function updateMobileBar() {
+  const bar = document.getElementById('mobile-bottom-bar');
+  if (!bar) return;
+
+  const cd = state.currentDay;
+  const isHeen = cd === 'heen';
+  const isTerug = cd === 'terug';
+  const isNum = typeof cd === 'number';
+
+  const labelEl = document.getElementById('mobile-day-label');
+  const fillEl = document.getElementById('mobile-budget-fill');
+  const textEl = document.getElementById('mobile-budget-text');
+
+  if (isHeen) {
+    labelEl.textContent = '✈️ Heenreis';
+    fillEl.style.width = '0%';
+    textEl.textContent = 'Vluchtinfo';
+    textEl.style.color = 'rgba(255,255,255,0.5)';
+  } else if (isTerug) {
+    labelEl.textContent = '✈️ Terugreis';
+    fillEl.style.width = '0%';
+    textEl.textContent = 'Vluchtinfo';
+    textEl.style.color = 'rgba(255,255,255,0.5)';
+  } else {
+    const day = DAYS[cd];
+    labelEl.textContent = `Dag ${cd + 1} — ${day.name}`;
+    const plan = state.plan[cd];
+    const usedMin = plan.activities.reduce((s, a) => s + a.duration, 0);
+    const pct = Math.min(100, (usedMin / DAY_BUDGET_MINUTES) * 100);
+    const isOver = usedMin > DAY_BUDGET_MINUTES;
+    const color = isOver ? 'var(--terracotta)' : pct >= 70 ? '#d97706' : 'var(--olive)';
+    fillEl.style.width = pct + '%';
+    fillEl.style.background = color;
+    if (usedMin === 0) {
+      textEl.textContent = 'Leeg — tik om te plannen';
+      textEl.style.color = 'rgba(255,255,255,0.5)';
+    } else {
+      textEl.textContent = `${Math.floor(usedMin / 60)}u${usedMin % 60 > 0 ? ' ' + (usedMin % 60) + 'm' : ''} / 9 uur${isOver ? ' ⚠️' : ''}`;
+      textEl.style.color = isOver ? 'var(--terracotta)' : 'rgba(255,255,255,0.7)';
+    }
+  }
+
+  document.getElementById('mobile-prev-btn').disabled = isHeen;
+  document.getElementById('mobile-next-btn').disabled = isTerug;
+}
+
+function mobilePrevDay() {
+  const cd = state.currentDay;
+  if (cd === 'heen') return;
+  if (cd === 'terug') goDay(13);
+  else if (cd === 0) goDay('heen');
+  else goDay(cd - 1);
+}
+
+function mobileNextDay() {
+  const cd = state.currentDay;
+  if (cd === 'terug') return;
+  if (cd === 'heen') goDay(0);
+  else if (cd === 13) goDay('terug');
+  else goDay(cd + 1);
+}
+
+function openDaySheet() {
+  const list = document.getElementById('day-sheet-list');
+  const cd = state.currentDay;
+  let html = '';
+
+  const heenCls = cd === 'heen' ? 'current' : '';
+  html += `<div class="day-sheet-item ${heenCls}" onclick="goDay('heen');closeDaySheet()">
+    <div class="day-sheet-dot">✈️</div>
+    <div class="day-sheet-meta">
+      <div class="day-sheet-name">Heenreis</div>
+      <div class="day-sheet-sub">Za 13 juni 2026</div>
+    </div>
+  </div>`;
+
+  DAYS.forEach((day, i) => {
+    const plan = state.plan[i];
+    const isDone = plan.activities.length > 0;
+    const isCurrent = cd === i;
+    const usedMin = plan.activities.reduce((s, a) => s + a.duration, 0);
+    const badge = isDone
+      ? `${Math.floor(usedMin / 60)}u${usedMin % 60 > 0 ? ' ' + (usedMin % 60) + 'm' : ''}`
+      : 'Leeg';
+    const dot = isDone ? '✓' : String(i + 1);
+    const birthday = i === 2 ? ' 🎂' : '';
+    html += `<div class="day-sheet-item ${isCurrent ? 'current' : ''} ${isDone ? 'done' : ''}" onclick="goDay(${i});closeDaySheet()">
+      <div class="day-sheet-dot">${dot}</div>
+      <div class="day-sheet-meta">
+        <div class="day-sheet-name">${day.label}${birthday}</div>
+        <div class="day-sheet-sub">${day.name}</div>
+      </div>
+      <div class="day-sheet-badge">${badge}</div>
+    </div>`;
+  });
+
+  const terugCls = cd === 'terug' ? 'current' : '';
+  html += `<div class="day-sheet-item ${terugCls}" onclick="goDay('terug');closeDaySheet()">
+    <div class="day-sheet-dot">✈️</div>
+    <div class="day-sheet-meta">
+      <div class="day-sheet-name">Terugreis</div>
+      <div class="day-sheet-sub">Za 27 juni 2026</div>
+    </div>
+  </div>`;
+
+  list.innerHTML = html;
+  document.getElementById('day-sheet-backdrop').classList.add('open');
+}
+
+function closeDaySheet() {
+  document.getElementById('day-sheet-backdrop').classList.remove('open');
 }
 
 function renderFlightPage(type) {
@@ -2080,6 +2398,7 @@ function selectActivity(dayIndex, actId) {
     renderPlannerDay(dayIndex);
     renderSidebar();
     setTimeout(() => updateMap(dayIndex), 50);
+    updateMobileBar();
     return;
   }
 
@@ -2105,6 +2424,7 @@ function selectActivity(dayIndex, actId) {
   renderPlannerDay(dayIndex);
   renderSidebar();
   setTimeout(() => updateMap(dayIndex), 50);
+  updateMobileBar();
 
   // Auto-advance only for full-day activities
   if (isFullDay) {
@@ -2203,6 +2523,7 @@ function goBackToPlanner() {
   showScreen('screen-planner');
   renderSidebar();
   renderPlannerDay(state.currentDay);
+  updateMobileBar();
 }
 
 function resetAll() {
@@ -2246,6 +2567,11 @@ function fireConfetti() {
 function showScreen(id) {
   document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
   document.getElementById(id).classList.add('active');
+  const bar = document.getElementById('mobile-bottom-bar');
+  if (bar) {
+    if (id === 'screen-planner') bar.classList.remove('hidden');
+    else bar.classList.add('hidden');
+  }
 }
 
 // ═══════════════════════════════════════════════════════
