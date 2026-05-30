@@ -365,6 +365,116 @@ h3 { font-family: 'DM Sans', sans-serif; font-weight: 500; font-size: 1rem; }
 .act-card.selected .act-check { background: var(--sea); border-color: var(--sea); color: white; }
 .act-card.special.selected .act-check { background: var(--gold); border-color: var(--gold); }
 
+/* Info badge (replaces act-check — shows ℹ when not selected, ✓ when selected) */
+.act-info-hint {
+  position: absolute;
+  top: 10px; right: 10px;
+  width: 22px; height: 22px;
+  border-radius: 50%;
+  border: 1.5px solid var(--sand-dark);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 10px;
+  color: var(--muted);
+  background: white;
+  transition: all 0.2s;
+  pointer-events: none;
+  font-weight: 600;
+}
+.act-card.selected .act-info-hint {
+  background: var(--sea);
+  border-color: var(--sea);
+  color: white;
+}
+.act-card.special.selected .act-info-hint {
+  background: var(--gold);
+  border-color: var(--gold);
+  color: white;
+}
+
+/* Select button at bottom of activity card */
+.act-select-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  width: 100%;
+  margin-top: 10px;
+  padding: 8px 14px;
+  border-radius: 100px;
+  border: 1.5px solid var(--sea-deep);
+  background: transparent;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--sea-deep);
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.act-select-btn:hover:not(:disabled) {
+  background: var(--sea-deep);
+  color: white;
+}
+.act-select-btn.selected {
+  background: var(--sea-deep);
+  color: white;
+  border-color: var(--sea-deep);
+}
+.act-card.special .act-select-btn {
+  border-color: var(--gold);
+  color: var(--gold);
+}
+.act-card.special .act-select-btn:hover:not(:disabled) {
+  background: var(--gold);
+  color: white;
+}
+.act-card.special .act-select-btn.selected {
+  background: var(--gold);
+  border-color: var(--gold);
+  color: white;
+}
+.act-select-btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+/* Activity detail modal */
+.activity-detail-header {
+  position: sticky;
+  top: 0;
+  background: var(--white);
+  z-index: 1;
+  padding: 1rem 1.5rem 0.75rem;
+  border-bottom: 1px solid var(--sand-dark);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+}
+.activity-detail-body {
+  padding: 1.5rem;
+  overflow-y: auto;
+}
+.activity-detail-footer {
+  padding: 1rem 1.5rem 1.5rem;
+  border-top: 1px solid var(--sand-dark);
+  display: flex;
+  gap: 10px;
+  justify-content: flex-end;
+}
+#modal-activity-detail .modal-box {
+  max-width: 520px;
+  max-height: 88vh;
+  overflow-y: auto;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+}
+@media (max-width: 768px) {
+  #modal-activity-detail .modal-box {
+    max-height: 92vh;
+  }
+}
+
 /* Day slot summary */
 .day-slots {
   background: var(--white);
@@ -1288,6 +1398,23 @@ h3 { font-family: 'DM Sans', sans-serif; font-weight: 500; font-size: 1rem; }
   </div>
 </div>
 
+<!-- ═══════════════════════════════════════════
+     MODAL: ACTIVITEIT DETAIL
+══════════════════════════════════════════════ -->
+<div id="modal-activity-detail" class="modal-backdrop" onclick="handleDetailBackdropClick(event)">
+  <div class="modal-box">
+    <div class="activity-detail-header">
+      <span style="font-size:0.68rem; text-transform:uppercase; letter-spacing:0.15em; color:var(--muted);">Activiteit details</span>
+      <button onclick="closeActivityDetail()" style="background:none; border:none; cursor:pointer; font-size:1.15rem; color:var(--muted); padding:4px 8px; border-radius:6px; line-height:1; transition:color 0.15s;" onmouseover="this.style.color='var(--ink)'" onmouseout="this.style.color='var(--muted)'">✕</button>
+    </div>
+    <div id="activity-detail-content" class="activity-detail-body"></div>
+    <div class="activity-detail-footer">
+      <button class="btn-cancel" onclick="closeActivityDetail()">Sluiten</button>
+      <button class="btn-primary" id="btn-detail-select" onclick="detailSelectActivity()">＋ Selecteer voor vandaag</button>
+    </div>
+  </div>
+</div>
+
 <script>
 // ═══════════════════════════════════════════════════════
 //  DATA
@@ -2062,19 +2189,20 @@ function renderPlannerDay(i) {
     const isBlocked = isBlockedByFullDay || isFullDayBlocked;
     const durLabel = act.duration > 0 ? formatDuration(act.duration) : '';
     const durColor = act.duration >= 420 ? 'var(--terracotta)' : act.duration >= 240 ? '#d97706' : 'var(--sea-deep)';
+    const selectLabel = isSelected ? '✓ Geselecteerd' : (isBlocked ? 'Niet beschikbaar' : '＋ Selecteer');
     return `
       <div class="act-card ${isSelected ? 'selected' : ''} ${act.special ? 'special' : ''} ${isBlocked ? 'blocked' : ''}"
-           onclick="${isBlocked ? '' : `selectActivity(${i}, '${act.id}')`}"
-           style="${isBlocked ? 'opacity:0.4; cursor:not-allowed;' : ''}"
-           title="${isSelected ? 'Klik om te verwijderen' : isBlocked ? 'Niet combineerbaar met een hele-dag activiteit' : 'Klik om toe te voegen'}">
-        <div class="act-check">${isSelected ? '✓' : ''}</div>
+           onclick="openActivityDetail(${i}, '${act.id}')"
+           style="${isBlocked ? 'opacity:0.4;' : ''}"
+           title="Klik voor meer informatie over deze activiteit">
+        <div class="act-info-hint">${isSelected ? '✓' : 'ℹ'}</div>
         <div class="act-icon">${act.icon}</div>
         <div class="act-title">${act.title}</div>
         ${durLabel ? `<div style="display:inline-block; font-size:0.68rem; font-weight:700; color:${durColor}; background:${durColor}18; border-radius:100px; padding:2px 8px; margin-bottom:6px;">⏱️ ${durLabel}</div>` : ''}
         ${act.distKm !== undefined ? `<div style="font-size:0.7rem; color:var(--olive); font-weight:600; margin-bottom:4px;">📏 ${act.distKm} km vanaf ${act.distFrom}</div>` : ''}
         ${act.location ? `
           <div style="font-size:0.7rem; color:var(--sea); margin: 4px 0 8px; display:flex; align-items:center; gap:4px; font-weight:500;">
-            📍 <a href="${act.mapUrl}" target="_blank" onclick="event.stopPropagation();" style="color:var(--sea); text-decoration:none; border-bottom:1px dashed var(--sea);">${act.location}</a>
+            📍 <a href="${act.mapUrl}" target="_blank" onclick="event.stopPropagation();" style="color:var(--sea); text-decoration:none; border-bottom:1px dashed var(--sea);">${act.location.split(',')[0]}</a>
           </div>
         ` : ''}
         <div class="act-why">${act.why}</div>
@@ -2082,6 +2210,12 @@ function renderPlannerDay(i) {
           ${act.cost === 0 ? '✓ Gratis' : `~€${act.cost} p.p. 2 pers.`}
         </div>
         <div class="act-tip">💡 ${act.tip}</div>
+        <button class="act-select-btn ${isSelected ? 'selected' : ''}"
+                onclick="event.stopPropagation(); ${isBlocked ? '' : `selectActivity(${i}, '${act.id}')`}"
+                ${isBlocked ? 'disabled' : ''}
+                title="${isSelected ? 'Klik om te verwijderen uit dag' : isBlocked ? 'Niet combineerbaar met een hele-dag activiteit' : 'Voeg toe aan dag'}">
+          ${selectLabel}
+        </button>
       </div>`;
   }
 
@@ -2437,6 +2571,106 @@ function selectActivity(dayIndex, actId) {
       }
     }, 900);
   }
+}
+
+// ═══════════════════════════════════════════════════════
+//  ACTIVITY DETAIL MODAL
+// ═══════════════════════════════════════════════════════
+let detailContext = { dayIndex: null, actId: null };
+
+function openActivityDetail(dayIndex, actId) {
+  const act = ACTIVITIES.find(a => a.id === actId);
+  if (!act) return;
+
+  detailContext = { dayIndex, actId };
+
+  const plan = state.plan[dayIndex];
+  const isSelected = plan.activities.some(a => a.id === actId);
+  const isFullDayAct = dayIsFullDay(dayIndex);
+  const isBlockedByFullDay = !isSelected && isFullDayAct;
+  const isFullDayBlocked = !isSelected && act.duration >= 420 && plan.activities.length > 0;
+  const isBlocked = isBlockedByFullDay || isFullDayBlocked;
+
+  const durLabel = act.duration > 0 ? formatDuration(act.duration) : '';
+  const durColor = act.duration >= 420 ? 'var(--terracotta)' : act.duration >= 240 ? '#d97706' : 'var(--sea-deep)';
+  const day = typeof dayIndex === 'number' ? DAYS[dayIndex] : null;
+  const catLabel = CAT_LABELS[act.cat] || '';
+
+  document.getElementById('activity-detail-content').innerHTML = `
+    <div style="text-align:center; margin-bottom:1rem;">
+      <div style="font-size:2.8rem; margin-bottom:0.5rem;">${act.icon}</div>
+      <div style="font-family:'Cormorant Garamond',serif; font-size:1.6rem; font-weight:400; line-height:1.2; margin-bottom:0.4rem;">${act.title}</div>
+      <div style="font-size:0.75rem; color:var(--muted);">${catLabel}</div>
+    </div>
+
+    <div style="display:flex; flex-wrap:wrap; gap:8px; justify-content:center; margin-bottom:1.5rem;">
+      ${durLabel ? `<span style="font-size:0.78rem; font-weight:700; color:${durColor}; background:${durColor}18; border-radius:100px; padding:5px 14px;">⏱️ ${durLabel}</span>` : ''}
+      <span style="font-size:0.78rem; font-weight:700; color:${act.cost === 0 ? 'var(--olive)' : 'var(--terracotta)'}; background:${act.cost === 0 ? 'rgba(90,122,58,0.1)' : 'var(--terracotta-light)'}; border-radius:100px; padding:5px 14px;">
+        ${act.cost === 0 ? '✓ Gratis' : `~€${act.cost} p.p. 2 pers.`}
+      </span>
+      ${day && day.special ? `<span style="font-size:0.78rem; font-weight:700; color:var(--gold); background:var(--gold-light); border-radius:100px; padding:5px 14px;">🎂 Verjaardagsidee</span>` : ''}
+    </div>
+
+    ${act.location ? `
+      <a href="${act.mapUrl}" target="_blank" onclick="event.stopPropagation();"
+         style="display:flex; align-items:center; gap:10px; background:var(--sea-light); border:1px solid rgba(27,108,168,0.2); border-radius:var(--radius); padding:12px 14px; margin-bottom:1.25rem; text-decoration:none; color:var(--sea-deep); transition:background 0.15s;">
+        <span style="font-size:1.3rem;">📍</span>
+        <div style="flex:1; min-width:0;">
+          <div style="font-size:0.85rem; font-weight:600;">${act.location}</div>
+          <div style="font-size:0.72rem; color:var(--muted); margin-top:1px;">Tik om te openen in Google Maps ↗</div>
+        </div>
+      </a>
+    ` : ''}
+
+    <div style="margin-bottom:1.25rem;">
+      <div style="font-size:0.68rem; font-weight:700; text-transform:uppercase; letter-spacing:0.12em; color:var(--muted); margin-bottom:8px;">Waarom deze activiteit?</div>
+      <div style="font-size:0.9rem; line-height:1.65; color:var(--ink);">${act.why}</div>
+    </div>
+
+    <div style="background:var(--sand); border-radius:var(--radius); padding:14px 16px;">
+      <div style="font-size:0.68rem; font-weight:700; text-transform:uppercase; letter-spacing:0.12em; color:var(--muted); margin-bottom:6px;">💡 Tip</div>
+      <div style="font-size:0.88rem; line-height:1.55; color:var(--ink);">${act.tip}</div>
+    </div>
+  `;
+
+  const selectBtn = document.getElementById('btn-detail-select');
+  if (isBlocked) {
+    selectBtn.textContent = 'Niet combineerbaar';
+    selectBtn.disabled = true;
+    selectBtn.style.opacity = '0.4';
+  } else if (isSelected) {
+    selectBtn.textContent = '✕ Verwijder uit dag';
+    selectBtn.style.background = 'var(--terracotta)';
+    selectBtn.style.borderColor = 'var(--terracotta)';
+    selectBtn.disabled = false;
+    selectBtn.style.opacity = '1';
+  } else {
+    selectBtn.textContent = act.special ? '＋ Selecteer voor verjaardag' : '＋ Selecteer voor vandaag';
+    selectBtn.style.background = act.special ? 'var(--gold)' : '';
+    selectBtn.style.borderColor = act.special ? 'var(--gold)' : '';
+    selectBtn.disabled = false;
+    selectBtn.style.opacity = '1';
+  }
+
+  document.getElementById('modal-activity-detail').classList.add('open');
+}
+
+function closeActivityDetail() {
+  document.getElementById('modal-activity-detail').classList.remove('open');
+  detailContext = { dayIndex: null, actId: null };
+}
+
+function handleDetailBackdropClick(e) {
+  if (e.target === document.getElementById('modal-activity-detail')) {
+    closeActivityDetail();
+  }
+}
+
+function detailSelectActivity() {
+  const { dayIndex, actId } = detailContext;
+  if (dayIndex === null || actId === null) return;
+  closeActivityDetail();
+  selectActivity(dayIndex, actId);
 }
 
 // ═══════════════════════════════════════════════════════
