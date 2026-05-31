@@ -682,6 +682,22 @@ h3 { font-family: 'DM Sans', sans-serif; font-weight: 500; font-size: 1rem; }
   margin-bottom: 6px;
 }
 
+.ov-res-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  font-size: 0.6rem;
+  font-weight: 700;
+  background: var(--terracotta-light);
+  color: var(--terracotta);
+  border: 1px solid rgba(196,98,45,0.35);
+  padding: 2px 6px;
+  border-radius: 4px;
+  letter-spacing: 0.03em;
+  margin-top: 3px;
+  flex-shrink: 0;
+}
+
 .overview-stats {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
@@ -1457,6 +1473,255 @@ h3 { font-family: 'DM Sans', sans-serif; font-weight: 500; font-size: 1rem; }
 .menu-sheet-name { font-size: 0.92rem; font-weight: 600; color: var(--ink); }
 .menu-sheet-sub { font-size: 0.74rem; color: var(--muted); margin-top: 2px; line-height: 1.3; }
 .menu-sheet-arrow { color: var(--muted); font-size: 1rem; flex-shrink: 0; }
+
+/* ── ACTIVITEITEN CATALOGUS ──────────────────────────── */
+#screen-catalog {
+  flex-direction: column;
+  background: var(--sand);
+}
+.catalog-header {
+  background: var(--sea-deep);
+  color: white;
+  padding: 2rem 3rem 1.5rem;
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 1rem;
+}
+.catalog-header::after {
+  content: '';
+  position: absolute;
+  bottom: -1px; left: 0; right: 0;
+  height: 40px;
+  background: var(--sand);
+  clip-path: ellipse(55% 100% at 50% 100%);
+}
+.catalog-header h1 { color: white; margin-bottom: 0.25rem; }
+.catalog-header p { color: rgba(255,255,255,0.6); font-size: 0.9rem; }
+.catalog-header-back {
+  background: rgba(255,255,255,0.12);
+  border: 1px solid rgba(255,255,255,0.25);
+  color: white;
+  border-radius: 100px;
+  padding: 8px 18px;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.82rem;
+  cursor: pointer;
+  transition: background 0.15s;
+  flex-shrink: 0;
+  position: relative;
+  z-index: 1;
+}
+.catalog-header-back:hover { background: rgba(255,255,255,0.22); }
+
+.catalog-body {
+  padding: 2rem 3rem 4rem;
+  max-width: 1200px;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.catalog-filters {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-bottom: 1.5rem;
+  padding: 1rem 1.25rem;
+  background: var(--white);
+  border: 1.5px solid var(--sand-dark);
+  border-radius: var(--radius-lg);
+}
+.catalog-filter-label {
+  font-size: 0.72rem;
+  color: var(--muted);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  white-space: nowrap;
+}
+.catalog-filter-input {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.85rem;
+  border: 1.5px solid var(--sand-dark);
+  border-radius: 100px;
+  padding: 7px 14px;
+  background: var(--sand);
+  color: var(--ink);
+  outline: none;
+  transition: border-color 0.15s;
+  min-width: 0;
+}
+.catalog-filter-input:focus { border-color: var(--sea); }
+.catalog-filter-input.search { flex: 1; min-width: 160px; }
+.catalog-filter-select {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.82rem;
+  border: 1.5px solid var(--sand-dark);
+  border-radius: 100px;
+  padding: 7px 28px 7px 14px;
+  background: var(--sand);
+  color: var(--ink);
+  outline: none;
+  cursor: pointer;
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%237A6F60'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 10px center;
+  transition: border-color 0.15s;
+}
+.catalog-filter-select:focus { border-color: var(--sea); }
+.catalog-count {
+  font-size: 0.78rem;
+  color: var(--muted);
+  margin-left: auto;
+  white-space: nowrap;
+}
+
+.catalog-table-wrap {
+  background: var(--white);
+  border: 1.5px solid var(--sand-dark);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  overflow-x: auto;
+}
+.catalog-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.85rem;
+}
+.catalog-table thead tr {
+  background: var(--sea-deep);
+  color: white;
+}
+.catalog-th {
+  padding: 11px 14px;
+  text-align: left;
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  white-space: nowrap;
+  cursor: pointer;
+  user-select: none;
+  transition: background 0.15s;
+}
+.catalog-th:hover { background: rgba(255,255,255,0.08); }
+.catalog-th.active { background: rgba(255,255,255,0.12); }
+.catalog-th .sort-icon {
+  display: inline-block;
+  margin-left: 5px;
+  opacity: 0.35;
+  font-size: 0.7rem;
+  font-style: normal;
+}
+.catalog-th.active .sort-icon { opacity: 1; }
+
+.catalog-tr {
+  border-bottom: 1px solid var(--sand-dark);
+  cursor: pointer;
+  transition: background 0.1s;
+}
+.catalog-tr:last-child { border-bottom: none; }
+.catalog-tr:hover { background: var(--sand); }
+.catalog-tr.planned { background: rgba(27,108,168,0.04); }
+.catalog-tr.planned:hover { background: rgba(27,108,168,0.09); }
+
+.catalog-td {
+  padding: 11px 14px;
+  vertical-align: middle;
+  color: var(--ink);
+}
+.catalog-td-name {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  font-weight: 500;
+}
+.catalog-td-icon { font-size: 1.15rem; flex-shrink: 0; }
+.catalog-td-sub { font-size: 0.72rem; color: var(--muted); margin-top: 2px; }
+
+.cat-pill {
+  display: inline-block;
+  font-size: 0.7rem;
+  font-weight: 600;
+  padding: 3px 9px;
+  border-radius: 100px;
+  background: var(--sand-dark);
+  color: var(--ink);
+  white-space: nowrap;
+}
+.cost-pill {
+  display: inline-block;
+  font-size: 0.72rem;
+  font-weight: 700;
+  padding: 3px 9px;
+  border-radius: 100px;
+  white-space: nowrap;
+}
+.cost-pill.gratis { background: rgba(90,122,58,0.12); color: var(--olive); }
+.cost-pill.betaald { background: rgba(196,98,45,0.1); color: var(--terracotta); }
+.res-pill {
+  display: inline-block;
+  font-size: 0.7rem;
+  font-weight: 700;
+  padding: 3px 9px;
+  border-radius: 100px;
+  background: rgba(196,98,45,0.1);
+  color: var(--terracotta);
+  white-space: nowrap;
+}
+.planned-pill {
+  display: inline-block;
+  font-size: 0.7rem;
+  font-weight: 700;
+  padding: 3px 9px;
+  border-radius: 100px;
+  background: rgba(27,108,168,0.1);
+  color: var(--sea);
+  white-space: nowrap;
+}
+.catalog-muted { color: var(--muted); font-size: 0.8rem; }
+
+.catalog-empty {
+  padding: 4rem 2rem;
+  text-align: center;
+  color: var(--muted);
+  font-style: italic;
+}
+
+.btn-catalog-link {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  background: rgba(255,255,255,0.05);
+  border: 1.5px solid rgba(255,255,255,0.15);
+  border-radius: var(--radius);
+  padding: 9px 16px;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.82rem;
+  color: rgba(255,255,255,0.5);
+  cursor: pointer;
+  transition: all 0.2s;
+  margin-bottom: 8px;
+}
+.btn-catalog-link:hover {
+  background: rgba(255,255,255,0.1);
+  border-color: rgba(255,255,255,0.28);
+  color: rgba(255,255,255,0.8);
+}
+
+@media (max-width: 768px) {
+  .catalog-header { padding: 1.5rem 1.25rem 1.25rem; flex-direction: column; align-items: flex-start; }
+  .catalog-body { padding: 1.25rem 1rem 3rem; }
+  .catalog-th, .catalog-td { padding: 9px 10px; }
+  .catalog-th.hide-mob, .catalog-td.hide-mob { display: none; }
+  .catalog-filters { gap: 8px; }
+}
 </style>
 </head>
 <body>
@@ -1520,8 +1785,11 @@ h3 { font-family: 'DM Sans', sans-serif; font-weight: 500; font-size: 1rem; }
     </div>
     <div class="day-list" id="day-list"></div>
     <div class="sidebar-footer">
+      <button class="btn-catalog-link" onclick="showCatalog()">
+        <span style="font-size:1rem;">📋</span> Alle activiteiten bekijken
+      </button>
       <button class="btn-add-activity" onclick="openAddActivityModal()">
-        <span style="font-size:1.1rem;">＋</span> Activiteit toevoegen
+        <span style="font-size:1.1rem;">＋</span> Activiteit voorstellen
       </button>
     </div>
   </aside>
@@ -1569,6 +1837,14 @@ h3 { font-family: 'DM Sans', sans-serif; font-weight: 500; font-size: 1rem; }
           <div class="menu-sheet-meta">
             <div class="menu-sheet-name">Bekijk overzicht</div>
             <div class="menu-sheet-sub">Volledig plan, kosten, kaart & terugkeer-code</div>
+          </div>
+          <span class="menu-sheet-arrow">→</span>
+        </button>
+        <button class="menu-sheet-item" onclick="closeMenuSheet(); showCatalog();">
+          <span class="menu-sheet-icon">📋</span>
+          <div class="menu-sheet-meta">
+            <div class="menu-sheet-name">Alle activiteiten</div>
+            <div class="menu-sheet-sub">Bekijk en filter de volledige catalogus</div>
           </div>
           <span class="menu-sheet-arrow">→</span>
         </button>
@@ -1692,6 +1968,78 @@ h3 { font-family: 'DM Sans', sans-serif; font-weight: 500; font-size: 1rem; }
 </div>
 
 <!-- ═══════════════════════════════════════════
+     SCREEN 4: ACTIVITEITEN CATALOGUS
+══════════════════════════════════════════════ -->
+<div id="screen-catalog" class="screen">
+  <div class="catalog-header">
+    <div style="position:relative; z-index:1;">
+      <h1>Alle activiteiten</h1>
+      <p id="catalog-subtitle">Sorteer en filter de volledige catalogus</p>
+    </div>
+    <button class="catalog-header-back" onclick="goBackFromCatalog()">← Terug naar planner</button>
+  </div>
+  <div class="catalog-body">
+    <div class="catalog-filters">
+      <span class="catalog-filter-label">Zoek</span>
+      <input class="catalog-filter-input search" id="catalog-search" type="text"
+        placeholder="Naam of locatie…" oninput="applyCatalogFilters()" autocomplete="off">
+      <span class="catalog-filter-label">Categorie</span>
+      <select class="catalog-filter-select" id="catalog-cat" onchange="applyCatalogFilters()">
+        <option value="">Alle</option>
+        <option value="stranden">🏖️ Stranden</option>
+        <option value="cultuur">🏛️ Cultuur</option>
+        <option value="natuur">🌿 Natuur</option>
+        <option value="eten">🍷 Eten &amp; Drinken</option>
+        <option value="hotel">🏨 Hotel</option>
+        <option value="bday">🎂 Verjaardag</option>
+      </select>
+      <span class="catalog-filter-label">Kosten</span>
+      <select class="catalog-filter-select" id="catalog-cost" onchange="applyCatalogFilters()">
+        <option value="">Alle</option>
+        <option value="gratis">Gratis</option>
+        <option value="betaald">Betaald</option>
+      </select>
+      <span class="catalog-filter-label">Reservering</span>
+      <select class="catalog-filter-select" id="catalog-res" onchange="applyCatalogFilters()">
+        <option value="">Alle</option>
+        <option value="ja">Vereist</option>
+        <option value="nee">Niet vereist</option>
+      </select>
+      <span class="catalog-count" id="catalog-count"></span>
+    </div>
+
+    <div class="catalog-table-wrap">
+      <table class="catalog-table">
+        <thead>
+          <tr>
+            <th class="catalog-th" data-col="title" onclick="sortCatalog('title')">
+              Activiteit <em class="sort-icon" id="sort-icon-title">↕</em>
+            </th>
+            <th class="catalog-th" data-col="cat" onclick="sortCatalog('cat')">
+              Categorie <em class="sort-icon" id="sort-icon-cat">↕</em>
+            </th>
+            <th class="catalog-th" data-col="duration" onclick="sortCatalog('duration')">
+              Duur <em class="sort-icon" id="sort-icon-duration">↕</em>
+            </th>
+            <th class="catalog-th" data-col="cost" onclick="sortCatalog('cost')">
+              Kosten <em class="sort-icon" id="sort-icon-cost">↕</em>
+            </th>
+            <th class="catalog-th hide-mob" data-col="location" onclick="sortCatalog('location')">
+              Locatie <em class="sort-icon" id="sort-icon-location">↕</em>
+            </th>
+            <th class="catalog-th" data-col="reservation" onclick="sortCatalog('reservation')">
+              Reservering <em class="sort-icon" id="sort-icon-reservation">↕</em>
+            </th>
+            <th class="catalog-th hide-mob">Ingepland</th>
+          </tr>
+        </thead>
+        <tbody id="catalog-tbody"></tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════
      MODAL: ACTIVITEIT TOEVOEGEN
 ══════════════════════════════════════════════ -->
 <div id="modal-add-activity" class="modal-backdrop" onclick="handleBackdropClick(event)">
@@ -1780,26 +2128,26 @@ const ACTIVITIES = [
   { id: 'n1', cat: 'natuur', icon: '🐢', title: 'Caretta Caretta schildpadden spotten', duration: 60, why: 'Grote zeeschildpadden in de haven van Argostoli — van heel dichtbij, gratis en ontroerend.', tip: 'Ga tussen 9:00 en 11:00 naar de vissersboten op de kade. Hoe eerder, hoe meer schildpadden.', cost: 0, location: 'Kade van Argostoli (bij de vissersboten), Argostoli, Kefalonia', mapUrl: 'https://www.google.com/maps/search/?api=1&query=Argostoli+Harbour+Kefalonia', lat: 38.169, lng: 20.499 },
   { id: 'n2', cat: 'natuur', icon: '⛰️', title: 'Mount Ainos National Park', duration: 180, why: 'Top van de Ionische eilanden (1628m). Op heldere dagen zie je Zakynthos, Ithaka én het vasteland.', tip: 'Asfaltweg tot de telecomtorens, dan korte wandeling. Altijd warme trui meenemen — het waait fors.', cost: 0, location: 'Mount Ainos National Park, Kefalonia', mapUrl: 'https://www.google.com/maps/search/?api=1&query=Mount+Ainos+National+Park', lat: 38.136, lng: 20.672 },
   { id: 'n3', cat: 'natuur', icon: '🥾', title: 'Wandelen op kalderimia (ezelspaden)', duration: 240, why: 'Historische paden door olijfgaarden, langs ruïnes. Het echte eiland ontdekken weg van de kust.', tip: 'Gebruik Wikiloc of AllTrails. Start uiterlijk 8:00 uur — het wordt snel heet in juni.', cost: 0, location: 'Sami en omgeving, Kefalonia', mapUrl: 'https://www.google.com/maps/search/?api=1&query=Sami+Kefalonia', lat: 38.251, lng: 20.647 },
-  { id: 'n4', cat: 'natuur', icon: '🚤', title: 'Motorboot huren (zonder vaarbewijs)', duration: 360, why: 'Ultieme vrijheid: verborgen baaitjes bereiken die alleen per boot toegankelijk zijn. Dé topdag.', tip: 'Boek vroeg in de vakantie zodat je bij slecht weer kunt verzetten. Huren mag tot 30 pk.', cost: 150, location: 'Fiskardo of Argostoli Haven, Kefalonia', mapUrl: 'https://www.google.com/maps/search/?api=1&query=Fiskardo+Boat+Rental', lat: 38.461, lng: 20.578 },
-  { id: 'n5', cat: 'natuur', icon: '🚣', title: 'Kajakken langs de kust van Lassi', duration: 180, why: 'Zeekajak langs kalksteenkliffen en verborgen zeegrotten. Uniek perspectief dat je van het strand nooit krijgt.', tip: 'Begeleide tours vanuit Minies of Antisamos — de gids kent alle beste grotten.', cost: 60, location: 'Lassi Coastline, Lassi, Kefalonia', mapUrl: 'https://www.google.com/maps/search/?api=1&query=Lassi+Kefalonia', lat: 38.157, lng: 20.48 },
-  { id: 'n6', cat: 'natuur', icon: '🗺️', title: 'Dagtrip naar Ithaka', duration: 480, why: 'Het eiland van Odysseus — nóg rustiger en met een haast mystieke sfeer. Havenstadje Vathy is tijdloos.', tip: 'Vroege autoveerboot vanuit Sami. Check bij verhuurder of de verzekering de overtocht dekt.', cost: 40, location: 'Ferry Haven Sami, Sami, Kefalonia', mapUrl: 'https://www.google.com/maps/search/?api=1&query=Port+of+Sami+Kefalonia', lat: 38.251, lng: 20.647 },
+  { id: 'n4', cat: 'natuur', icon: '🚤', title: 'Motorboot huren (zonder vaarbewijs)', duration: 360, why: 'Ultieme vrijheid: verborgen baaitjes bereiken die alleen per boot toegankelijk zijn. Dé topdag.', tip: 'Boek vroeg in de vakantie zodat je bij slecht weer kunt verzetten. Huren mag tot 30 pk.', cost: 150, reservation: true, location: 'Fiskardo of Argostoli Haven, Kefalonia', mapUrl: 'https://www.google.com/maps/search/?api=1&query=Fiskardo+Boat+Rental', lat: 38.461, lng: 20.578 },
+  { id: 'n5', cat: 'natuur', icon: '🚣', title: 'Kajakken langs de kust van Lassi', duration: 180, why: 'Zeekajak langs kalksteenkliffen en verborgen zeegrotten. Uniek perspectief dat je van het strand nooit krijgt.', tip: 'Begeleide tours vanuit Minies of Antisamos — de gids kent alle beste grotten.', cost: 60, reservation: true, location: 'Lassi Coastline, Lassi, Kefalonia', mapUrl: 'https://www.google.com/maps/search/?api=1&query=Lassi+Kefalonia', lat: 38.157, lng: 20.48 },
+  { id: 'n6', cat: 'natuur', icon: '🗺️', title: 'Dagtrip naar Ithaka', duration: 480, why: 'Het eiland van Odysseus — nóg rustiger en met een haast mystieke sfeer. Havenstadje Vathy is tijdloos.', tip: 'Vroege autoveerboot vanuit Sami. Check bij verhuurder of de verzekering de overtocht dekt.', cost: 40, reservation: true, location: 'Ferry Haven Sami, Sami, Kefalonia', mapUrl: 'https://www.google.com/maps/search/?api=1&query=Port+of+Sami+Kefalonia', lat: 38.251, lng: 20.647 },
   { id: 'n7', cat: 'natuur', icon: '🐡', title: 'Snorkelen bij Foki Beach', duration: 120, why: 'Kristalhelder water boven rotsen vol vis, zeeëgels en octopussen. Rustig en nauwelijks bezocht.', tip: 'Bezoek \'s ochtends voor het beste licht. Eigen snorkelset meenemen — geen verhuur ter plekke.', cost: 0, location: 'Foki Beach, Fiskardo, Kefalonia', mapUrl: 'https://www.google.com/maps/search/?api=1&query=Foki+Beach+Kefalonia', lat: 38.448, lng: 20.584 },
   { id: 'n8', cat: 'natuur', icon: '🦩', title: 'Vogels kijken in de Koutavos Lagune', duration: 60, why: 'Beschermd lagune-ecosysteem vol flamingo\'s en reigers. Wandelpad omheen voor een ontspannen ochtend.', tip: 'Vroeg \'s ochtends voor de meeste activiteit. Gratis en goed bereikbaar vanuit Argostoli.', cost: 0, location: 'Koutavos Lagoon, Argostoli, Kefalonia', mapUrl: 'https://www.google.com/maps/search/?api=1&query=Koutavos+Lagoon+Argostoli', lat: 38.169, lng: 20.499 },
   // ── ETEN & DRINKEN ──────────────────────────────────────
   { id: 'e1', cat: 'eten', icon: '🍷', title: 'Wijnproeverij Gentilini Winery', duration: 90, why: 'De beste boetiekwijnmaker van Kefalonia. De frisse Robola-wijn is legendarisch. Relaxte proeverij in schaduwrijke tuin.', tip: 'Geen reservering nodig voor standaardtasting, maar meld je \'s namiddags aan. Proef ook de Muscat.', cost: 30, location: 'Gentilini Winery, Minies, Kefalonia', mapUrl: 'https://www.google.com/maps/search/?api=1&query=Gentilini+Winery+Kefalonia', lat: 38.143, lng: 20.505 },
-  { id: 'e2', cat: 'eten', icon: '🌅', title: 'Zonsondergang bij Apolafsi (Lixouri)', duration: 120, why: 'Eten met de voeten in het zand terwijl de lucht roze en oranje kleurt boven de zee. Perfecte vakantiedag.', tip: 'Bestel de Kefalonitiki Kreatopita — de traditionele vleespastei van het eiland. Niet missen.', cost: 70, location: 'Apolafsi Restaurant, Lixouri, Kefalonia', mapUrl: 'https://www.google.com/maps/search/?api=1&query=Apolafsi+Restaurant+Lixouri', lat: 38.19, lng: 20.418 },
+  { id: 'e2', cat: 'eten', icon: '🌅', title: 'Zonsondergang bij Apolafsi (Lixouri)', duration: 120, why: 'Eten met de voeten in het zand terwijl de lucht roze en oranje kleurt boven de zee. Perfecte vakantiedag.', tip: 'Bestel de Kefalonitiki Kreatopita — de traditionele vleespastei van het eiland. Niet missen.', cost: 70, reservation: true, location: 'Apolafsi Restaurant, Lixouri, Kefalonia', mapUrl: 'https://www.google.com/maps/search/?api=1&query=Apolafsi+Restaurant+Lixouri', lat: 38.19, lng: 20.418 },
   { id: 'e3', cat: 'eten', icon: '🫒', title: 'Lokale honing & olijfolie kopen in Pyrgi', duration: 60, why: 'Tijmhoning en koudgeperste olijfolie van Kefalonia behoren tot de beste van heel Griekenland.', tip: 'Altijd contant geld bij (pinnen kan niet). Kraampjes langs de bergwegen rond Mount Ainos.', cost: 30, location: 'Pyrgi bergwegen, Pyrgi, Kefalonia', mapUrl: 'https://www.google.com/maps/search/?api=1&query=Pyrgi+Kefalonia', lat: 38.176, lng: 20.612 },
   { id: 'e4', cat: 'eten', icon: '🍲', title: 'Lunchen in Valsamata of Fragata', duration: 90, why: 'Dorpjes zonder toeristen in de Omala-vallei. Eten wat de pot schaft: stoofpotten, gevulde groenten, zelfgebakken brood.', tip: 'Bestel mezedes om te delen — dé manier waarop locals eten. Veel gezelliger dan elk een groot bord.', cost: 35, location: 'Valsamata, Omala Valley, Kefalonia', mapUrl: 'https://www.google.com/maps/search/?api=1&query=Valsamata+Kefalonia', lat: 38.174, lng: 20.583 },
   { id: 'e5', cat: 'eten', icon: '☕', title: 'Frappé drinken in Karavomylos', duration: 45, why: 'Rustig kustdorpje waar het water van de Melissani-grot omhoog komt. Heerlijk zitten onder de bomen.', tip: 'Loop na de koffie over het kustpad richting Sami. Combineer met een grottenmiddag.', cost: 12, location: 'Karavomylos Lake, Karavomylos, Kefalonia', mapUrl: 'https://www.google.com/maps/search/?api=1&query=Karavomylos+Lake+Kefalonia', lat: 38.257, lng: 20.634 },
-  { id: 'e6', cat: 'eten', icon: '🐟', title: 'Verse vis bij Taverna Gorgona (Fiskardo)', duration: 120, why: 'De vangst van de dag eten aan de kade. Zo vers dat hij \'s ochtends nog in de boot lag.', tip: 'Vraag de ober mee te lopen naar de koelvitrine om zelf je vis te kiezen — heel gebruikelijk en leuk.', cost: 80, location: 'Taverna Gorgona, Fiskardo, Kefalonia', mapUrl: 'https://www.google.com/maps/search/?api=1&query=Taverna+Gorgona+Fiskardo', lat: 38.461, lng: 20.579 },
+  { id: 'e6', cat: 'eten', icon: '🐟', title: 'Verse vis bij Taverna Gorgona (Fiskardo)', duration: 120, why: 'De vangst van de dag eten aan de kade. Zo vers dat hij \'s ochtends nog in de boot lag.', tip: 'Vraag de ober mee te lopen naar de koelvitrine om zelf je vis te kiezen — heel gebruikelijk en leuk.', cost: 80, reservation: true, location: 'Taverna Gorgona, Fiskardo, Kefalonia', mapUrl: 'https://www.google.com/maps/search/?api=1&query=Taverna+Gorgona+Fiskardo', lat: 38.461, lng: 20.579 },
   { id: 'e7', cat: 'eten', icon: '🎉', title: 'Avondwandeling Argostoli (volta)', duration: 90, why: 'De Griekse volta is heilig. Schuif aan op Vallianou-plein met een ouzo en geniet van het leven.', tip: 'Start rond 20:00. Probeer loukoumades (Griekse honing-oliebollen) bij lokale zoetwinkels.', cost: 20, location: 'Vallianou Square, Argostoli, Kefalonia', mapUrl: 'https://www.google.com/maps/search/?api=1&query=Vallianou+Square+Argostoli', lat: 38.175, lng: 20.493 },
-  { id: 'e8', cat: 'eten', icon: '🍇', title: 'Haritatos Vineyard (Paliki)', duration: 120, why: 'Authentiek 19e-eeuws landgoed — tijdloos, sfeervol en bijna onontdekt. Biologische wijnen en rust.', tip: 'Van tevoren bellen voor een exclusieve proeverij met mezze-plank in de tuin.', cost: 50, location: 'Haritatos Vineyard, Lixouri, Paliki, Kefalonia', mapUrl: 'https://www.google.com/maps/search/?api=1&query=Haritatos+Vineyard+Lixouri', lat: 38.232, lng: 20.395 },
-  { id: 'e9', cat: 'hotel', icon: '🏨', title: 'Ontspannen in het hotel', duration: 0, why: 'Genieten van de luxe faciliteiten en de spa van Apollonion Asterias Resort & Spa ***** in Lixouri.', tip: 'Boek vooraf een heerlijke massage of gezichtsbehandeling in de health spa van het resort.', cost: 0, location: 'Apollonion Asterias Resort en Spa *****, Lixouri, Griekenland', mapUrl: 'https://www.google.com/maps/search/?api=1&query=Apollonion+Asterias+Resort+Spa+Lixouri', lat: 38.188, lng: 20.407 },
+  { id: 'e8', cat: 'eten', icon: '🍇', title: 'Haritatos Vineyard (Paliki)', duration: 120, why: 'Authentiek 19e-eeuws landgoed — tijdloos, sfeervol en bijna onontdekt. Biologische wijnen en rust.', tip: 'Van tevoren bellen voor een exclusieve proeverij met mezze-plank in de tuin.', cost: 50, reservation: true, location: 'Haritatos Vineyard, Lixouri, Paliki, Kefalonia', mapUrl: 'https://www.google.com/maps/search/?api=1&query=Haritatos+Vineyard+Lixouri', lat: 38.232, lng: 20.395 },
+  { id: 'e9', cat: 'hotel', icon: '🏨', title: 'Ontspannen in het hotel', duration: 0, why: 'Genieten van de luxe faciliteiten en de spa van Apollonion Asterias Resort & Spa ***** in Lixouri.', tip: 'Boek vooraf een heerlijke massage of gezichtsbehandeling in de health spa van het resort.', cost: 0, reservation: true, location: 'Apollonion Asterias Resort en Spa *****, Lixouri, Griekenland', mapUrl: 'https://www.google.com/maps/search/?api=1&query=Apollonion+Asterias+Resort+Spa+Lixouri', lat: 38.188, lng: 20.407 },
   // ── VERJAARDAG (speciale pool) ────────────────────────
-  { id: 'b1', cat: 'bday', icon: '⛵', title: 'Privé sunset cruise', duration: 240, why: 'Een privéboot met schipper, verlaten baaitjes, gekoelde Robola-wijn en de zon die in de Ionische Zee wegzakt. Volledige privacy.', tip: 'Vooraf boeken via charterbedrijven in Fiskardo of Argostoli. Vraag om wijn die al koud staat.', cost: 280, special: true, location: 'Fiskardo of Sami Haven, Kefalonia', mapUrl: 'https://www.google.com/maps/search/?api=1&query=Fiskardo+Harbour', lat: 38.461, lng: 20.578 },
-  { id: 'b2', cat: 'bday', icon: '🍽️', title: 'Romantisch diner bij Tassia (Fiskardo)', duration: 120, why: 'Het iconische restaurant aan de kade van Fiskardo. Top-tier service, verfijnde Griekse keuken, geluid van de golven.', tip: 'Reserveer voor 20:15. Vraag expliciet om een seafront tafel voor de zonsondergang.', cost: 120, special: true, location: 'Tassia Restaurant, Fiskardo Haven, Kefalonia', mapUrl: 'https://www.google.com/maps/search/?api=1&query=Tassia+Restaurant+Fiskardo', lat: 38.461, lng: 20.579 },
-  { id: 'b3', cat: 'bday', icon: '🍇', title: 'Private wine tasting Haritatos Vineyard', duration: 120, why: 'Een romantisch 19e-eeuws landgoed op Paliki. Privérondleiding en proeverij onder de bomen — intiem en tijdloos.', tip: 'Combineer met Petani Beach op 10 min rijden voor een spectaculaire zonsondergangsdip.', cost: 80, special: true, location: 'Haritatos Vineyard, Lixouri, Paliki, Kefalonia', mapUrl: 'https://www.google.com/maps/search/?api=1&query=Haritatos+Vineyard+Lixouri', lat: 38.232, lng: 20.395 },
-  { id: 'b4', cat: 'bday', icon: '💎', title: 'Vroegbezoek Melissani Cave + luxe dag Antisamos', duration: 360, why: 'Betoverende grot nét voor de drukte, gevolgd door een hele dag luxe in een privé-cabana op Antisamos.', tip: 'Grot: 11:30–13:30 voor het licht. Cabana: consumptie = gratis. Boek het premium setje vooraf.', cost: 50, special: true, location: 'Melissani Cave & Antisamos Beach, Sami, Kefalonia', mapUrl: 'https://www.google.com/maps/search/?api=1&query=Antisamos+Beach+Kefalonia', lat: 38.259, lng: 20.673 },
+  { id: 'b1', cat: 'bday', icon: '⛵', title: 'Privé sunset cruise', duration: 240, why: 'Een privéboot met schipper, verlaten baaitjes, gekoelde Robola-wijn en de zon die in de Ionische Zee wegzakt. Volledige privacy.', tip: 'Vooraf boeken via charterbedrijven in Fiskardo of Argostoli. Vraag om wijn die al koud staat.', cost: 280, special: true, reservation: true, location: 'Fiskardo of Sami Haven, Kefalonia', mapUrl: 'https://www.google.com/maps/search/?api=1&query=Fiskardo+Harbour', lat: 38.461, lng: 20.578 },
+  { id: 'b2', cat: 'bday', icon: '🍽️', title: 'Romantisch diner bij Tassia (Fiskardo)', duration: 120, why: 'Het iconische restaurant aan de kade van Fiskardo. Top-tier service, verfijnde Griekse keuken, geluid van de golven.', tip: 'Reserveer voor 20:15. Vraag expliciet om een seafront tafel voor de zonsondergang.', cost: 120, special: true, reservation: true, location: 'Tassia Restaurant, Fiskardo Haven, Kefalonia', mapUrl: 'https://www.google.com/maps/search/?api=1&query=Tassia+Restaurant+Fiskardo', lat: 38.461, lng: 20.579 },
+  { id: 'b3', cat: 'bday', icon: '🍇', title: 'Private wine tasting Haritatos Vineyard', duration: 120, why: 'Een romantisch 19e-eeuws landgoed op Paliki. Privérondleiding en proeverij onder de bomen — intiem en tijdloos.', tip: 'Combineer met Petani Beach op 10 min rijden voor een spectaculaire zonsondergangsdip.', cost: 80, special: true, reservation: true, location: 'Haritatos Vineyard, Lixouri, Paliki, Kefalonia', mapUrl: 'https://www.google.com/maps/search/?api=1&query=Haritatos+Vineyard+Lixouri', lat: 38.232, lng: 20.395 },
+  { id: 'b4', cat: 'bday', icon: '💎', title: 'Vroegbezoek Melissani Cave + luxe dag Antisamos', duration: 360, why: 'Betoverende grot nét voor de drukte, gevolgd door een hele dag luxe in een privé-cabana op Antisamos.', tip: 'Grot: 11:30–13:30 voor het licht. Cabana: consumptie = gratis. Boek het premium setje vooraf.', cost: 50, special: true, reservation: true, location: 'Melissani Cave & Antisamos Beach, Sami, Kefalonia', mapUrl: 'https://www.google.com/maps/search/?api=1&query=Antisamos+Beach+Kefalonia', lat: 38.259, lng: 20.673 },
 ];
 
 const CAT_LABELS = {
@@ -3353,6 +3701,10 @@ function showOverview() {
     return sum + d.activities.reduce((s, a) => s + (a.cost || 0), 0);
   }, 0);
 
+  const reservationCount = state.plan.reduce((n, d) => {
+    return n + d.activities.filter(a => a.reservation).length;
+  }, 0);
+
   document.getElementById('ov-stats').innerHTML = `
     <div class="stat-card"><div class="stat-num">${totalActivities}</div><div class="stat-label">Geplande activiteiten</div></div>
     <div class="stat-card"><div class="stat-num">${fullDays}</div><div class="stat-label">Goed gevulde dagen</div></div>
@@ -3362,6 +3714,11 @@ function showOverview() {
       <div class="stat-num" style="color: var(--terracotta);">~€${totalCost}</div>
       <div class="stat-label">Geschatte activiteitenkosten</div>
     </div>
+    ${reservationCount > 0 ? `
+    <div class="stat-card" style="border-color: var(--terracotta); background: var(--terracotta-light);">
+      <div class="stat-num" style="color: var(--terracotta);">📋 ${reservationCount}</div>
+      <div class="stat-label">Vereisen reservering vooraf</div>
+    </div>` : ''}
   `;
 
   // Grid
@@ -3377,6 +3734,7 @@ function showOverview() {
         ? `<span style="font-size:0.62rem; color:var(--olive); font-weight:600;">Gratis</span>`
         : `<span style="font-size:0.62rem; color:var(--terracotta); font-weight:600;">~€${act.cost}</span>`;
       const durLabel = act.duration > 0 ? `<span style="font-size:0.62rem; color:var(--sea-deep); font-weight:600;">⏱️ ${formatDuration(act.duration)}</span>` : '';
+      const resBadge = act.reservation ? `<span class="ov-res-badge">📋 Reserveer vooraf!</span>` : '';
       return `
         <div class="ov-act" style="display:flex; align-items:flex-start; gap:6px; margin-bottom:4px;">
           <span class="ov-act-icon">${act.icon}</span>
@@ -3389,6 +3747,7 @@ function showOverview() {
               </a>
             ` : ''}
             <div style="margin-top:2px; display:flex; gap:6px;">${costLabel}${durLabel}</div>
+            ${resBadge}
           </div>
         </div>
       `;
@@ -3487,6 +3846,153 @@ function showScreen(id) {
     if (id === 'screen-planner') bar.classList.remove('hidden');
     else bar.classList.add('hidden');
   }
+}
+
+// ═══════════════════════════════════════════════════════
+//  ACTIVITEITEN CATALOGUS
+// ═══════════════════════════════════════════════════════
+let catalogSortCol = 'cat';
+let catalogSortDir = 'asc';
+
+function showCatalog() {
+  showScreen('screen-catalog');
+  const total = ACTIVITIES.length;
+  document.getElementById('catalog-subtitle').textContent =
+    `${total} activiteiten · sorteer en filter naar wens`;
+  applyCatalogFilters();
+}
+
+function goBackFromCatalog() {
+  showScreen('screen-planner');
+}
+
+function sortCatalog(col) {
+  if (catalogSortCol === col) {
+    catalogSortDir = catalogSortDir === 'asc' ? 'desc' : 'asc';
+  } else {
+    catalogSortCol = col;
+    catalogSortDir = 'asc';
+  }
+  applyCatalogFilters();
+}
+
+function applyCatalogFilters() {
+  const search = (document.getElementById('catalog-search').value || '').toLowerCase().trim();
+  const cat    = document.getElementById('catalog-cat').value;
+  const cost   = document.getElementById('catalog-cost').value;
+  const res    = document.getElementById('catalog-res').value;
+
+  let filtered = ACTIVITIES.filter(a => {
+    if (search) {
+      const hay = (a.title + ' ' + a.location + ' ' + a.why + ' ' + (CAT_LABELS[a.cat] || '')).toLowerCase();
+      if (!hay.includes(search)) return false;
+    }
+    if (cat && a.cat !== cat) return false;
+    if (cost === 'gratis' && a.cost !== 0) return false;
+    if (cost === 'betaald' && a.cost === 0) return false;
+    if (res === 'ja' && !a.reservation) return false;
+    if (res === 'nee' && a.reservation) return false;
+    return true;
+  });
+
+  // Sort
+  filtered.sort((a, b) => {
+    let va, vb;
+    switch (catalogSortCol) {
+      case 'title':       va = a.title.toLowerCase();    vb = b.title.toLowerCase();    break;
+      case 'cat':         va = a.cat;                    vb = b.cat;                    break;
+      case 'duration':    va = a.duration;               vb = b.duration;               break;
+      case 'cost':        va = a.cost;                   vb = b.cost;                   break;
+      case 'location':    va = a.location.toLowerCase(); vb = b.location.toLowerCase(); break;
+      case 'reservation': va = a.reservation ? 1 : 0;   vb = b.reservation ? 1 : 0;   break;
+      default: return 0;
+    }
+    if (va < vb) return catalogSortDir === 'asc' ? -1 : 1;
+    if (va > vb) return catalogSortDir === 'asc' ?  1 : -1;
+    return 0;
+  });
+
+  // Update sort header visuals
+  const cols = ['title', 'cat', 'duration', 'cost', 'location', 'reservation'];
+  cols.forEach(col => {
+    const icon = document.getElementById('sort-icon-' + col);
+    if (!icon) return;
+    icon.textContent = col === catalogSortCol
+      ? (catalogSortDir === 'asc' ? '↑' : '↓')
+      : '↕';
+  });
+  document.querySelectorAll('.catalog-th').forEach(th => th.classList.remove('active'));
+  const activeTh = document.querySelector(`.catalog-th[data-col="${catalogSortCol}"]`);
+  if (activeTh) activeTh.classList.add('active');
+
+  // Build activity→day lookup from current plan
+  const actDayMap = {};
+  if (state && state.plan) {
+    state.plan.forEach((day, i) => {
+      day.activities.forEach(a => { actDayMap[a.id] = i; });
+    });
+  }
+
+  // Update count
+  document.getElementById('catalog-count').textContent =
+    `${filtered.length} van ${ACTIVITIES.length} activiteit${filtered.length !== 1 ? 'en' : ''}`;
+
+  const tbody = document.getElementById('catalog-tbody');
+  if (filtered.length === 0) {
+    tbody.innerHTML = `<tr><td colspan="7" class="catalog-empty">Geen activiteiten gevonden met deze filters.</td></tr>`;
+    return;
+  }
+
+  tbody.innerHTML = filtered.map(a => {
+    const dayIdx   = actDayMap[a.id];
+    const isPlanned = dayIdx !== undefined;
+    const dayLabel  = isPlanned ? DAYS[dayIdx].short : '';
+    const catLabel  = (CAT_LABELS[a.cat] || a.cat).split(' ').slice(1).join(' ') || CAT_LABELS[a.cat] || a.cat;
+    const catEmoji  = (CAT_LABELS[a.cat] || '').split(' ')[0] || '';
+    const durText   = a.duration >= 60
+      ? (a.duration % 60 === 0
+          ? Math.floor(a.duration / 60) + 'u'
+          : Math.floor(a.duration / 60) + 'u ' + (a.duration % 60) + 'm')
+      : a.duration + 'm';
+    const locationShort = a.location.split(',')[0];
+
+    return `<tr class="catalog-tr${isPlanned ? ' planned' : ''}" onclick="openActivityDetailFromCatalog('${a.id}')">
+      <td class="catalog-td">
+        <div class="catalog-td-name">
+          <span class="catalog-td-icon">${a.icon}</span>
+          <div>
+            ${a.title}
+            ${a.reservation ? `<div class="catalog-td-sub">📋 Reservering vereist</div>` : ''}
+          </div>
+        </div>
+      </td>
+      <td class="catalog-td">
+        <span class="cat-pill">${catEmoji} ${catLabel}</span>
+      </td>
+      <td class="catalog-td" style="white-space:nowrap; color:var(--muted);">⏱ ${durText}</td>
+      <td class="catalog-td">
+        <span class="cost-pill ${a.cost === 0 ? 'gratis' : 'betaald'}">
+          ${a.cost === 0 ? '✓ Gratis' : `~€${a.cost} p.p.`}
+        </span>
+      </td>
+      <td class="catalog-td hide-mob catalog-muted">${locationShort}</td>
+      <td class="catalog-td">
+        ${a.reservation
+          ? `<span class="res-pill">📋 Ja</span>`
+          : `<span class="catalog-muted">—</span>`}
+      </td>
+      <td class="catalog-td hide-mob">
+        ${isPlanned
+          ? `<span class="planned-pill">✓ ${dayLabel}</span>`
+          : `<span class="catalog-muted">—</span>`}
+      </td>
+    </tr>`;
+  }).join('');
+}
+
+function openActivityDetailFromCatalog(actId) {
+  const dayIndex = typeof state.currentDay === 'number' ? state.currentDay : 0;
+  openActivityDetail(dayIndex, actId);
 }
 
 // ═══════════════════════════════════════════════════════

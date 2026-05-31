@@ -23,7 +23,8 @@ geen backend nodig.
 - Activiteiten­catalogus van 35+ opties verdeeld over categorieën: **stranden, cultuur &
   dorpjes, natuur & actief, eten & drinken, hotel & relaxen**
 - Elke activiteit heeft een icoon, beschrijving (waarom), praktische tip, geschatte duur,
-  kosten en een locatie op de kaart
+  kosten, een locatie op de kaart en een optionele `reservation`-vlag wanneer vooraf boeken
+  verplicht of sterk aanbevolen is
 - **Detail-modal** per activiteit met alle info en een "Selecteer voor vandaag"-knop
 - **Tijdsbudget per dag** — visuele balk op basis van 9 beschikbare uren (09:00–18:00),
   die oranje/rood kleurt wanneer een dag te vol raakt
@@ -33,6 +34,7 @@ geen backend nodig.
 - **Confetti** 🎉 wanneer een dag wordt afgerond
 - **Activiteit voorstellen** — mis je iets? Een formulier stuurt je suggestie naar de
   beheerder via een n8n-webhook
+- **"Alle activiteiten"** — knop in de sidebar opent de activiteiten­catalogus (zie hieronder)
 
 ### Interactieve kaart
 - **Split-screen Leaflet-kaart** naast de planner (op desktop) toont per dag het hotel,
@@ -48,10 +50,27 @@ geen backend nodig.
 - Knop om de dagroute direct in **Google Maps** te openen
 - **Overzichtskaart** met alle ingeplande plekken van de hele vakantie in één blik
 
+### Activiteiten­catalogus
+- **Volledig overzicht** van alle 39 activiteiten in één sorteerbare tabel
+- **Filteren** op categorie (stranden / cultuur / natuur / eten / hotel / verjaardag),
+  kosten (gratis / betaald) en reserveringsverplichting
+- **Vrije zoekbalk** doorzoekt naam, locatie en motivatietekst tegelijk
+- **Kolomsortering** — klik een kolomhoofd (Activiteit, Categorie, Duur, Kosten,
+  Locatie, Reservering) om oplopend te sorteren; nogmaals klikken sorteert aflopend,
+  met een ↑ / ↓ pijl als indicator
+- **Ingepland-kolom** toont per activiteit of en op welke dag hij al in het plan zit
+- Klikken op een rij opent de bestaande detail-modal met "Selecteer voor vandaag"
+- Bereikbaar via de **"📋 Alle activiteiten bekijken"-knop** onderaan de sidebar
+  (desktop) of via **Menu → Alle activiteiten** op mobiel
+
 ### Overzichtspagina
 - Statistieken (aantal geplande dagen, activiteiten, geschatte kosten …)
+- **Reserveringsteller** — stat card toont hoeveel geplande activiteiten vooraf gereserveerd
+  moeten worden, zodat je niets mist
 - Vlucht- & reisinformatie als tickets
 - Volledige kaart + dag-voor-dag overzicht
+- Per activiteit een **"📋 Reserveer vooraf!"-badge** bij activiteiten die advance booking
+  vereisen (bootcharter, restaurantreservering, begeleide tours, privéproeverijen …)
 - **Printbaar / op te slaan als PDF** (eigen print-stylesheet)
 - Terugkeer-code kopiëren om later verder te gaan
 
@@ -127,16 +146,98 @@ npx serve .
 
 Geen build-stap nodig — puur HTML/CSS/JS.
 
+## Een nieuwe activiteit toevoegen
+
+Alle activiteiten staan als object-literals in de `ACTIVITIES`-array in `index.html`
+(rond regel 1774). Kopieer het onderstaande template en vul alle verplichte velden in.
+
+### Template
+
+```js
+{
+  // ── VERPLICHT ──────────────────────────────────────────────────────────
+  id:       'x1',                    // Unieke string; gebruik prefix per categorie:
+                                     //   s=stranden · c=cultuur · n=natuur
+                                     //   e=eten · b=bday (verjaardag) · hotel=e9
+  cat:      'stranden',              // Categorie — zie tabel hieronder
+  icon:     '🏖️',                   // Één emoji als visuele marker op de kaart en kaart
+  title:    'Naam van de activiteit',// Korte weergavenaam (Nederlands)
+  duration: 120,                     // Duur in minuten — zie toegestane waarden hieronder
+  why:      'Waarom dit een ...',    // Motivatie: wat maakt dit de moeite waard? (1–2 zinnen)
+  tip:      'Praktische tip ...',    // Concreet advies: beste tijd, wat meenemen, combineren
+  cost:     0,                       // Geschatte kosten in euro's (geheel getal; 0 = gratis)
+  location: 'Locatienaam, Dorp, Kefalonia', // Leesbare locatie (voor tooltip en overzicht)
+  mapUrl:   'https://www.google.com/maps/search/?api=1&query=...+Kefalonia',
+  lat:      38.300,                  // Breedtegraad (decimaal, ~5 decimalen)
+  lng:      20.500,                  // Lengtegraad (decimaal, ~5 decimalen)
+
+  // ── OPTIONEEL ──────────────────────────────────────────────────────────
+  reservation: true,   // Voeg toe als vooraf boeken verplicht of sterk aanbevolen is.
+                       // Toont oranje "📋 Reserveer vooraf!"-badge in de dag- en overzichtsweergave
+                       // en telt mee in de reserveringsteller op de overzichtspagina.
+                       // Weglaten (of false) = geen badge.
+  special:     true,   // Uitsluitend voor cat:'bday'-activiteiten. Geeft de kaart gouden
+                       // stijl en toont het "Verjaardagsidee"-label. Weglaten voor alle
+                       // andere categorieën.
+}
+```
+
+### Toegestane categorieën (`cat`)
+
+| Waarde     | Label in de UI                    | Wanneer gebruiken                          |
+|------------|-----------------------------------|--------------------------------------------|
+| `stranden` | 🏖️ Stranden & Baaien             | Stranden, baaien, zwemplekken              |
+| `cultuur`  | 🏛️ Cultuur & Dorpjes             | Dorpjes, kastelen, musea, grotten, kloosters |
+| `natuur`   | 🌿 Natuur & Actief               | Wandelen, kajakken, boots, nationale parken |
+| `eten`     | 🍷 Eten, Drinken & Ervaringen    | Restaurants, proeverijen, markten, cafés   |
+| `hotel`    | 🏨 Hotel & Relaxen               | Alleen voor hotel/spa-activiteiten         |
+| `bday`     | 🎂 Verjaardagsideeën             | Exclusieve pool, alleen zichtbaar op 15 juni |
+
+### Toegestane duurwaarden (`duration`)
+
+`0` · `45` · `60` · `90` · `120` · `150` · `180` · `240` · `360` · `480`
+
+Waarde `0` = "geen tijdsindicatie" (bijv. hotel/spa). Waarden ≥ 420 worden weergegeven
+als "Hele dag" en blokkeren andere activiteiten op dezelfde dag.
+
+### Volledig eigenschappenoverzicht
+
+| Eigenschap    | Type      | Verplicht | Beschrijving                                                      |
+|---------------|-----------|:---------:|-------------------------------------------------------------------|
+| `id`          | `string`  | Ja        | Unieke identifier; prefix bepaalt categorie (s/c/n/e/b)          |
+| `cat`         | `string`  | Ja        | Categorie-key — zie tabel hierboven                               |
+| `icon`        | `string`  | Ja        | Één emoji; verschijnt op de kaart-marker en activiteitenkaart     |
+| `title`       | `string`  | Ja        | Weergavenaam van de activiteit                                    |
+| `duration`    | `number`  | Ja        | Duur in minuten; telt mee in het tijdsbudget van de dag (9 uur)   |
+| `why`         | `string`  | Ja        | Motivatietekst in de detail-modal ("Waarom dit?")                 |
+| `tip`         | `string`  | Ja        | Praktisch advies in de detail-modal                               |
+| `cost`        | `number`  | Ja        | Geschatte kosten in € (geheel getal; 0 = gratis)                  |
+| `location`    | `string`  | Ja        | Leesbare locatie voor tooltip en overzichtspagina                 |
+| `mapUrl`      | `string`  | Ja        | Google Maps-link die opent bij klikken op de locatienaam          |
+| `lat`         | `number`  | Ja        | Breedtegraad voor Leaflet-marker en OSRM-routing                  |
+| `lng`         | `number`  | Ja        | Lengtegraad voor Leaflet-marker en OSRM-routing                   |
+| `reservation` | `boolean` | Nee       | `true` = badge "📋 Reserveer vooraf!" + telt in reserveringsteller |
+| `special`     | `boolean` | Nee       | `true` = gouden UI-stijl; **alleen voor `cat: 'bday'`**           |
+
+> **Positie in de array:** voeg de activiteit toe in de bijpassende blok-sectie
+> (gemarkeerd met `// ── STRANDEN ──`, `// ── NATUUR ──`, enzovoort). De volgorde
+> binnen een categorie bepaalt de weergavevolgorde in de UI.
+
+---
+
 ## Technische details
 
 - **Pure HTML/CSS/JS** — geen framework, geen bundler, één bestand
-- Drie "schermen" (welkom, planner, overzicht) geschakeld via CSS-klassen
+- Vier "schermen" (welkom, planner, catalogus, overzicht) geschakeld via CSS-klassen
 - **State** wordt bewaard in `localStorage` én is te exporteren als zelfbevattende
   base64url-code (`KEF1-…`) — volledig serverloos
 - Kaart en routing volledig client-side via Leaflet + OSRM, met caching van
   routesegmenten en geometrie
 - **OSRM-foutafvang**: AbortController-timeout (6s), 429/5xx/netwerk-detectie,
   automatische sessie-brede uitschakeling na 3 opeenvolgende fouten, haversine-fallback
+- **`reservation: true`** op een activiteit markeert dat vooraf boeken verplicht of sterk
+  aanbevolen is; de dag-voor-dag weergave toont dan een oranje "📋 Reserveer vooraf!"-badge
+  en het statistiekoverzicht telt hoeveel van de geplande activiteiten dit vereisen
 - Volledig responsive met aparte mobiele navigatie en een ingebouwde print-stylesheet
 - Lettertypes: Cormorant Garamond (serif) + DM Sans (sans)
 </content>
