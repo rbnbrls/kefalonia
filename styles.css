@@ -2045,33 +2045,34 @@ h3 { font-family: 'DM Sans', sans-serif; font-weight: 500; font-size: 1rem; }
   top: 50%;
   transform: translateY(-50%) rotate(-90deg);
   transform-origin: right center;
-  z-index: 4000; /* stays visible but below top modals */
+  z-index: 99999; /* Ensure it is ALWAYS on top of everything, including map and overlays */
   display: flex;
   align-items: center;
   gap: 8px;
-  background: var(--sea-deep);
+  background: var(--terracotta); /* Vibrant warm color that contrasts perfectly with the blue sea theme */
   border: 1.5px solid var(--white);
   border-right: none;
   border-radius: var(--radius) var(--radius) 0 0;
-  padding: 12px 20px;
+  padding: 12px 22px;
   cursor: pointer;
-  box-shadow: 0 -4px 16px rgba(0,0,0,0.15);
+  box-shadow: -4px 0 16px rgba(0,0,0,0.2);
   color: var(--white);
   font-family: 'DM Sans', sans-serif;
-  font-size: 0.85rem;
-  font-weight: 600;
-  letter-spacing: 0.05em;
-  transition: background 0.2s, color 0.2s, padding 0.2s;
-  margin-right: -42px; /* Pulls half of the button out when rotated */
+  font-size: 0.9rem;
+  font-weight: 700;
+  letter-spacing: 0.065em;
+  text-transform: uppercase; /* Even more prominent styling */
+  transition: background 0.2s ease, margin-right 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  margin-right: -32px; /* Pulls less of the button out, making it clearly visible */
 }
 
 .feedback-tab:hover {
-  background: var(--sea);
-  margin-right: -36px; /* Pops out slightly on hover */
+  background: #d35400; /* Rich vibrant orange */
+  margin-right: -6px; /* Pops out significantly on hover */
 }
 
 .feedback-tab-icon {
-  font-size: 1.1rem;
+  font-size: 1.15rem;
   transform: rotate(90deg); /* Counter rotate icon to remain upright */
   display: inline-block;
 }
@@ -2105,12 +2106,12 @@ h3 { font-family: 'DM Sans', sans-serif; font-weight: 500; font-size: 1rem; }
 @media (max-width: 768px) {
   .feedback-tab {
     top: 30%; /* Move higher up on mobile screens */
-    padding: 10px 14px;
+    padding: 10px 16px;
     font-size: 0.78rem;
-    margin-right: -34px;
+    margin-right: -26px; /* Stays clearly visible on mobile too */
   }
   .feedback-tab:hover {
-    margin-right: -30px;
+    margin-right: -4px;
   }
   .feedback-tab-icon {
     font-size: 0.95rem;
