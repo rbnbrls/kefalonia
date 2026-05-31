@@ -41,10 +41,14 @@ function fail(file, msg) {
   errors.push(`  ✗ ${file}: ${msg}`);
 }
 
-function isString(v) { return typeof v === 'string' && v.length > 0; }
+function isString(v) { return typeof v === 'string' && v.trim().length > 0; }
 function isNumber(v) { return typeof v === 'number' && Number.isFinite(v); }
 
 function validate(file, a) {
+  if (a === null || typeof a !== 'object' || Array.isArray(a)) {
+    fail(file, 'JSON moet een object zijn, geen ' + (Array.isArray(a) ? 'array' : typeof a));
+    return;
+  }
   // Onbekende keys weren — houdt het template strak (belangrijk voor AI-agents).
   for (const k of Object.keys(a)) {
     if (!ALL_KEYS.includes(k)) fail(file, `onbekend veld "${k}" (toegestaan: ${ALL_KEYS.join(', ')})`);
@@ -108,7 +112,9 @@ for (const file of files) {
     continue;
   }
   validate(file, data);
-  activities.push(data);
+  if (!errors.some(e => e.includes(file))) {
+    activities.push(data);
+  }
 }
 
 if (errors.length > 0) {
@@ -120,8 +126,8 @@ if (errors.length > 0) {
 
 // ── Sorteren in UI-volgorde: categorie, dan numeriek deel van id ────────────
 function idNum(id) {
-  const m = String(id).match(/\d+/);
-  return m ? parseInt(m[0], 10) : 0;
+  const m = String(id).match(/^[a-z]+(\d+)/);
+  return m ? parseInt(m[1], 10) : 0;
 }
 activities.sort((a, b) => {
   const ca = CAT_ORDER.indexOf(a.cat);

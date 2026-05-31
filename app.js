@@ -39,14 +39,30 @@ const CAT_LABELS = {
 // ═══════════════════════════════════════════════════════
 let state = {
   name: '',
-  currentDay: 0,
+  currentDay: 'heen',
   plan: Array(14).fill(null).map(() => ({ activities: [] })),
 };
+
+// ═══════════════════════════════════════════════════════
+//  UTILS
+// ═══════════════════════════════════════════════════════
+
+function escapeHtml(str) {
+  return String(str)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;');
+}
 
 // ═══════════════════════════════════════════════════════
 //  OPSLAAN / HERSTELLEN (localStorage + terugkeer-code)
 // ═══════════════════════════════════════════════════════
 const STORAGE_KEY = 'kefalonia_plan_v1';
+
+function escapeHtml(str) {
+  return String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+}
 
 // Compacte representatie van het plan: alleen naam, huidige dag en
 // per dag de activiteit-id's (activiteiten komen altijd uit ACTIVITIES).
@@ -114,7 +130,8 @@ function clearSavedState() {
 // ── Terugkeer-code (zelfbevattend, base64url, geen backend) ──
 function encodePlanCode() {
   const json = JSON.stringify(serializePlan(state));
-  const b64 = btoa(unescape(encodeURIComponent(json)));
+  const bytes = new TextEncoder().encode(json);
+  const b64 = btoa(String.fromCharCode(...bytes));
   return 'KEF1-' + b64.replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
 }
 
@@ -124,7 +141,9 @@ function decodePlanCode(code) {
     if (!trimmed.startsWith('KEF1-')) return null;
     let b64 = trimmed.slice(5).replace(/-/g, '+').replace(/_/g, '/');
     while (b64.length % 4) b64 += '=';
-    const json = decodeURIComponent(escape(atob(b64)));
+    const binary = atob(b64);
+    const bytes = new Uint8Array([...binary].map(c => c.charCodeAt(0)));
+    const json = new TextDecoder().decode(bytes);
     return hydratePlan(JSON.parse(json));
   } catch (e) {
     return null;
@@ -256,6 +275,7 @@ function resumeSaved() {
 function startFresh() {
   pendingSaved = null;
   clearSavedState();
+  sync.disconnect();
   document.getElementById('welcome-banner').classList.remove('open');
 }
 
@@ -521,7 +541,9 @@ async function getRoadSegmentDistance(lat1, lng1, lat2, lng2) {
     }
   }
   const fallback = calculateTravelStats(lat1, lng1, lat2, lng2);
-  return { ...fallback, exact: false };
+  const result = { ...fallback, exact: false };
+  routeDistanceCache[key] = result;
+  return result;
 }
 
 async function fetchRoadRouteGeometry(waypoints) {
@@ -752,8 +774,9 @@ function updateMap(dayIndex) {
   coords.push(HOTEL_COORDS);
 
   // 4. Draw route
-  if (plan.activities.length >= 2) {
-    const waypoints = [HOTEL_COORDS, ...plan.activities.map(a => [a.lat, a.lng]), HOTEL_COORDS];
+  const validActivities = plan.activities.filter(a => typeof a.lat === 'number' && typeof a.lng === 'number');
+  if (validActivities.length >= 2) {
+    const waypoints = [HOTEL_COORDS, ...validActivities.map(a => [a.lat, a.lng]), HOTEL_COORDS];
     map.fitBounds(L.latLngBounds(waypoints), { padding: [60, 60] });
 
     setMapRouteStatus('status-loading', '⏳ Routes laden…');
@@ -1056,7 +1079,7 @@ function renderPlannerDay(i) {
         id="activity-search-input"
         type="text"
         placeholder="Zoek activiteit… bijv. Ithaka, strand, cave"
-        value="${activitySearchQuery.replace(/"/g, '&quot;')}"
+        value="${escapeHtml(activitySearchQuery)}"
         oninput="setActivitySearch(this.value)"
         style="width:100%; padding:10px 14px 10px 38px; border:1.5px solid var(--sand-dark); border-radius:100px; font-family:'DM Sans',sans-serif; font-size:0.875rem; color:var(--ink); background:var(--white); outline:none; transition:border-color 0.15s;"
         onfocus="this.style.borderColor='var(--sea)'"
@@ -1135,7 +1158,7 @@ function renderPlannerDay(i) {
     } else if (activitySearchQuery && selectedActs.length === 0) {
       html += `<div class="fade-up" style="text-align:center; padding:2.5rem 1rem; color:var(--muted);">
         <div style="font-size:2rem; margin-bottom:0.5rem;">🔍</div>
-        <div style="font-size:0.9rem;">Geen activiteiten gevonden voor <strong>"${activitySearchQuery}"</strong></div>
+        <div style="font-size:0.9rem;">Geen activiteiten gevonden voor <strong>"${escapeHtml(activitySearchQuery)}"</strong></div>
         <button onclick="setActivitySearch('')" style="margin-top:0.75rem; background:none; border:1.5px solid var(--sand-dark); border-radius:100px; padding:7px 18px; font-family:'DM Sans',sans-serif; font-size:0.82rem; color:var(--muted); cursor:pointer;">Zoekopdracht wissen</button>
       </div>`;
     }
@@ -1149,7 +1172,7 @@ function renderPlannerDay(i) {
     if (activitySearchQuery && avail.length === 0) {
       html += `<div class="fade-up" style="text-align:center; padding:2.5rem 1rem; color:var(--muted);">
         <div style="font-size:2rem; margin-bottom:0.5rem;">🔍</div>
-        <div style="font-size:0.9rem;">Geen activiteiten gevonden voor <strong>"${activitySearchQuery}"</strong></div>
+        <div style="font-size:0.9rem;">Geen activiteiten gevonden voor <strong>"${escapeHtml(activitySearchQuery)}"</strong></div>
         <button onclick="setActivitySearch('')" style="margin-top:0.75rem; background:none; border:1.5px solid var(--sand-dark); border-radius:100px; padding:7px 18px; font-family:'DM Sans',sans-serif; font-size:0.82rem; color:var(--muted); cursor:pointer;">Zoekopdracht wissen</button>
       </div>`;
     }
@@ -1230,7 +1253,7 @@ function updateMobileBar() {
     const day = DAYS[cd];
     labelEl.textContent = `Dag ${cd + 1} — ${day.name}`;
     const plan = state.plan[cd];
-    const usedMin = plan.activities.reduce((s, a) => s + a.duration, 0);
+    const usedMin = dayUsedMinutes(cd);
     const pct = Math.min(100, (usedMin / DAY_BUDGET_MINUTES) * 100);
     const isOver = usedMin > DAY_BUDGET_MINUTES;
     const color = isOver ? 'var(--terracotta)' : pct >= 70 ? '#d97706' : 'var(--olive)';
@@ -1283,7 +1306,7 @@ function openDaySheet() {
     const plan = state.plan[i];
     const isDone = plan.activities.length > 0;
     const isCurrent = cd === i;
-    const usedMin = plan.activities.reduce((s, a) => s + a.duration, 0);
+    const usedMin = dayUsedMinutes(i);
     const badge = isDone
       ? `${Math.floor(usedMin / 60)}u${usedMin % 60 > 0 ? ' ' + (usedMin % 60) + 'm' : ''}`
       : 'Leeg';
@@ -1430,12 +1453,14 @@ function selectActivity(dayIndex, actId) {
 
   // Block adding any activity when a full-day activity is already planned
   if (dayIsFullDay(dayIndex)) {
+    showToast('⚠️ Deze dag heeft al een hele-dag-activiteit');
     renderPlannerDay(dayIndex);
     return;
   }
 
   // Block adding a full-day activity when other activities already exist
   if (act.duration >= 420 && plan.activities.length > 0) {
+    showToast('⚠️ Deze dag heeft al activiteiten — geen hele-dag-activiteit meer mogelijk');
     renderPlannerDay(dayIndex);
     return;
   }
@@ -1591,7 +1616,7 @@ function showOverview() {
   document.getElementById('ov-stats').innerHTML = `
     <div class="stat-card"><div class="stat-num">${totalActivities}</div><div class="stat-label">Geplande activiteiten</div></div>
     <div class="stat-card"><div class="stat-num">${fullDays}</div><div class="stat-label">Goed gevulde dagen</div></div>
-    <div class="stat-card"><div class="stat-num">14</div><div class="stat-label">Nachten in Kefalonia</div></div>
+    <div class="stat-card"><div class="stat-num">${DAYS.length}</div><div class="stat-label">Nachten in Kefalonia</div></div>
     <div class="stat-card"><div class="stat-num">${topCat ? CAT_LABELS[topCat[0]].split(' ').slice(1).join(' ') : '—'}</div><div class="stat-label">Meest gekozen categorie</div></div>
     <div class="stat-card" style="border-color: var(--terracotta); background: var(--terracotta-light);">
       <div class="stat-num" style="color: var(--terracotta);">~€${totalCost}</div>
@@ -1767,7 +1792,7 @@ function applyCatalogFilters() {
 
   let filtered = ACTIVITIES.filter(a => {
     if (search) {
-      const hay = (a.title + ' ' + a.location + ' ' + a.why + ' ' + (CAT_LABELS[a.cat] || '')).toLowerCase();
+      const hay = (a.title + ' ' + a.location + ' ' + a.why + ' ' + (a.tip || '') + ' ' + (CAT_LABELS[a.cat] || '')).toLowerCase();
       if (!hay.includes(search)) return false;
     }
     if (cat && a.cat !== cat) return false;
@@ -1874,7 +1899,19 @@ function applyCatalogFilters() {
 }
 
 function openActivityDetailFromCatalog(actId) {
-  const dayIndex = typeof state.currentDay === 'number' ? state.currentDay : 0;
+  let dayIndex;
+  if (typeof state.currentDay === 'number') {
+    dayIndex = state.currentDay;
+  } else {
+    let minActivities = Infinity;
+    state.plan.forEach((d, i) => {
+      if (d.activities.length < minActivities) {
+        minActivities = d.activities.length;
+        dayIndex = i;
+      }
+    });
+    if (dayIndex === undefined) dayIndex = 0;
+  }
   openActivityDetail(dayIndex, actId);
 }
 
@@ -1964,7 +2001,14 @@ function mergeRemotePlan(localState, remoteObj) {
     const remoteIds = remoteDay.activities.map(a => a.id).join(',');
     if (localIds !== remoteIds) {
       changedDays.push(i);
-      return remoteDay;
+      const mergedActivities = new Map();
+      remoteDay.activities.forEach(a => mergedActivities.set(a.id, a));
+      localDay.activities.forEach(a => {
+        if (!mergedActivities.has(a.id)) {
+          mergedActivities.set(a.id, a);
+        }
+      });
+      return { activities: [...mergedActivities.values()] };
     }
     return localDay;
   });
@@ -1998,6 +2042,24 @@ function updateSyncStatusBadge(status) {
   const labels = { connected: 'Gesynchroniseerd', connecting: 'Verbinden…', offline: 'Verbinding verbroken' };
   text.textContent = labels[status] || status;
   codeLabel.textContent = sync.sessionCode ? '· ' + sync.sessionCode : '';
+}
+
+// ═══════════════════════════════════════════════════════
+//  GENERIC TOAST NOTIFICATIONS
+// ═══════════════════════════════════════════════════════
+let _toastTimer = null;
+function showToast(message, duration = 3000) {
+  let el = document.getElementById('app-toast');
+  if (!el) {
+    el = document.createElement('div');
+    el.id = 'app-toast';
+    el.className = 'app-toast';
+    document.body.appendChild(el);
+  }
+  el.textContent = message;
+  el.classList.add('visible');
+  clearTimeout(_toastTimer);
+  _toastTimer = setTimeout(() => el.classList.remove('visible'), duration);
 }
 
 let _syncToastTimer = null;

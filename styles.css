@@ -1807,6 +1807,26 @@ h3 { font-family: 'DM Sans', sans-serif; font-weight: 500; font-size: 1rem; }
 }
 .sync-toast.visible { transform: translateX(-50%) translateY(0); }
 
+/* ── APP: toast notificaties (feedback, waarschuwingen) ── */
+.app-toast {
+  position: fixed;
+  bottom: 1.5rem;
+  left: 50%;
+  transform: translateX(-50%) translateY(90px);
+  background: #e67e22;
+  color: white;
+  border-radius: 100px;
+  padding: 10px 24px;
+  font-size: 0.82rem;
+  font-weight: 500;
+  z-index: 9999;
+  transition: transform 0.3s ease;
+  white-space: nowrap;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.3);
+  pointer-events: none;
+}
+.app-toast.visible { transform: translateX(-50%) translateY(0); }
+
 /* ── SYNC: sessiecode modal ───────────────────────────── */
 .session-code-box {
   display: flex;
