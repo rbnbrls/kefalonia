@@ -49,6 +49,12 @@
         <h2>Hoe wil je plannen?</h2>
         <p>Kies een modus om direct te beginnen met het samenstellen van jullie droomreis op Kefalonia.</p>
       </div>
+
+      <!-- Naam invoeren -->
+      <div class="name-input-wrap" style="max-width: 440px; margin: 0 auto 1.5rem auto;">
+        <input type="text" id="planner-name" placeholder="Vul je naam in…" maxlength="24" autocomplete="off">
+      </div>
+
       <div class="planning-modes">
 
         <!-- Zelf plannen -->
@@ -60,7 +66,7 @@
               <div class="mode-card-desc">Plan in je eigen tempo. Je plan wordt bewaard en je kunt later verder via een code.</div>
             </div>
           </div>
-          <button class="btn-mode btn-mode-solo" id="btn-start" onclick="startPlanning()">
+          <button class="btn-mode btn-mode-solo" id="btn-start" onclick="startPlanning()" disabled>
             Beginnen →
           </button>
         </div>

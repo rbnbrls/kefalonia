@@ -239,6 +239,8 @@ if (nameInput) {
       startPlanning();
     }
   });
+
+  updateStartButtonState();
 }
 
 function startPlanning() {
