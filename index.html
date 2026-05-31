@@ -134,12 +134,17 @@
     </div>
     <div class="day-list" id="day-list"></div>
     <div class="sidebar-footer">
-      <button class="btn-catalog-link" onclick="showCatalog()">
-        <span style="font-size:1rem;">📋</span> Alle activiteiten bekijken
+      <button id="btn-sidebar-feedback" class="btn-sidebar-feedback" onclick="openFeedbackModal()" title="Geef feedback">
+        <span class="feedback-tab-icon">💬</span>
       </button>
-      <button class="btn-add-activity" onclick="openAddActivityModal()">
-        <span style="font-size:1.1rem;">＋</span> Activiteit voorstellen
-      </button>
+      <div class="sidebar-footer-stack">
+        <button class="btn-catalog-link" onclick="showCatalog()">
+          <span style="font-size:0.95rem;">📋</span> Alle activiteiten bekijken
+        </button>
+        <button class="btn-add-activity" onclick="openAddActivityModal()">
+          <span style="font-size:1.05rem;">＋</span> Activiteit voorstellen
+        </button>
+      </div>
     </div>
   </aside>
 
@@ -202,6 +207,14 @@
           <div class="menu-sheet-meta">
             <div class="menu-sheet-name">Activiteit voorstellen</div>
             <div class="menu-sheet-sub">Mis je iets? Stuur ons een suggestie</div>
+          </div>
+          <span class="menu-sheet-arrow">→</span>
+        </button>
+        <button class="menu-sheet-item" onclick="closeMenuSheet(); openFeedbackModal();">
+          <span class="menu-sheet-icon">💬</span>
+          <div class="menu-sheet-meta">
+            <div class="menu-sheet-name">Feedback geven</div>
+            <div class="menu-sheet-sub">Laat ons weten wat je van de planner vindt</div>
           </div>
           <span class="menu-sheet-arrow">→</span>
         </button>
@@ -388,11 +401,7 @@
   </div>
 </div>
 
-<!-- Feedback Tab & Modal -->
-<button id="btn-feedback-tab" class="feedback-tab" onclick="openFeedbackModal()">
-  <span class="feedback-tab-icon">💬</span>
-  <span class="feedback-tab-text">Feedback</span>
-</button>
+<!-- Feedback Modal -->
 
 <div id="modal-feedback" class="modal-backdrop" onclick="handleFeedbackBackdropClick(event)">
   <div class="modal-box">
