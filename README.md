@@ -38,7 +38,13 @@ geen backend nodig.
 - **Split-screen Leaflet-kaart** naast de planner (op desktop) toont per dag het hotel,
   de gekozen activiteiten en de werkelijke autoroute
 - Reisafstanden en -tijden worden live berekend via de **OSRM**-routeservice, met een
-  haversine-schatting als fallback
+  haversine-schatting als fallback (luchtlijn × 1,5 + Lixouri Bay-toeslag)
+- **Statusbadge** linksonder op de kaart toont in realtime de kwaliteit van de routes:
+  - *✓ Echte routes* — OSRM gaf exacte wegafstanden terug
+  - *~ Geschatte routes* — OSRM tijdelijk niet bereikbaar, haversine-schatting gebruikt
+  - *⚠ Snelheidslimiet bereikt* — OSRM rate-limit actief, schatting als fallback
+  - *✕ Routeservice onbereikbaar* — server/netwerk-fout, schatting als fallback
+- Route-statistieken tonen een *~schatting*-label wanneer OSRM niet beschikbaar was
 - Knop om de dagroute direct in **Google Maps** te openen
 - **Overzichtskaart** met alle ingeplande plekken van de hele vakantie in één blik
 
@@ -69,13 +75,32 @@ kefalonia/
 
 ## Externe diensten (via CDN / API, geen eigen backend)
 
-| Dienst | Waarvoor |
-|--------|----------|
-| [Leaflet 1.9.4](https://leafletjs.com/) | Kaartweergave (via unpkg CDN) |
-| [OpenStreetMap](https://www.openstreetmap.org/) | Kaarttegels |
-| [OSRM](https://project-osrm.org/) (`router.project-osrm.org`) | Autoroutes & reistijden |
-| Google Fonts | Cormorant Garamond + DM Sans |
-| n8n webhook (`n8n.7rb.nl`) | Ontvangt voorgestelde activiteiten |
+| Dienst | Waarvoor | Beschikbaarheid |
+|--------|----------|----------------|
+| [Leaflet 1.9.4](https://leafletjs.com/) | Kaartweergave (via unpkg CDN) | Hoog (CDN) |
+| [OpenStreetMap / CARTO](https://www.openstreetmap.org/) | Kaarttegels | Hoog (CDN) |
+| [OSRM](https://project-osrm.org/) (`router.project-osrm.org`) | Autoroutes & reistijden | Ongegarandeerd — publieke demo-server, rate-limited |
+| Google Fonts | Cormorant Garamond + DM Sans | Hoog (CDN) |
+| n8n webhook (`n8n.7rb.nl`) | Ontvangt voorgestelde activiteiten | Zelfgehost |
+
+### Productieoverweging: OSRM
+
+De app gebruikt de **publieke demo-server** van OSRM (`router.project-osrm.org`). Die is
+**niet SLA-geborgd en rate-limited** — bij intensief gebruik of tijdens piekperiodes kan
+de service tijdelijk 429-responses of time-outs geven.
+
+De app vangt dit volledig op:
+- **6 seconden timeout** per verzoek (via `AbortController`)
+- **429/5xx/netwerk-fouten** worden apart herkend met specifieke gebruikersmeldingen
+- Na **3 opeenvolgende fouten** stopt de app met OSRM-verzoeken (sessie-breed) en
+  schakelt volledig over op de haversine-fallback
+- De **statusbadge** op de kaart en het **~schatting-label** in de route-statistieken
+  maken altijd duidelijk welke kwaliteit de getoonde afstanden hebben
+
+Voor een productie-omgeving met gegarandeerde beschikbaarheid:
+- **Zelfgehoste OSRM** — draai een eigen OSRM-instantie (bijv. Docker op je VPS)
+- **GraphHopper** (open-source, zelfhostbaar) als alternatief
+- **Mapbox Directions API** of **Google Routes API** als betaalde optie
 
 ## Lokaal testen
 
@@ -110,6 +135,8 @@ Geen build-stap nodig — puur HTML/CSS/JS.
   base64url-code (`KEF1-…`) — volledig serverloos
 - Kaart en routing volledig client-side via Leaflet + OSRM, met caching van
   routesegmenten en geometrie
+- **OSRM-foutafvang**: AbortController-timeout (6s), 429/5xx/netwerk-detectie,
+  automatische sessie-brede uitschakeling na 3 opeenvolgende fouten, haversine-fallback
 - Volledig responsive met aparte mobiele navigatie en een ingebouwde print-stylesheet
 - Lettertypes: Cormorant Garamond (serif) + DM Sans (sans)
 </content>

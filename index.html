@@ -1152,6 +1152,57 @@ h3 { font-family: 'DM Sans', sans-serif; font-weight: 500; font-size: 1rem; }
     display: none !important;
   }
 }
+.map-route-status {
+  position: absolute;
+  bottom: 28px;
+  left: 10px;
+  z-index: 1000;
+  font-size: 0.68rem;
+  font-family: 'DM Sans', sans-serif;
+  padding: 3px 9px;
+  border-radius: 12px;
+  pointer-events: auto;
+  transition: opacity 0.4s;
+  white-space: nowrap;
+  display: none;
+}
+.map-route-status.status-loading {
+  display: inline-block;
+  background: rgba(240,240,240,0.92);
+  color: #666;
+  border: 1px solid #ddd;
+}
+.map-route-status.status-ok {
+  display: inline-block;
+  background: rgba(212,237,218,0.95);
+  color: #155724;
+  border: 1px solid #c3e6cb;
+}
+.map-route-status.status-ok.fade-out {
+  opacity: 0;
+  pointer-events: none;
+}
+.map-route-status.status-fallback {
+  display: inline-block;
+  background: rgba(255,243,205,0.95);
+  color: #856404;
+  border: 1px solid #ffeaa7;
+  cursor: help;
+}
+.map-route-status.status-ratelimited {
+  display: inline-block;
+  background: rgba(255,224,178,0.95);
+  color: #c75b00;
+  border: 1px solid #ffcc80;
+  cursor: help;
+}
+.map-route-status.status-error {
+  display: inline-block;
+  background: rgba(248,215,218,0.95);
+  color: #721c24;
+  border: 1px solid #f5c6cb;
+  cursor: help;
+}
 .custom-map-icon {
   display: flex;
   align-items: center;
@@ -1541,6 +1592,7 @@ h3 { font-family: 'DM Sans', sans-serif; font-weight: 500; font-size: 1rem; }
   <!-- Map Column -->
   <div class="planner-map-container">
     <div id="map"></div>
+    <div id="map-route-status" class="map-route-status"></div>
   </div>
 </div>
 
@@ -2159,42 +2211,135 @@ function calculateTravelStats(lat1, lng1, lat2, lng2) {
 const routeDistanceCache = {};
 const roadGeometryCache = {};
 
+// OSRM service state tracking
+const osrm = {
+  consecutiveFailures: 0,
+  disabled: false,         // true after 3 consecutive failures this session
+  lastFailureType: null,   // 'ratelimited' | 'server' | 'network' | 'timeout'
+  usingFallback: false,
+};
+const OSRM_TIMEOUT_MS = 6000;
+const OSRM_MAX_FAILURES = 3;
+
+function setMapRouteStatus(statusClass, text, titleText) {
+  const el = document.getElementById('map-route-status');
+  if (!el) return;
+  el.className = `map-route-status ${statusClass}`;
+  el.textContent = text;
+  if (titleText) el.title = titleText;
+  else el.removeAttribute('title');
+
+  if (statusClass === 'status-ok') {
+    clearTimeout(el._fadeTimer);
+    el._fadeTimer = setTimeout(() => {
+      el.classList.add('fade-out');
+      setTimeout(() => { el.className = 'map-route-status'; }, 450);
+    }, 3000);
+  } else {
+    clearTimeout(el._fadeTimer);
+    el.classList.remove('fade-out');
+  }
+}
+
+async function osrmFetch(url) {
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), OSRM_TIMEOUT_MS);
+  try {
+    const res = await fetch(url, { signal: controller.signal });
+    clearTimeout(timer);
+    if (res.status === 429) {
+      osrm.consecutiveFailures++;
+      osrm.lastFailureType = 'ratelimited';
+      return null;
+    }
+    if (!res.ok) {
+      osrm.consecutiveFailures++;
+      osrm.lastFailureType = 'server';
+      return null;
+    }
+    const data = await res.json();
+    osrm.consecutiveFailures = 0;
+    osrm.lastFailureType = null;
+    return data;
+  } catch (e) {
+    clearTimeout(timer);
+    osrm.consecutiveFailures++;
+    osrm.lastFailureType = e.name === 'AbortError' ? 'timeout' : 'network';
+    return null;
+  } finally {
+    if (osrm.consecutiveFailures >= OSRM_MAX_FAILURES) {
+      osrm.disabled = true;
+    }
+  }
+}
+
 async function getRoadSegmentDistance(lat1, lng1, lat2, lng2) {
   const key = `${lat1.toFixed(4)},${lng1.toFixed(4)}|${lat2.toFixed(4)},${lng2.toFixed(4)}`;
   if (routeDistanceCache[key]) return routeDistanceCache[key];
-  try {
+  if (!osrm.disabled) {
     const url = `https://router.project-osrm.org/route/v1/driving/${lng1},${lat1};${lng2},${lat2}?overview=false`;
-    const res = await fetch(url);
-    const data = await res.json();
-    if (data.code === 'Ok' && data.routes && data.routes[0]) {
+    const data = await osrmFetch(url);
+    if (data && data.code === 'Ok' && data.routes && data.routes[0]) {
       const result = {
         distance: Math.round(data.routes[0].distance / 100) / 10,
-        time: Math.round(data.routes[0].duration / 60)
+        time: Math.round(data.routes[0].duration / 60),
+        exact: true,
       };
       routeDistanceCache[key] = result;
       return result;
     }
-  } catch (e) {}
-  return calculateTravelStats(lat1, lng1, lat2, lng2);
+  }
+  const fallback = calculateTravelStats(lat1, lng1, lat2, lng2);
+  return { ...fallback, exact: false };
 }
 
 async function fetchRoadRouteGeometry(waypoints) {
-  // waypoints: array of [lat, lng]
   const key = waypoints.map(w => w.join(',')).join('|');
   if (roadGeometryCache[key]) return roadGeometryCache[key];
-  try {
-    const coords = waypoints.map(([lat, lng]) => `${lng},${lat}`).join(';');
-    const url = `https://router.project-osrm.org/route/v1/driving/${coords}?overview=full&geometries=geojson`;
-    const res = await fetch(url);
-    const data = await res.json();
-    if (data.code === 'Ok' && data.routes && data.routes[0]) {
-      // GeoJSON is [lng, lat] — convert to Leaflet's [lat, lng]
-      const result = data.routes[0].geometry.coordinates.map(([lng, lat]) => [lat, lng]);
-      roadGeometryCache[key] = result;
-      return result;
-    }
-  } catch (e) {}
+  if (osrm.disabled) return null;
+  const coords = waypoints.map(([lat, lng]) => `${lng},${lat}`).join(';');
+  const url = `https://router.project-osrm.org/route/v1/driving/${coords}?overview=full&geometries=geojson`;
+  const data = await osrmFetch(url);
+  if (data && data.code === 'Ok' && data.routes && data.routes[0]) {
+    const result = data.routes[0].geometry.coordinates.map(([lng, lat]) => [lat, lng]);
+    roadGeometryCache[key] = result;
+    return result;
+  }
   return null;
+}
+
+function osrmStatusBadgeAfterFetch(routeCoords) {
+  if (routeCoords) {
+    osrm.usingFallback = false;
+    setMapRouteStatus('status-ok', '✓ Echte routes');
+  } else if (osrm.disabled) {
+    const msgs = {
+      ratelimited: 'OSRM snelheidslimiet bereikt — afstanden zijn schattingen. Probeer later opnieuw.',
+      server: 'Routeservice tijdelijk onbereikbaar — afstanden zijn schattingen.',
+      timeout: 'Routeservice reageert niet — afstanden zijn schattingen.',
+      network: 'Geen verbinding met routeservice — afstanden zijn schattingen.',
+    };
+    const type = osrm.lastFailureType || 'server';
+    const labels = {
+      ratelimited: '⚠ Snelheidslimiet bereikt',
+      server: '✕ Routeservice onbereikbaar',
+      timeout: '✕ Routeservice reageert niet',
+      network: '✕ Geen verbinding',
+    };
+    setMapRouteStatus(
+      type === 'ratelimited' ? 'status-ratelimited' : 'status-error',
+      labels[type],
+      msgs[type]
+    );
+    osrm.usingFallback = true;
+  } else {
+    osrm.usingFallback = true;
+    setMapRouteStatus(
+      'status-fallback',
+      '~ Geschatte routes',
+      'OSRM niet bereikbaar — routes zijn rechte lijnen met geschatte rijafstanden.'
+    );
+  }
 }
 
 function buildGoogleMapsUrl(plan) {
@@ -2213,16 +2358,18 @@ async function updateRouteStatsCard(dayIndex) {
   const acts = plan.activities.filter(a => a.lat && a.lng);
   if (acts.length === 0) return;
 
+  numbersEl.innerHTML = `<div style="font-size:0.75rem;color:var(--muted);">Berekenen…</div>`;
+
   const [hotelLat, hotelLng] = HOTEL_COORDS;
-  let totalDistance = 0, totalTime = 0;
+  let totalDistance = 0, totalTime = 0, allExact = true;
 
   try {
     if (acts.length === 1) {
       const s = await getRoadSegmentDistance(hotelLat, hotelLng, acts[0].lat, acts[0].lng);
       totalDistance = s.distance * 2;
       totalTime = s.time * 2;
+      if (!s.exact) allExact = false;
     } else {
-      // Chain: hotel → act[0] → act[1] → ... → hotel
       const waypoints = [
         [hotelLat, hotelLng],
         ...acts.map(a => [a.lat, a.lng]),
@@ -2235,6 +2382,7 @@ async function updateRouteStatsCard(dayIndex) {
       );
       totalDistance = segments.reduce((s, seg) => s + seg.distance, 0);
       totalTime = segments.reduce((s, seg) => s + seg.time, 0);
+      if (segments.some(s => !s.exact)) allExact = false;
     }
   } catch (e) {
     const el = document.getElementById(`route-stats-numbers-${dayIndex}`);
@@ -2248,10 +2396,13 @@ async function updateRouteStatsCard(dayIndex) {
   const hours = Math.floor(totalTime / 60);
   const mins  = totalTime % 60;
   const timeText = hours > 0 ? `${hours}u ${mins}m` : `${mins}m`;
+  const qualityLabel = allExact
+    ? ''
+    : `<span title="Routeservice niet bereikbaar — schatting op basis van luchtlijn × 1,5" style="font-size:0.65rem;color:var(--muted);margin-left:4px;cursor:help;">~schatting</span>`;
 
   el.innerHTML = `
     <div style="font-size:1.25rem; font-weight:700; color:var(--sea-deep);">${timeText} reistijd</div>
-    <div style="font-size:0.75rem; color:var(--muted); margin-top:2px;">${totalDistance.toFixed(1)} km rijden</div>
+    <div style="font-size:0.75rem; color:var(--muted); margin-top:2px;">${totalDistance.toFixed(1)} km rijden${qualityLabel}</div>
   `;
 }
 
@@ -2374,6 +2525,8 @@ function updateMap(dayIndex) {
     const waypoints = [HOTEL_COORDS, ...plan.activities.map(a => [a.lat, a.lng]), HOTEL_COORDS];
     map.fitBounds(L.latLngBounds(waypoints), { padding: [60, 60] });
 
+    setMapRouteStatus('status-loading', '⏳ Routes laden…');
+
     fetchRoadRouteGeometry(waypoints).then(routeCoords => {
       if (token !== mapUpdateToken) return;
       if (routeCoords) {
@@ -2394,6 +2547,7 @@ function updateMap(dayIndex) {
         routeLines.push(route);
         map.fitBounds(route.getBounds(), { padding: [60, 60] });
       }
+      osrmStatusBadgeAfterFetch(routeCoords);
     });
   } else if (coords.length > 2) {
     const route = L.polyline(coords, {
@@ -3386,14 +3540,23 @@ async function submitActivityRequest() {
       }),
     });
 
-    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    if (res.status === 429) throw new Error('ratelimit');
+    if (!res.ok) throw new Error(`server:${res.status}`);
 
     status.style.color = 'var(--olive)';
     status.textContent = '✓ Voorstel verzonden! De beheerder bekijkt het zo snel mogelijk.';
     setTimeout(closeAddActivityModal, 2200);
   } catch (err) {
     status.style.color = 'var(--terracotta)';
-    status.textContent = 'Er ging iets mis bij het versturen. Probeer het opnieuw.';
+    if (err.message === 'ratelimit') {
+      status.textContent = 'Te veel verzoeken — wacht even en probeer opnieuw.';
+    } else if (err.message && err.message.startsWith('server:')) {
+      status.textContent = 'De server is tijdelijk niet beschikbaar. Probeer het later opnieuw.';
+    } else if (err.name === 'TypeError') {
+      status.textContent = 'Geen verbinding. Controleer je internetverbinding en probeer opnieuw.';
+    } else {
+      status.textContent = 'Er ging iets mis bij het versturen. Probeer het opnieuw.';
+    }
     btn.disabled = false;
   }
 }
