@@ -2,8 +2,10 @@
   "name": "kefalonia",
   "version": "1.0.0",
   "description": "Een interactieve vakantie-onboarding app voor jullie trip naar Kefalonia (13–27 juni).",
-  "main": "index.js",
+  "main": "index.html",
   "scripts": {
+    "build": "node build.js",
+    "dev": "node build.js && npx serve .",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {

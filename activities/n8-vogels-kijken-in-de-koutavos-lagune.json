@@ -1,0 +1,16 @@
+{
+  "id": "n8",
+  "cat": "natuur",
+  "icon": "🦩",
+  "title": "Vogels kijken in de Koutavos Lagune",
+  "duration": 60,
+  "why": "Beschermd lagune-ecosysteem vol flamingo's en reigers. Wandelpad omheen voor een ontspannen ochtend.",
+  "tip": "Vroeg 's ochtends voor de meeste activiteit. Gratis en goed bereikbaar vanuit Argostoli.",
+  "cost": 0,
+  "location": "Koutavos Lagoon, Argostoli, Kefalonia",
+  "mapUrl": "https://www.google.com/maps/search/?api=1&query=Koutavos+Lagoon+Argostoli",
+  "lat": 38.169,
+  "lng": 20.499,
+  "reservation": false,
+  "special": false
+}

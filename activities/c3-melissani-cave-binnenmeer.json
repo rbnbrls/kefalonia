@@ -1,0 +1,16 @@
+{
+  "id": "c3",
+  "cat": "cultuur",
+  "icon": "🛶",
+  "title": "Melissani Cave (binnenmeer)",
+  "duration": 60,
+  "why": "Ondergronds meer met ingestort dak. Rond het middaguur lijken de bootjes te zweven in turquoise lucht.",
+  "tip": "Bezoek tussen 11:30 en 13:30 voor het magische lichteffect.",
+  "cost": 18,
+  "location": "Melissani Cave, Karavomylos, Kefalonia",
+  "mapUrl": "https://www.google.com/maps/search/?api=1&query=Melissani+Cave+Kefalonia",
+  "lat": 38.262,
+  "lng": 20.623,
+  "reservation": false,
+  "special": false
+}

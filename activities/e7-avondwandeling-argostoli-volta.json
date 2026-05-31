@@ -1,0 +1,16 @@
+{
+  "id": "e7",
+  "cat": "eten",
+  "icon": "🎉",
+  "title": "Avondwandeling Argostoli (volta)",
+  "duration": 90,
+  "why": "De Griekse volta is heilig. Schuif aan op Vallianou-plein met een ouzo en geniet van het leven.",
+  "tip": "Start rond 20:00. Probeer loukoumades (Griekse honing-oliebollen) bij lokale zoetwinkels.",
+  "cost": 20,
+  "location": "Vallianou Square, Argostoli, Kefalonia",
+  "mapUrl": "https://www.google.com/maps/search/?api=1&query=Vallianou+Square+Argostoli",
+  "lat": 38.175,
+  "lng": 20.493,
+  "reservation": false,
+  "special": false
+}

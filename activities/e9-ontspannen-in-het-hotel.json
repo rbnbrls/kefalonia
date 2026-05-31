@@ -1,0 +1,16 @@
+{
+  "id": "e9",
+  "cat": "hotel",
+  "icon": "🏨",
+  "title": "Ontspannen in het hotel",
+  "duration": 0,
+  "why": "Genieten van de luxe faciliteiten en de spa van Apollonion Asterias Resort & Spa ***** in Lixouri.",
+  "tip": "Boek vooraf een heerlijke massage of gezichtsbehandeling in de health spa van het resort.",
+  "cost": 0,
+  "location": "Apollonion Asterias Resort en Spa *****, Lixouri, Griekenland",
+  "mapUrl": "https://www.google.com/maps/search/?api=1&query=Apollonion+Asterias+Resort+Spa+Lixouri",
+  "lat": 38.188,
+  "lng": 20.407,
+  "reservation": true,
+  "special": false
+}

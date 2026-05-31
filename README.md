@@ -5,8 +5,11 @@ Een interactieve vakantie-onboarding app waarmee jullie samen de trip naar Kefal
 kiest per dag activiteiten uit een rijke catalogus, ziet meteen de reisafstanden op een
 kaart, en houdt een terugkeer-code over om later op elk apparaat verder te gaan.
 
-Alles draait in **één enkel `index.html`-bestand** — geen build-stap, geen framework,
-geen backend nodig.
+**Geen framework, geen backend, geen bundler.** De app is opgesplitst in een handvol
+losse statische bestanden (`index.html` + `styles.css` + `app.js`) en elke activiteit
+staat als **los JSON-bestand** in [`activities/`](activities/). Een klein, dependency-loos
+Node-script (`build.js`) bundelt die JSON-bestanden tot `activities.generated.js`. De
+gegenereerde site blijft **100% statisch** — Coolify hoeft niets te bouwen.
 
 ## Wat het doet
 
@@ -83,14 +86,34 @@ geen backend nodig.
 
 ```
 kefalonia/
-├── index.html        ← de volledige app (HTML + CSS + JS in één bestand)
-├── package.json      ← alleen Playwright als devDependency (testopzet)
+├── index.html               ← HTML-shell: markup + verwijzingen naar de losse bestanden
+├── styles.css               ← alle CSS (los bestand t.b.v. caching)
+├── app.js                   ← alle applicatielogica (los bestand t.b.v. caching)
+├── activities/              ← bron van waarheid: één JSON-bestand per activiteit
+│   ├── README.md            ← het verplichte template + veldspecificatie
+│   ├── _TEMPLATE.json       ← kopieersjabloon voor een nieuwe activiteit
+│   ├── s1-myrtos-beach.json
+│   └── …                    ← 39 activiteiten
+├── activities.generated.js  ← GEGENEREERD door build.js (window.ACTIVITIES = […])
+├── build.js                 ← zero-dependency Node-script: valideert + bundelt activities/
+├── package.json             ← npm-scripts (build/dev) + Playwright als devDependency
 ├── README.md
 └── .gitignore
 ```
 
-> De app zelf heeft geen runtime-dependencies. `package.json` bevat enkel Playwright,
-> bedoeld voor toekomstige end-to-end tests.
+### Hoe het laadt
+
+`index.html` laadt in volgorde: `styles.css`, Leaflet (CDN), `activities.generated.js`
+(zet `window.ACTIVITIES` klaar) en daarna `app.js` (de logica, die `window.ACTIVITIES`
+inleest). `app.js` blijft een *classic script* in global scope, zodat de inline
+`onclick`-handlers in de HTML blijven werken — bewust geen ES-modules of framework.
+
+> **Waarom opgesplitst?** Onderhoudbaarheid (CSS, logica en data los van elkaar) en
+> caching: wijzig je alleen een activiteit, dan verandert enkel `activities.generated.js`
+> en blijven `styles.css`/`app.js` in de browsercache staan.
+
+> De app heeft geen runtime-dependencies. `package.json` bevat enkel Playwright,
+> bedoeld voor end-to-end tests. `build.js` gebruikt **uitsluitend de Node-standaardlib**.
 
 ## Externe diensten (via CDN / API, geen eigen backend)
 
@@ -121,17 +144,24 @@ Voor een productie-omgeving met gegarandeerde beschikbaarheid:
 - **GraphHopper** (open-source, zelfhostbaar) als alternatief
 - **Mapbox Directions API** of **Google Routes API** als betaalde optie
 
-## Lokaal testen
+## Lokaal draaien
 
 ```bash
-# Simpelste manier — open het bestand direct:
-open index.html
+# Genereer activities.generated.js en start een lokale server:
+npm run dev          # = node build.js && npx serve .
 
-# Of via een lokale server (aan te raden, zodat fetch/CDN's netjes werken):
-npx serve .
+# Of los:
+npm run build        # valideert activities/ en (her)genereert activities.generated.js
+open index.html      # daarna direct te openen (alle scripts laden lokaal, geen fetch)
 ```
 
-## Deployen op Coolify
+> Je hoeft `npm run build` alleen te draaien als je iets in `activities/` hebt veranderd.
+> `activities.generated.js` wordt **meegecommit**, dus een verse clone werkt meteen.
+
+## Deployen op Coolify (blijft statisch)
+
+De gegenereerde site is puur HTML/CSS/JS — **er hoeft op de server niets gebouwd te
+worden**, omdat `activities.generated.js` al in de repo zit.
 
 1. Push deze repository naar een Git-host (GitHub, GitLab, Gitea, of `git.7rb.nl`)
 2. Open je Coolify dashboard
@@ -141,44 +171,53 @@ npx serve .
    - **Build pack**: `Static`
    - **Publish directory**: `/` (de root)
    - **Index file**: `index.html`
+   - **Build command**: *leeg laten* — niet nodig
 6. Stel je gewenste domein/subdomain in (bijv. `kefalonia.jouwnaam.nl`)
 7. Deploy → klaar!
 
-Geen build-stap nodig — puur HTML/CSS/JS.
+> Wil je de build tóch op Coolify laten draaien (bijv. om validatie af te dwingen),
+> zet dan de **Build command** op `npm run build` en houd **Publish directory** op `/`.
+> Dat blijft binnen de `Static` build pack — de uitvoer is en blijft statisch.
 
 ## Een nieuwe activiteit toevoegen
 
-Alle activiteiten staan als object-literals in de `ACTIVITIES`-array in `index.html`
-(rond regel 1774). Kopieer het onderstaande template en vul alle verplichte velden in.
+Activiteiten zijn **losse JSON-bestanden** in [`activities/`](activities/) — één bestand
+per activiteit. De volledige veldspecificatie staat in
+[`activities/README.md`](activities/README.md); hieronder de korte versie.
+
+1. Kopieer [`activities/_TEMPLATE.json`](activities/_TEMPLATE.json) naar
+   `activities/<id>-<slug>.json` (bijv. `s10-skala-beach.json`).
+2. Vul de verplichte velden in. Laat `reservation`/`special` op `false` tenzij van toepassing.
+3. Run `npm run build` — dit **valideert** je bestand en regenereert `activities.generated.js`.
+4. Commit zowel het nieuwe `.json`-bestand als de bijgewerkte `activities.generated.js`.
+
+De build **globt** alle bestanden in `activities/` automatisch — er is geen manifest of
+lijst om bij te werken. Eén bestand neerzetten volstaat. Bestanden die met `_` beginnen
+(zoals `_TEMPLATE.json`) worden overgeslagen.
+
+> **AI-agents:** voeg/bewerk uitsluitend bestanden in `activities/` volgens het template.
+> Onbekende velden, een foute `cat`/`duration`, een dubbele `id` of een ontbrekend
+> verplicht veld laten `npm run build` **falen met een duidelijke melding** — draai de
+> build dus altijd en bevestig dat de validatie slaagt voordat je commit.
 
 ### Template
 
-```js
+```json
 {
-  // ── VERPLICHT ──────────────────────────────────────────────────────────
-  id:       'x1',                    // Unieke string; gebruik prefix per categorie:
-                                     //   s=stranden · c=cultuur · n=natuur
-                                     //   e=eten · b=bday (verjaardag) · hotel=e9
-  cat:      'stranden',              // Categorie — zie tabel hieronder
-  icon:     '🏖️',                   // Één emoji als visuele marker op de kaart en kaart
-  title:    'Naam van de activiteit',// Korte weergavenaam (Nederlands)
-  duration: 120,                     // Duur in minuten — zie toegestane waarden hieronder
-  why:      'Waarom dit een ...',    // Motivatie: wat maakt dit de moeite waard? (1–2 zinnen)
-  tip:      'Praktische tip ...',    // Concreet advies: beste tijd, wat meenemen, combineren
-  cost:     0,                       // Geschatte kosten in euro's (geheel getal; 0 = gratis)
-  location: 'Locatienaam, Dorp, Kefalonia', // Leesbare locatie (voor tooltip en overzicht)
-  mapUrl:   'https://www.google.com/maps/search/?api=1&query=...+Kefalonia',
-  lat:      38.300,                  // Breedtegraad (decimaal, ~5 decimalen)
-  lng:      20.500,                  // Lengtegraad (decimaal, ~5 decimalen)
-
-  // ── OPTIONEEL ──────────────────────────────────────────────────────────
-  reservation: true,   // Voeg toe als vooraf boeken verplicht of sterk aanbevolen is.
-                       // Toont oranje "📋 Reserveer vooraf!"-badge in de dag- en overzichtsweergave
-                       // en telt mee in de reserveringsteller op de overzichtspagina.
-                       // Weglaten (of false) = geen badge.
-  special:     true,   // Uitsluitend voor cat:'bday'-activiteiten. Geeft de kaart gouden
-                       // stijl en toont het "Verjaardagsidee"-label. Weglaten voor alle
-                       // andere categorieën.
+  "id": "s10",
+  "cat": "stranden",
+  "icon": "🏖️",
+  "title": "Naam van de activiteit",
+  "duration": 120,
+  "why": "Waarom is dit de moeite waard? (1–2 zinnen)",
+  "tip": "Praktische tip: beste tijd, wat meenemen, slim combineren.",
+  "cost": 0,
+  "location": "Locatienaam, Dorp, Kefalonia",
+  "mapUrl": "https://www.google.com/maps/search/?api=1&query=...+Kefalonia",
+  "lat": 38.300,
+  "lng": 20.500,
+  "reservation": false,
+  "special": false
 }
 ```
 
@@ -219,15 +258,20 @@ als "Hele dag" en blokkeren andere activiteiten op dezelfde dag.
 | `reservation` | `boolean` | Nee       | `true` = badge "📋 Reserveer vooraf!" + telt in reserveringsteller |
 | `special`     | `boolean` | Nee       | `true` = gouden UI-stijl; **alleen voor `cat: 'bday'`**           |
 
-> **Positie in de array:** voeg de activiteit toe in de bijpassende blok-sectie
-> (gemarkeerd met `// ── STRANDEN ──`, `// ── NATUUR ──`, enzovoort). De volgorde
-> binnen een categorie bepaalt de weergavevolgorde in de UI.
+> **Volgorde in de UI:** `build.js` sorteert op categorie
+> (`stranden → cultuur → natuur → eten → hotel → bday`) en daarbinnen op het numerieke
+> deel van de `id` (`s1`, `s2`, …). De bestandsnaam doet er voor de volgorde niet toe;
+> de `id` bepaalt de positie.
 
 ---
 
 ## Technische details
 
-- **Pure HTML/CSS/JS** — geen framework, geen bundler, één bestand
+- **Pure HTML/CSS/JS** — geen framework, geen bundler; opgesplitst in `index.html` +
+  `styles.css` + `app.js`, met activiteiten als losse JSON-bestanden in `activities/`
+- **`build.js`** — zero-dependency Node-script (alleen de standaardlib) dat `activities/*.json`
+  valideert tegen het verplichte template en bundelt tot `activities.generated.js`. De
+  deploy blijft statisch: het gegenereerde bestand wordt meegecommit, de server bouwt niets
 - Vier "schermen" (welkom, planner, catalogus, overzicht) geschakeld via CSS-klassen
 - **State** wordt bewaard in `localStorage` én is te exporteren als zelfbevattende
   base64url-code (`KEF1-…`) — volledig serverloos

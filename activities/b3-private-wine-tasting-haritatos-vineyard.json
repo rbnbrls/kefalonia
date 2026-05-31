@@ -1,0 +1,16 @@
+{
+  "id": "b3",
+  "cat": "bday",
+  "icon": "🍇",
+  "title": "Private wine tasting Haritatos Vineyard",
+  "duration": 120,
+  "why": "Een romantisch 19e-eeuws landgoed op Paliki. Privérondleiding en proeverij onder de bomen — intiem en tijdloos.",
+  "tip": "Combineer met Petani Beach op 10 min rijden voor een spectaculaire zonsondergangsdip.",
+  "cost": 80,
+  "location": "Haritatos Vineyard, Lixouri, Paliki, Kefalonia",
+  "mapUrl": "https://www.google.com/maps/search/?api=1&query=Haritatos+Vineyard+Lixouri",
+  "lat": 38.232,
+  "lng": 20.395,
+  "reservation": true,
+  "special": true
+}

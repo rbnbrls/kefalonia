@@ -1,0 +1,16 @@
+{
+  "id": "x1",
+  "cat": "stranden",
+  "icon": "🏖️",
+  "title": "Naam van de activiteit",
+  "duration": 120,
+  "why": "Waarom is dit de moeite waard? (1–2 zinnen)",
+  "tip": "Praktische tip: beste tijd, wat meenemen, slim combineren.",
+  "cost": 0,
+  "location": "Locatienaam, Dorp, Kefalonia",
+  "mapUrl": "https://www.google.com/maps/search/?api=1&query=...+Kefalonia",
+  "lat": 38.3,
+  "lng": 20.5,
+  "reservation": false,
+  "special": false
+}

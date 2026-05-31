@@ -1,0 +1,16 @@
+{
+  "id": "e5",
+  "cat": "eten",
+  "icon": "☕",
+  "title": "Frappé drinken in Karavomylos",
+  "duration": 45,
+  "why": "Rustig kustdorpje waar het water van de Melissani-grot omhoog komt. Heerlijk zitten onder de bomen.",
+  "tip": "Loop na de koffie over het kustpad richting Sami. Combineer met een grottenmiddag.",
+  "cost": 12,
+  "location": "Karavomylos Lake, Karavomylos, Kefalonia",
+  "mapUrl": "https://www.google.com/maps/search/?api=1&query=Karavomylos+Lake+Kefalonia",
+  "lat": 38.257,
+  "lng": 20.634,
+  "reservation": false,
+  "special": false
+}

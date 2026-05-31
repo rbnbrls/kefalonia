@@ -1,0 +1,16 @@
+{
+  "id": "e2",
+  "cat": "eten",
+  "icon": "🌅",
+  "title": "Zonsondergang bij Apolafsi (Lixouri)",
+  "duration": 120,
+  "why": "Eten met de voeten in het zand terwijl de lucht roze en oranje kleurt boven de zee. Perfecte vakantiedag.",
+  "tip": "Bestel de Kefalonitiki Kreatopita — de traditionele vleespastei van het eiland. Niet missen.",
+  "cost": 70,
+  "location": "Apolafsi Restaurant, Lixouri, Kefalonia",
+  "mapUrl": "https://www.google.com/maps/search/?api=1&query=Apolafsi+Restaurant+Lixouri",
+  "lat": 38.19,
+  "lng": 20.418,
+  "reservation": true,
+  "special": false
+}

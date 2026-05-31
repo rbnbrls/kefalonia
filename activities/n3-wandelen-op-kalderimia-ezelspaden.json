@@ -1,0 +1,16 @@
+{
+  "id": "n3",
+  "cat": "natuur",
+  "icon": "🥾",
+  "title": "Wandelen op kalderimia (ezelspaden)",
+  "duration": 240,
+  "why": "Historische paden door olijfgaarden, langs ruïnes. Het echte eiland ontdekken weg van de kust.",
+  "tip": "Gebruik Wikiloc of AllTrails. Start uiterlijk 8:00 uur — het wordt snel heet in juni.",
+  "cost": 0,
+  "location": "Sami en omgeving, Kefalonia",
+  "mapUrl": "https://www.google.com/maps/search/?api=1&query=Sami+Kefalonia",
+  "lat": 38.251,
+  "lng": 20.647,
+  "reservation": false,
+  "special": false
+}

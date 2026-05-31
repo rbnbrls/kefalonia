@@ -1,0 +1,16 @@
+{
+  "id": "c1",
+  "cat": "cultuur",
+  "icon": "🏡",
+  "title": "Fiskardo verkennen",
+  "duration": 120,
+  "why": "Het enige dorp dat de aardbeving van 1953 overleefde. Pastelkleurige Venetiaanse huizen en een sfeervolle jachthaven.",
+  "tip": "Parkeer gratis net buiten het dorp en loop er laat in de middag naartoe — dan zijn de dagjesmensen weg.",
+  "cost": 0,
+  "location": "Fiskardo Haven, Erisos, Kefalonia",
+  "mapUrl": "https://www.google.com/maps/search/?api=1&query=Fiskardo+Kefalonia",
+  "lat": 38.461,
+  "lng": 20.578,
+  "reservation": false,
+  "special": false
+}

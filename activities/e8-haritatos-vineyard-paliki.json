@@ -1,0 +1,16 @@
+{
+  "id": "e8",
+  "cat": "eten",
+  "icon": "🍇",
+  "title": "Haritatos Vineyard (Paliki)",
+  "duration": 120,
+  "why": "Authentiek 19e-eeuws landgoed — tijdloos, sfeervol en bijna onontdekt. Biologische wijnen en rust.",
+  "tip": "Van tevoren bellen voor een exclusieve proeverij met mezze-plank in de tuin.",
+  "cost": 50,
+  "location": "Haritatos Vineyard, Lixouri, Paliki, Kefalonia",
+  "mapUrl": "https://www.google.com/maps/search/?api=1&query=Haritatos+Vineyard+Lixouri",
+  "lat": 38.232,
+  "lng": 20.395,
+  "reservation": true,
+  "special": false
+}

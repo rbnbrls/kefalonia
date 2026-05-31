@@ -1,0 +1,16 @@
+{
+  "id": "e6",
+  "cat": "eten",
+  "icon": "🐟",
+  "title": "Verse vis bij Taverna Gorgona (Fiskardo)",
+  "duration": 120,
+  "why": "De vangst van de dag eten aan de kade. Zo vers dat hij 's ochtends nog in de boot lag.",
+  "tip": "Vraag de ober mee te lopen naar de koelvitrine om zelf je vis te kiezen — heel gebruikelijk en leuk.",
+  "cost": 80,
+  "location": "Taverna Gorgona, Fiskardo, Kefalonia",
+  "mapUrl": "https://www.google.com/maps/search/?api=1&query=Taverna+Gorgona+Fiskardo",
+  "lat": 38.461,
+  "lng": 20.579,
+  "reservation": true,
+  "special": false
+}

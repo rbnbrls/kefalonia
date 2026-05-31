@@ -1,0 +1,16 @@
+{
+  "id": "s7",
+  "cat": "stranden",
+  "icon": "🦭",
+  "title": "Dafnoudi Beach",
+  "duration": 150,
+  "why": "Na 15 min wandelen door een groen dal openbaart zich een piepkleine beschutte baai. Kans op Monniksrob!",
+  "tip": "Stevige schoenen verplicht. Neem meer water mee dan je denkt nodig te hebben.",
+  "cost": 0,
+  "location": "Dafnoudi Beach, Antipata, Kefalonia",
+  "mapUrl": "https://www.google.com/maps/search/?api=1&query=Dafnoudi+Beach+Kefalonia",
+  "lat": 38.458,
+  "lng": 20.563,
+  "reservation": false,
+  "special": false
+}

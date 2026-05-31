@@ -1,0 +1,16 @@
+{
+  "id": "c2",
+  "cat": "cultuur",
+  "icon": "🏰",
+  "title": "Assos & Venetiaans kasteel",
+  "duration": 150,
+  "why": "Schilderachtig dorpje op een smalle landtong. Het uitzicht op de hoefijzervormige baai is ronduit magisch.",
+  "tip": "Vroeg beginnen vanwege de hitte. Toegang kasteel gratis. Daarna duik in de baai beneden.",
+  "cost": 0,
+  "location": "Assos Castle, Assos, Kefalonia",
+  "mapUrl": "https://www.google.com/maps/search/?api=1&query=Assos+Castle+Kefalonia",
+  "lat": 38.38,
+  "lng": 20.536,
+  "reservation": false,
+  "special": false
+}

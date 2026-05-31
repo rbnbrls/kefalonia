@@ -1,0 +1,16 @@
+{
+  "id": "c8",
+  "cat": "cultuur",
+  "icon": "⛵",
+  "title": "Lixouri & schiereiland Paliki",
+  "duration": 120,
+  "why": "De tweede stad van Kefalonia, bijna zonder toeristen. Authentieke Griekse sfeer en mooie pleinen.",
+  "tip": "Neem het kleine veerbootje vanuit Argostoli (20 min, leuke ervaring) in plaats van de omweg over de weg.",
+  "cost": 8,
+  "location": "Lixouri Haven, Paliki, Kefalonia",
+  "mapUrl": "https://www.google.com/maps/search/?api=1&query=Lixouri+Kefalonia",
+  "lat": 38.201,
+  "lng": 20.438,
+  "reservation": false,
+  "special": false
+}

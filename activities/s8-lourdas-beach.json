@@ -1,0 +1,16 @@
+{
+  "id": "s8",
+  "cat": "stranden",
+  "icon": "🌊",
+  "title": "Lourdas Beach",
+  "duration": 150,
+  "why": "Breed, rustig strand aan de zuidkust met uitzicht op Zakynthos. Minder druk dan de noordkust.",
+  "tip": "Op heldere dagen zie je Zakynthos — verrekijker meenemen! Goede taverna's vlakbij.",
+  "cost": 0,
+  "location": "Lourdas Beach, Lourdata, Kefalonia",
+  "mapUrl": "https://www.google.com/maps/search/?api=1&query=Lourdas+Beach+Kefalonia",
+  "lat": 38.117,
+  "lng": 20.635,
+  "reservation": false,
+  "special": false
+}

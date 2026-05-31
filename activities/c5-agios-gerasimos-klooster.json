@@ -1,0 +1,16 @@
+{
+  "id": "c5",
+  "cat": "cultuur",
+  "icon": "⛪",
+  "title": "Agios Gerasimos klooster",
+  "duration": 60,
+  "why": "Spiritueel hart van het eiland. Prachtige fresco's en een ondergrondse grot waar de heilige leefde.",
+  "tip": "Gepaste kleding verplicht (schouders/knieën bedekt). Sjaals liggen aan de ingang.",
+  "cost": 0,
+  "location": "Monastery of Agios Gerasimos, Omala, Kefalonia",
+  "mapUrl": "https://www.google.com/maps/search/?api=1&query=Monastery+of+Agios+Gerasimos+Kefalonia",
+  "lat": 38.167,
+  "lng": 20.588,
+  "reservation": false,
+  "special": false
+}

@@ -1,0 +1,16 @@
+{
+  "id": "n6",
+  "cat": "natuur",
+  "icon": "🗺️",
+  "title": "Dagtrip naar Ithaka",
+  "duration": 480,
+  "why": "Het eiland van Odysseus — nóg rustiger en met een haast mystieke sfeer. Havenstadje Vathy is tijdloos.",
+  "tip": "Vroege autoveerboot vanuit Sami. Check bij verhuurder of de verzekering de overtocht dekt.",
+  "cost": 40,
+  "location": "Ferry Haven Sami, Sami, Kefalonia",
+  "mapUrl": "https://www.google.com/maps/search/?api=1&query=Port+of+Sami+Kefalonia",
+  "lat": 38.251,
+  "lng": 20.647,
+  "reservation": true,
+  "special": false
+}

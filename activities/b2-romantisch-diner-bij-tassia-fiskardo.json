@@ -1,0 +1,16 @@
+{
+  "id": "b2",
+  "cat": "bday",
+  "icon": "🍽️",
+  "title": "Romantisch diner bij Tassia (Fiskardo)",
+  "duration": 120,
+  "why": "Het iconische restaurant aan de kade van Fiskardo. Top-tier service, verfijnde Griekse keuken, geluid van de golven.",
+  "tip": "Reserveer voor 20:15. Vraag expliciet om een seafront tafel voor de zonsondergang.",
+  "cost": 120,
+  "location": "Tassia Restaurant, Fiskardo Haven, Kefalonia",
+  "mapUrl": "https://www.google.com/maps/search/?api=1&query=Tassia+Restaurant+Fiskardo",
+  "lat": 38.461,
+  "lng": 20.579,
+  "reservation": true,
+  "special": true
+}

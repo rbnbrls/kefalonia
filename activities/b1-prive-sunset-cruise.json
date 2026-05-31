@@ -1,0 +1,16 @@
+{
+  "id": "b1",
+  "cat": "bday",
+  "icon": "⛵",
+  "title": "Privé sunset cruise",
+  "duration": 240,
+  "why": "Een privéboot met schipper, verlaten baaitjes, gekoelde Robola-wijn en de zon die in de Ionische Zee wegzakt. Volledige privacy.",
+  "tip": "Vooraf boeken via charterbedrijven in Fiskardo of Argostoli. Vraag om wijn die al koud staat.",
+  "cost": 280,
+  "location": "Fiskardo of Sami Haven, Kefalonia",
+  "mapUrl": "https://www.google.com/maps/search/?api=1&query=Fiskardo+Harbour",
+  "lat": 38.461,
+  "lng": 20.578,
+  "reservation": true,
+  "special": true
+}

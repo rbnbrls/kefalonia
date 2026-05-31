@@ -1,0 +1,16 @@
+{
+  "id": "c4",
+  "cat": "cultuur",
+  "icon": "💎",
+  "title": "Drogarati Cave",
+  "duration": 60,
+  "why": "Indrukwekkende druipsteengrot van miljoenen jaar oud. Fenomenale akoestiek — hier werden concerten gegeven.",
+  "tip": "Binnen altijd 18°C — dunne laag meenemen. Combineer met Melissani op dezelfde dag.",
+  "cost": 14,
+  "location": "Drogarati Cave, Chaliotata, Kefalonia",
+  "mapUrl": "https://www.google.com/maps/search/?api=1&query=Drogarati+Cave+Kefalonia",
+  "lat": 38.228,
+  "lng": 20.627,
+  "reservation": false,
+  "special": false
+}

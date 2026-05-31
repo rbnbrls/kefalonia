@@ -1,0 +1,16 @@
+{
+  "id": "s6",
+  "cat": "stranden",
+  "icon": "🐠",
+  "title": "Kimilia Beach (nabij Fiskardo)",
+  "duration": 120,
+  "why": "Schaduwrijke kiezelbaai in het noorden omringd door cipressen. Zwembadhelder water vol vis.",
+  "tip": "Snorkelset mee! Korte wandeling door bos houdt het rustig.",
+  "cost": 0,
+  "location": "Kimilia Beach, Germenata, Kefalonia",
+  "mapUrl": "https://www.google.com/maps/search/?api=1&query=Kimilia+Beach+Kefalonia",
+  "lat": 38.455,
+  "lng": 20.554,
+  "reservation": false,
+  "special": false
+}

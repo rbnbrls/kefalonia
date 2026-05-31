@@ -1,0 +1,16 @@
+{
+  "id": "n4",
+  "cat": "natuur",
+  "icon": "🚤",
+  "title": "Motorboot huren (zonder vaarbewijs)",
+  "duration": 360,
+  "why": "Ultieme vrijheid: verborgen baaitjes bereiken die alleen per boot toegankelijk zijn. Dé topdag.",
+  "tip": "Boek vroeg in de vakantie zodat je bij slecht weer kunt verzetten. Huren mag tot 30 pk.",
+  "cost": 150,
+  "location": "Fiskardo of Argostoli Haven, Kefalonia",
+  "mapUrl": "https://www.google.com/maps/search/?api=1&query=Fiskardo+Boat+Rental",
+  "lat": 38.461,
+  "lng": 20.578,
+  "reservation": true,
+  "special": false
+}

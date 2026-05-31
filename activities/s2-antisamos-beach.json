@@ -1,0 +1,16 @@
+{
+  "id": "s2",
+  "cat": "stranden",
+  "icon": "🌴",
+  "title": "Antisamos Beach",
+  "duration": 180,
+  "why": "Weelderig groen omringd strand, bekend van Captain Corelli's Mandolin. Ideaal om te snorkelen.",
+  "tip": "Consumptie bij beachclub = gratis ligbedden. Mooiste weg via Sami.",
+  "cost": 30,
+  "location": "Antisamos Beach, Sami, Kefalonia",
+  "mapUrl": "https://www.google.com/maps/search/?api=1&query=Antisamos+Beach+Kefalonia",
+  "lat": 38.259,
+  "lng": 20.673,
+  "reservation": false,
+  "special": false
+}

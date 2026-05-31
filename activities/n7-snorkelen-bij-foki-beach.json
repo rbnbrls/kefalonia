@@ -1,0 +1,16 @@
+{
+  "id": "n7",
+  "cat": "natuur",
+  "icon": "🐡",
+  "title": "Snorkelen bij Foki Beach",
+  "duration": 120,
+  "why": "Kristalhelder water boven rotsen vol vis, zeeëgels en octopussen. Rustig en nauwelijks bezocht.",
+  "tip": "Bezoek 's ochtends voor het beste licht. Eigen snorkelset meenemen — geen verhuur ter plekke.",
+  "cost": 0,
+  "location": "Foki Beach, Fiskardo, Kefalonia",
+  "mapUrl": "https://www.google.com/maps/search/?api=1&query=Foki+Beach+Kefalonia",
+  "lat": 38.448,
+  "lng": 20.584,
+  "reservation": false,
+  "special": false
+}

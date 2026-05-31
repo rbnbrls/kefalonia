@@ -1,0 +1,16 @@
+{
+  "id": "n2",
+  "cat": "natuur",
+  "icon": "⛰️",
+  "title": "Mount Ainos National Park",
+  "duration": 180,
+  "why": "Top van de Ionische eilanden (1628m). Op heldere dagen zie je Zakynthos, Ithaka én het vasteland.",
+  "tip": "Asfaltweg tot de telecomtorens, dan korte wandeling. Altijd warme trui meenemen — het waait fors.",
+  "cost": 0,
+  "location": "Mount Ainos National Park, Kefalonia",
+  "mapUrl": "https://www.google.com/maps/search/?api=1&query=Mount+Ainos+National+Park",
+  "lat": 38.136,
+  "lng": 20.672,
+  "reservation": false,
+  "special": false
+}

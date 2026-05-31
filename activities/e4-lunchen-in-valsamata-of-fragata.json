@@ -1,0 +1,16 @@
+{
+  "id": "e4",
+  "cat": "eten",
+  "icon": "🍲",
+  "title": "Lunchen in Valsamata of Fragata",
+  "duration": 90,
+  "why": "Dorpjes zonder toeristen in de Omala-vallei. Eten wat de pot schaft: stoofpotten, gevulde groenten, zelfgebakken brood.",
+  "tip": "Bestel mezedes om te delen — dé manier waarop locals eten. Veel gezelliger dan elk een groot bord.",
+  "cost": 35,
+  "location": "Valsamata, Omala Valley, Kefalonia",
+  "mapUrl": "https://www.google.com/maps/search/?api=1&query=Valsamata+Kefalonia",
+  "lat": 38.174,
+  "lng": 20.583,
+  "reservation": false,
+  "special": false
+}

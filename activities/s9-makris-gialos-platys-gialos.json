@@ -1,0 +1,16 @@
+{
+  "id": "s9",
+  "cat": "stranden",
+  "icon": "🤿",
+  "title": "Makris Gialos & Platys Gialos",
+  "duration": 120,
+  "why": "Twee naast elkaar gelegen stranden bij Lassi, met organisatie, sfeer en watersportmogelijkheden.",
+  "tip": "Hier vertrekken ook kajakexcursies langs de kliffen. Makkelijkst bereikbaar vanuit Argostoli.",
+  "cost": 0,
+  "location": "Makris Gialos Beach, Lassi, Kefalonia",
+  "mapUrl": "https://www.google.com/maps/search/?api=1&query=Makris+Gialos+Beach+Kefalonia",
+  "lat": 38.157,
+  "lng": 20.48,
+  "reservation": false,
+  "special": false
+}

@@ -1,0 +1,16 @@
+{
+  "id": "s4",
+  "cat": "stranden",
+  "icon": "🏺",
+  "title": "Xi Beach",
+  "duration": 150,
+  "why": "Uniek roodbruin zand met witte kleiklippen. Het gratis moddermasker van de kliffen is goed voor je huid én onvergetelijk.",
+  "tip": "Het water is lang ondiep — relaxt en kalm. Ideaal voor lui dagje.",
+  "cost": 0,
+  "location": "Xi Beach, Lixouri, Kefalonia",
+  "mapUrl": "https://www.google.com/maps/search/?api=1&query=Xi+Beach+Kefalonia",
+  "lat": 38.163,
+  "lng": 20.414,
+  "reservation": false,
+  "special": false
+}

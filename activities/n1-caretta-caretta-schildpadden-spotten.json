@@ -1,0 +1,16 @@
+{
+  "id": "n1",
+  "cat": "natuur",
+  "icon": "🐢",
+  "title": "Caretta Caretta schildpadden spotten",
+  "duration": 60,
+  "why": "Grote zeeschildpadden in de haven van Argostoli — van heel dichtbij, gratis en ontroerend.",
+  "tip": "Ga tussen 9:00 en 11:00 naar de vissersboten op de kade. Hoe eerder, hoe meer schildpadden.",
+  "cost": 0,
+  "location": "Kade van Argostoli (bij de vissersboten), Argostoli, Kefalonia",
+  "mapUrl": "https://www.google.com/maps/search/?api=1&query=Argostoli+Harbour+Kefalonia",
+  "lat": 38.169,
+  "lng": 20.499,
+  "reservation": false,
+  "special": false
+}

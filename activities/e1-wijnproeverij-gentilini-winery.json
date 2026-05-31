@@ -1,0 +1,16 @@
+{
+  "id": "e1",
+  "cat": "eten",
+  "icon": "🍷",
+  "title": "Wijnproeverij Gentilini Winery",
+  "duration": 90,
+  "why": "De beste boetiekwijnmaker van Kefalonia. De frisse Robola-wijn is legendarisch. Relaxte proeverij in schaduwrijke tuin.",
+  "tip": "Geen reservering nodig voor standaardtasting, maar meld je 's namiddags aan. Proef ook de Muscat.",
+  "cost": 30,
+  "location": "Gentilini Winery, Minies, Kefalonia",
+  "mapUrl": "https://www.google.com/maps/search/?api=1&query=Gentilini+Winery+Kefalonia",
+  "lat": 38.143,
+  "lng": 20.505,
+  "reservation": false,
+  "special": false
+}

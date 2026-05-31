@@ -1,0 +1,16 @@
+{
+  "id": "b4",
+  "cat": "bday",
+  "icon": "💎",
+  "title": "Vroegbezoek Melissani Cave + luxe dag Antisamos",
+  "duration": 360,
+  "why": "Betoverende grot nét voor de drukte, gevolgd door een hele dag luxe in een privé-cabana op Antisamos.",
+  "tip": "Grot: 11:30–13:30 voor het licht. Cabana: consumptie = gratis. Boek het premium setje vooraf.",
+  "cost": 50,
+  "location": "Melissani Cave & Antisamos Beach, Sami, Kefalonia",
+  "mapUrl": "https://www.google.com/maps/search/?api=1&query=Antisamos+Beach+Kefalonia",
+  "lat": 38.259,
+  "lng": 20.673,
+  "reservation": true,
+  "special": true
+}

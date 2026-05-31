@@ -1,0 +1,16 @@
+{
+  "id": "s5",
+  "cat": "stranden",
+  "icon": "⛵",
+  "title": "Fteri Beach",
+  "duration": 240,
+  "why": "Ongerept paradijs — alléén bereikbaar per boot. Ultieme verlaten eiland-vibe.",
+  "tip": "Taxiboot vanuit haven Zola (~10 min). Meenemen: water, snacks, zonnebrand. Geen faciliteiten!",
+  "cost": 20,
+  "location": "Fteri Beach, Zola (taxiboot), Kefalonia",
+  "mapUrl": "https://www.google.com/maps/search/?api=1&query=Fteri+Beach+Kefalonia",
+  "lat": 38.307,
+  "lng": 20.477,
+  "reservation": false,
+  "special": false
+}

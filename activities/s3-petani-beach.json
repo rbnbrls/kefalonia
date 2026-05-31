@@ -1,0 +1,16 @@
+{
+  "id": "s3",
+  "cat": "stranden",
+  "icon": "🌅",
+  "title": "Petani Beach",
+  "duration": 180,
+  "why": "Het intimere broertje van Myrtos op Paliki. De zonsondergang hier is ronduit spektakulair.",
+  "tip": "Blijf voor het avondeten bij Erasmia Taverna direct aan het strand.",
+  "cost": 50,
+  "location": "Petani Beach, Paliki, Kefalonia",
+  "mapUrl": "https://www.google.com/maps/search/?api=1&query=Petani+Beach+Kefalonia",
+  "lat": 38.261,
+  "lng": 20.378,
+  "reservation": false,
+  "special": false
+}

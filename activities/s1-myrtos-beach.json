@@ -1,0 +1,16 @@
+{
+  "id": "s1",
+  "cat": "stranden",
+  "icon": "🏖️",
+  "title": "Myrtos Beach",
+  "duration": 180,
+  "why": "Intens blauw water en spierwit kiezels. Het iconische uithangbord van Kefalonia — onontkoombaar mooi.",
+  "tip": "Ga vóór 10:30 of nà 18:00. Waterschoenen zijn een must.",
+  "cost": 0,
+  "location": "Myrtos Beach, Pylaros, Kefalonia",
+  "mapUrl": "https://www.google.com/maps/search/?api=1&query=Myrtos+Beach+Kefalonia",
+  "lat": 38.343,
+  "lng": 20.535,
+  "reservation": false,
+  "special": false
+}
