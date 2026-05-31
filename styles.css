@@ -1054,14 +1054,21 @@ h3 { font-family: 'DM Sans', sans-serif; font-weight: 500; font-size: 1rem; }
   color: rgba(255, 255, 255, 0.8);
 }
 .btn-sidebar-feedback-content {
-  transform: rotate(90deg);
+  writing-mode: vertical-rl;
+  text-orientation: mixed;
+  transform: rotate(180deg);
   white-space: nowrap;
   display: flex;
   align-items: center;
   gap: 6px;
   font-family: 'DM Sans', sans-serif;
-  font-size: 0.8rem;
+  font-size: 0.76rem;
   font-weight: 500;
+  color: rgba(255, 255, 255, 0.5);
+  transition: color 0.2s ease;
+}
+.btn-sidebar-feedback:hover .btn-sidebar-feedback-content {
+  color: rgba(255, 255, 255, 0.8);
 }
 .sidebar-footer-stack {
   flex: 1;
