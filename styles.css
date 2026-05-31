@@ -1035,21 +1035,32 @@ h3 { font-family: 'DM Sans', sans-serif; font-weight: 500; font-size: 1rem; }
   border-top: 1px solid rgba(255,255,255,0.08);
 }
 .btn-sidebar-feedback {
-  width: 44px;
+  width: 72px;
   background: var(--terracotta);
   border: 1.5px solid var(--white);
   border-radius: var(--radius);
   color: var(--white);
   display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
+  gap: 3px;
   cursor: pointer;
   transition: background 0.2s ease, transform 0.15s ease;
   flex-shrink: 0;
+  padding: 8px 4px;
 }
 .btn-sidebar-feedback:hover {
   background: #d35400;
   transform: scale(1.05);
+}
+.btn-sidebar-feedback-text {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.62rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  opacity: 0.95;
 }
 .sidebar-footer-stack {
   flex: 1;
