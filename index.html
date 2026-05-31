@@ -54,6 +54,22 @@
         <span class="resume-error" id="resume-error"></span>
       </div>
     </div>
+
+    <div class="welcome-sync">
+      <div class="sync-divider">— of plan samen —</div>
+      <div class="sync-panel">
+        <button class="resume-toggle" onclick="toggleSyncJoinForm()">Samen plannen met een code</button>
+        <div class="sync-form" id="sync-join-form">
+          <input type="text" id="sync-code-input" placeholder="Bijv. KEF-A3X"
+                 autocomplete="off" spellcheck="false" maxlength="7">
+          <button class="btn-ghost" onclick="joinSyncSession()">Meedoen →</button>
+          <span class="resume-error" id="sync-join-error"></span>
+        </div>
+      </div>
+      <div class="sync-panel">
+        <button class="resume-toggle" onclick="createSyncSession()">Nieuw gedeeld plan starten</button>
+      </div>
+    </div>
   </div>
 </div>
 
@@ -71,6 +87,11 @@
         <div class="progress-bar-fill" id="progress-fill" style="width:0%"></div>
       </div>
       <div class="progress-label" id="progress-label">0 van 14 dagen gepland</div>
+      <div class="sync-badge" id="sync-badge" style="display:none;">
+        <span class="sync-dot" id="sync-dot"></span>
+        <span id="sync-badge-text">Verbinden…</span>
+        <span class="sync-code-label" id="sync-code-label"></span>
+      </div>
     </div>
     <div class="day-list" id="day-list"></div>
     <div class="sidebar-footer">
@@ -371,6 +392,8 @@
 <!-- Data + applicatielogica. activities.generated.js (gegenereerd uit
      activities/*.json door build.js) zet window.ACTIVITIES klaar en moet
      vóór app.js laden. -->
+<script src="https://cdn.jsdelivr.net/npm/pocketbase@latest/dist/pocketbase.umd.min.js"></script>
+<script src="sync.js"></script>
 <script src="activities.generated.js"></script>
 <script src="app.js"></script>
 </body>

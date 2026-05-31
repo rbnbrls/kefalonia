@@ -86,11 +86,13 @@ function planHasContent(s) {
 }
 
 function saveState() {
+  const serialized = serializePlan(state);
   try {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(serializePlan(state)));
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(serialized));
   } catch (e) {
     // private mode / quota — stilletjes negeren
   }
+  sync.push(serialized);
 }
 
 function loadState() {
@@ -233,6 +235,12 @@ function enterPlanner() {
   renderPlannerDay(state.currentDay);
   setTimeout(() => updateMap(state.currentDay), 50);
   updateMobileBar();
+  const saved = sync.getSavedSession();
+  if (saved && !sync.recordId) {
+    sync.sessionCode = saved.code;
+    sync.recordId = saved.recordId;
+    sync.subscribe(saved.recordId, onRemoteUpdate);
+  }
 }
 
 // ── Welkom-terug banner (auto-herstel via localStorage) ──
@@ -1940,4 +1948,153 @@ async function submitActivityRequest() {
     }
     btn.disabled = false;
   }
+}
+
+// ═══════════════════════════════════════════════════════
+//  SYNC: POCKETBASE REAL-TIME COLLABORATION
+// ═══════════════════════════════════════════════════════
+
+function mergeRemotePlan(localState, remoteObj) {
+  const remote = hydratePlan(remoteObj);
+  if (!remote) return null;
+  const changedDays = [];
+  const plan = localState.plan.map((localDay, i) => {
+    const remoteDay = remote.plan[i];
+    const localIds = localDay.activities.map(a => a.id).join(',');
+    const remoteIds = remoteDay.activities.map(a => a.id).join(',');
+    if (localIds !== remoteIds) {
+      changedDays.push(i);
+      return remoteDay;
+    }
+    return localDay;
+  });
+  return { merged: { ...localState, plan }, changedDays };
+}
+
+function onRemoteUpdate(remotePlanObj) {
+  const result = mergeRemotePlan(state, remotePlanObj);
+  if (!result) return;
+  const { merged, changedDays } = result;
+  if (changedDays.length === 0) return;
+  state = merged;
+  try { localStorage.setItem(STORAGE_KEY, JSON.stringify(serializePlan(state))); } catch (e) {}
+  renderSidebar();
+  const currentIdx = typeof state.currentDay === 'number' ? state.currentDay : -1;
+  if (changedDays.includes(currentIdx)) {
+    renderPlannerDay(state.currentDay);
+    setTimeout(() => updateMap(state.currentDay), 50);
+  }
+  showSyncToast(changedDays);
+}
+
+function updateSyncStatusBadge(status) {
+  const badge = document.getElementById('sync-badge');
+  const dot = document.getElementById('sync-dot');
+  const text = document.getElementById('sync-badge-text');
+  const codeLabel = document.getElementById('sync-code-label');
+  if (!badge) return;
+  badge.style.display = sync.sessionCode ? 'flex' : 'none';
+  dot.className = 'sync-dot ' + status;
+  const labels = { connected: 'Gesynchroniseerd', connecting: 'Verbinden…', offline: 'Verbinding verbroken' };
+  text.textContent = labels[status] || status;
+  codeLabel.textContent = sync.sessionCode ? '· ' + sync.sessionCode : '';
+}
+
+let _syncToastTimer = null;
+function showSyncToast(changedDays) {
+  let el = document.getElementById('sync-toast');
+  if (!el) {
+    el = document.createElement('div');
+    el.id = 'sync-toast';
+    el.className = 'sync-toast';
+    document.body.appendChild(el);
+  }
+  const names = changedDays.map(i => DAYS[i] ? DAYS[i].short : `dag ${i + 1}`);
+  el.textContent = '🔄 Partner heeft ' + (names.length === 1 ? names[0] : `${names.length} dagen`) + ' bijgewerkt';
+  el.classList.add('visible');
+  clearTimeout(_syncToastTimer);
+  _syncToastTimer = setTimeout(() => el.classList.remove('visible'), 4000);
+}
+
+function toggleSyncJoinForm() {
+  const form = document.getElementById('sync-join-form');
+  form.classList.toggle('open');
+  if (form.classList.contains('open')) {
+    setTimeout(() => document.getElementById('sync-code-input').focus(), 50);
+  }
+}
+
+async function joinSyncSession() {
+  const input = document.getElementById('sync-code-input');
+  const err = document.getElementById('sync-join-error');
+  const code = (input.value || '').trim().toUpperCase();
+  if (!code) { err.textContent = 'Voer een code in.'; return; }
+  err.textContent = 'Zoeken…';
+  try {
+    const name = (document.getElementById('planner-name').value || '').trim() || 'Jij';
+    const result = await sync.loadSession(code);
+    if (!result) { err.textContent = 'Code niet gevonden.'; return; }
+    const hydrated = hydratePlan(result.plan);
+    if (!hydrated) { err.textContent = 'Plan kon niet worden geladen.'; return; }
+    state = { ...hydrated, name };
+    sync.subscribe(result.recordId, onRemoteUpdate);
+    enterPlanner();
+  } catch (e) {
+    err.textContent = 'Code niet gevonden. Controleer de spelling.';
+  }
+}
+
+async function createSyncSession() {
+  const nameInput = document.getElementById('planner-name');
+  const name = (nameInput ? nameInput.value : '').trim();
+  if (!name) {
+    nameInput.focus();
+    nameInput.placeholder = 'Vul eerst je naam in…';
+    return;
+  }
+  state.name = name;
+  state.currentDay = 'heen';
+  try {
+    const { code, recordId } = await sync.createSession(serializePlan(state));
+    sync.subscribe(recordId, onRemoteUpdate);
+    showSessionCodeModal(code);
+  } catch (e) {
+    alert('Kon geen sessie aanmaken. Controleer de verbinding.');
+  }
+}
+
+function showSessionCodeModal(code) {
+  let overlay = document.getElementById('session-code-overlay');
+  if (!overlay) {
+    overlay = document.createElement('div');
+    overlay.id = 'session-code-overlay';
+    overlay.className = 'modal-backdrop';
+    overlay.innerHTML = `
+      <div class="modal-box session-code-box">
+        <div class="session-code-title">Gedeeld plan aangemaakt!</div>
+        <div class="session-code-sub">Stuur deze code naar je partner:</div>
+        <div class="session-code-display" id="session-code-display"></div>
+        <button class="btn-ghost" style="margin:0 auto;" onclick="copySessionCode()">📋 Kopieer code</button>
+        <div class="session-code-hint" id="session-code-copy-hint"></div>
+        <button class="btn-primary" onclick="closeSessionCodeModal()">Beginnen met plannen →</button>
+      </div>
+    `;
+    document.body.appendChild(overlay);
+  }
+  document.getElementById('session-code-display').textContent = code;
+  overlay.classList.add('open');
+}
+
+function closeSessionCodeModal() {
+  const overlay = document.getElementById('session-code-overlay');
+  if (overlay) overlay.classList.remove('open');
+  enterPlanner();
+}
+
+function copySessionCode() {
+  const code = document.getElementById('session-code-display').textContent;
+  navigator.clipboard.writeText(code).catch(() => {});
+  const hint = document.getElementById('session-code-copy-hint');
+  hint.textContent = '✓ Gekopieerd!';
+  setTimeout(() => { hint.textContent = ''; }, 2000);
 }
