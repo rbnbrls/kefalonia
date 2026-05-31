@@ -10,8 +10,8 @@
 <!-- Leaflet Map Library -->
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-<!-- App-stijlen (los bestand t.b.v. caching) -->
-<link rel="stylesheet" href="styles.css">
+<!-- App-stijlen (los bestand t.b.v. caching met cache-buster) -->
+<link rel="stylesheet" href="styles.css?v=2">
 </head>
 <body>
 
@@ -426,8 +426,8 @@
      activities/*.json door build.js) zet window.ACTIVITIES klaar en moet
      vóór app.js laden. -->
 <script src="https://cdn.jsdelivr.net/npm/pocketbase@latest/dist/pocketbase.umd.min.js"></script>
-<script src="sync.js"></script>
-<script src="activities.generated.js"></script>
-<script src="app.js"></script>
+<script src="sync.js?v=2"></script>
+<script src="activities.generated.js?v=2"></script>
+<script src="app.js?v=2"></script>
 </body>
 </html>
