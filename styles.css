@@ -38,92 +38,277 @@ h3 { font-family: 'DM Sans', sans-serif; font-weight: 500; font-size: 1rem; }
 .screen { display: none; min-height: 100vh; }
 .screen.active { display: flex; }
 
-/* ── WELCOME SCREEN ─────────────────────────────────────── */
+/* ── WELCOME SCREEN — Grieks eiland thema ──────────────── */
 #screen-welcome {
   flex-direction: column;
   align-items: center;
-  justify-content: center;
-  text-align: center;
-  padding: 2rem;
+  justify-content: flex-start;
+  padding: 0;
   position: relative;
-  background: var(--sea-deep);
-  overflow: hidden;
+  min-height: 100vh;
+  overflow-x: hidden;
+  overflow-y: auto;
+  background: linear-gradient(
+    180deg,
+    #083868 0%,
+    #0e5da4 18%,
+    #1a82cb 38%,
+    #3aa8d8 56%,
+    #7ec8e3 68%,
+    #c8e8f2 76%,
+    #f0e4cc 84%,
+    var(--sand) 100%
+  );
 }
 
+/* Zonnegloed + sfeerlagen */
 .welcome-bg {
-  position: absolute; inset: 0;
+  position: absolute; inset: 0; pointer-events: none;
   background:
-    radial-gradient(ellipse 80% 60% at 50% 100%, rgba(27,108,168,0.6) 0%, transparent 70%),
-    radial-gradient(ellipse 60% 40% at 20% 20%, rgba(90,122,58,0.2) 0%, transparent 60%),
-    radial-gradient(ellipse 50% 50% at 80% 10%, rgba(201,150,42,0.15) 0%, transparent 60%);
-  pointer-events: none;
+    radial-gradient(ellipse 55% 28% at 78% 4%, rgba(255,210,55,0.42) 0%, transparent 62%),
+    radial-gradient(ellipse 30% 18% at 15% 10%, rgba(255,235,130,0.18) 0%, transparent 55%),
+    radial-gradient(ellipse 70% 40% at 50% 72%, rgba(255,255,255,0.08) 0%, transparent 70%);
 }
 
-.wave-decoration {
-  position: absolute;
-  bottom: 0; left: 0; right: 0;
-  height: 180px;
-  background: var(--sand);
-  clip-path: ellipse(60% 100% at 50% 100%);
-  pointer-events: none;
+/* Hero boven — reisinfo */
+.welcome-hero {
+  position: relative; z-index: 2;
+  text-align: center;
+  padding: 3.5rem 2rem 2rem;
+  width: 100%;
+  max-width: 580px;
 }
 
 #screen-welcome .content {
   position: relative; z-index: 2;
-  max-width: 600px;
+  max-width: 580px;
+  width: 100%;
 }
 
 .welcome-label {
-  font-size: 0.75rem;
-  letter-spacing: 0.2em;
+  font-size: 0.72rem;
+  letter-spacing: 0.24em;
   text-transform: uppercase;
-  color: rgba(255,255,255,0.5);
-  margin-bottom: 1.5rem;
+  color: rgba(255,255,255,0.65);
+  margin-bottom: 1rem;
 }
 
-#screen-welcome h1 { color: white; margin-bottom: 1.5rem; }
+#screen-welcome h1 { color: white; margin-bottom: 1.1rem; text-shadow: 0 2px 12px rgba(0,0,0,0.25); }
 
 .welcome-dates {
   display: inline-flex;
   align-items: center;
   gap: 12px;
-  background: rgba(255,255,255,0.1);
-  border: 1px solid rgba(255,255,255,0.2);
+  background: rgba(255,255,255,0.16);
+  border: 1px solid rgba(255,255,255,0.28);
   border-radius: 100px;
   padding: 8px 20px;
-  color: rgba(255,255,255,0.8);
-  font-size: 0.9rem;
-  margin-bottom: 2.5rem;
+  color: rgba(255,255,255,0.95);
+  font-size: 0.88rem;
+  letter-spacing: 0.02em;
+  margin-bottom: 1rem;
 }
-
 .welcome-dates span { color: rgba(255,255,255,0.4); }
 
-.name-input-wrap {
-  margin-bottom: 2rem;
+.welcome-trip-meta {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  color: rgba(255,255,255,0.7);
+  font-size: 0.8rem;
+  margin-bottom: 0.5rem;
 }
-.name-input-wrap label {
-  display: block;
-  color: rgba(255,255,255,0.6);
-  font-size: 0.85rem;
-  margin-bottom: 8px;
-}
-.name-input-wrap input {
-  background: rgba(255,255,255,0.1);
-  border: 1px solid rgba(255,255,255,0.25);
-  border-radius: 100px;
-  padding: 12px 24px;
-  color: white;
-  font-family: 'Cormorant Garamond', serif;
-  font-size: 1.3rem;
-  font-style: italic;
-  text-align: center;
+.trip-meta-dot { color: rgba(255,255,255,0.35); }
+
+/* Interactieve kaart — onderste gedeelte */
+.welcome-card {
+  position: relative; z-index: 2;
+  background: var(--white);
+  border-radius: 28px 28px 0 0;
+  padding: 2.25rem 2rem 3rem;
   width: 100%;
-  max-width: 280px;
-  outline: none;
-  transition: border-color 0.2s, background 0.2s;
+  max-width: 580px;
+  box-shadow: 0 -16px 48px rgba(8,40,80,0.18);
+  flex: 1;
+  margin-top: 1.5rem;
 }
-.name-input-wrap input::placeholder { color: rgba(255,255,255,0.3); }
-.name-input-wrap input:focus { border-color: rgba(255,255,255,0.6); background: rgba(255,255,255,0.15); }
+
+/* Welkom-terug banner (nu in lichte kaart) */
+.welcome-banner {
+  display: none;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  background: var(--sea-light);
+  border: 1.5px solid rgba(27,108,168,0.28);
+  border-radius: 16px;
+  padding: 16px 20px;
+  margin-bottom: 1.75rem;
+  text-align: center;
+}
+.welcome-banner.open { display: flex; }
+.banner-icon { font-size: 1.5rem; }
+.welcome-banner p { color: var(--sea-deep); font-size: 0.92rem; margin: 0; font-weight: 500; }
+.banner-actions { display: flex; gap: 10px; flex-wrap: wrap; justify-content: center; }
+
+/* Secties binnen de kaart */
+.welcome-section { margin-bottom: 1.75rem; }
+
+.welcome-section-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 1rem;
+}
+.welcome-step-badge {
+  width: 26px; height: 26px;
+  background: var(--sea);
+  color: white;
+  border-radius: 50%;
+  font-size: 0.72rem;
+  font-weight: 700;
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+  box-shadow: 0 2px 8px rgba(27,108,168,0.35);
+}
+.welcome-section-title {
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: var(--ink);
+}
+
+/* Naam-invoerveld (nu op lichte achtergrond) */
+.name-input-wrap { margin-bottom: 0; }
+.name-input-wrap label { display: none; }
+.name-input-wrap input {
+  background: var(--sand);
+  border: 2px solid var(--sand-dark);
+  border-radius: 14px;
+  padding: 14px 20px;
+  color: var(--ink);
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.4rem;
+  font-style: italic;
+  width: 100%;
+  outline: none;
+  transition: border-color 0.2s, background 0.2s, box-shadow 0.2s;
+}
+.name-input-wrap input::placeholder { color: var(--muted); }
+.name-input-wrap input:focus {
+  border-color: var(--sea);
+  background: var(--white);
+  box-shadow: 0 0 0 3px rgba(27,108,168,0.12);
+}
+
+/* Planmodus kiezer */
+.planning-modes {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.mode-card {
+  border-radius: 18px;
+  padding: 1.25rem;
+  border: 2px solid var(--sand-dark);
+  background: var(--sand);
+  display: flex;
+  flex-direction: column;
+  gap: 0.9rem;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+.mode-solo {
+  border-color: rgba(27,108,168,0.3);
+  background: linear-gradient(135deg, #EBF4FB 0%, #F5F0E8 100%);
+}
+.mode-collab {
+  border-color: rgba(201,150,42,0.3);
+  background: linear-gradient(135deg, #FBF5E8 0%, #F5F0E8 100%);
+}
+.mode-card:hover { box-shadow: 0 4px 20px rgba(0,0,0,0.1); }
+.mode-solo:hover { border-color: var(--sea); }
+.mode-collab:hover { border-color: var(--gold); }
+
+.mode-card-top { display: flex; align-items: flex-start; gap: 10px; }
+.mode-card-icon { font-size: 1.5rem; flex-shrink: 0; margin-top: 1px; }
+.mode-card-title { font-size: 0.88rem; font-weight: 700; color: var(--ink); margin-bottom: 5px; }
+.mode-card-desc { font-size: 0.74rem; color: var(--muted); line-height: 1.55; }
+
+/* Knoppen in de modus-kaarten */
+.btn-mode {
+  width: 100%;
+  border: none;
+  border-radius: 10px;
+  padding: 11px 16px;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s;
+  text-align: center;
+  letter-spacing: 0.01em;
+}
+.btn-mode-solo {
+  background: var(--sea-deep);
+  color: white;
+  box-shadow: 0 3px 12px rgba(13,74,120,0.3);
+}
+.btn-mode-solo:hover:not(:disabled) { background: var(--sea); box-shadow: 0 4px 16px rgba(27,108,168,0.4); }
+.btn-mode-solo:disabled { opacity: 0.35; cursor: not-allowed; box-shadow: none; }
+
+.btn-mode-collab {
+  background: var(--gold);
+  color: white;
+  box-shadow: 0 3px 12px rgba(201,150,42,0.3);
+}
+.btn-mode-collab:hover { background: #b5841f; box-shadow: 0 4px 16px rgba(201,150,42,0.4); }
+
+.collab-actions { display: flex; flex-direction: column; gap: 8px; }
+
+.collab-divider {
+  font-size: 0.72rem;
+  color: var(--muted);
+  text-align: center;
+  padding: 2px 0;
+}
+
+.collab-join-row { display: flex; gap: 8px; }
+.collab-join-row input {
+  flex: 1; min-width: 0;
+  background: var(--white);
+  border: 1.5px solid var(--sand-dark);
+  border-radius: 9px;
+  padding: 9px 12px;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.85rem;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--ink);
+  outline: none;
+  transition: border-color 0.15s, box-shadow 0.15s;
+}
+.collab-join-row input::placeholder {
+  color: var(--muted); font-weight: 400;
+  letter-spacing: 0; text-transform: none; font-size: 0.78rem;
+}
+.collab-join-row input:focus { border-color: var(--gold); box-shadow: 0 0 0 3px rgba(201,150,42,0.12); }
+
+.btn-mode-join {
+  background: var(--ink);
+  color: white;
+  border: none;
+  border-radius: 9px;
+  padding: 9px 14px;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.82rem;
+  font-weight: 600;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background 0.15s;
+}
+.btn-mode-join:hover { background: var(--sea-deep); }
 
 .btn-primary {
   background: var(--gold);
@@ -142,22 +327,30 @@ h3 { font-family: 'DM Sans', sans-serif; font-weight: 500; font-size: 1rem; }
 .btn-primary:active { transform: translateY(0); }
 .btn-primary:disabled { opacity: 0.4; cursor: not-allowed; transform: none; }
 
-/* ── WELCOME: terugkeer-code & welkom-terug banner ─────── */
+/* ── WELCOME: terugkeer-code onderaan de kaart ─────────── */
 .welcome-resume {
-  margin-top: 1.75rem;
+  margin-top: 0;
+  padding-top: 1.25rem;
+  border-top: 1px solid var(--sand-dark);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0;
 }
+
 .resume-toggle {
   background: none;
   border: none;
-  color: rgba(255,255,255,0.6);
+  color: var(--muted);
   font-family: 'DM Sans', sans-serif;
-  font-size: 0.85rem;
+  font-size: 0.82rem;
   cursor: pointer;
   text-decoration: underline;
   text-underline-offset: 3px;
   transition: color 0.2s;
+  padding: 4px 0;
 }
-.resume-toggle:hover { color: white; }
+.resume-toggle:hover { color: var(--ink); }
 
 .resume-form {
   display: none;
@@ -165,55 +358,47 @@ h3 { font-family: 'DM Sans', sans-serif; font-weight: 500; font-size: 1rem; }
   align-items: center;
   gap: 10px;
   margin-top: 1rem;
+  width: 100%;
 }
 .resume-form.open { display: flex; }
 .resume-form input {
-  background: rgba(255,255,255,0.1);
-  border: 1px solid rgba(255,255,255,0.25);
-  border-radius: 100px;
-  padding: 11px 22px;
-  color: white;
+  background: var(--sand);
+  border: 1.5px solid var(--sand-dark);
+  border-radius: 10px;
+  padding: 11px 18px;
+  color: var(--ink);
   font-family: 'DM Sans', sans-serif;
   font-size: 0.85rem;
   text-align: center;
   width: 100%;
-  max-width: 340px;
+  max-width: 360px;
   outline: none;
-  transition: border-color 0.2s, background 0.2s;
+  transition: border-color 0.2s, box-shadow 0.2s;
 }
-.resume-form input::placeholder { color: rgba(255,255,255,0.3); }
-.resume-form input:focus { border-color: rgba(255,255,255,0.6); background: rgba(255,255,255,0.15); }
+.resume-form input::placeholder { color: var(--muted); }
+.resume-form input:focus { border-color: var(--sea); box-shadow: 0 0 0 3px rgba(27,108,168,0.1); }
+
 .resume-error {
   min-height: 1.1em;
-  font-size: 0.8rem;
-  color: #F0A89A;
-}
-
-.welcome-banner {
-  display: none;
-  align-items: center;
-  flex-direction: column;
-  gap: 12px;
-  background: rgba(255,255,255,0.12);
-  border: 1px solid rgba(255,255,255,0.25);
-  border-radius: 16px;
-  padding: 18px 22px;
-  margin-bottom: 2rem;
-  max-width: 420px;
-}
-.welcome-banner.open { display: flex; }
-.welcome-banner p {
-  color: white;
-  font-size: 0.95rem;
-  margin: 0;
+  font-size: 0.78rem;
+  color: var(--terracotta);
   text-align: center;
 }
-.welcome-banner .banner-actions {
-  display: flex;
-  gap: 10px;
-  flex-wrap: wrap;
-  justify-content: center;
+
+.btn-resume-submit {
+  background: var(--sea-deep);
+  color: white;
+  border: none;
+  border-radius: 100px;
+  padding: 10px 24px;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.85rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.15s;
 }
+.btn-resume-submit:hover { background: var(--sea); }
+
 .btn-ghost {
   background: rgba(255,255,255,0.1);
   color: white;
@@ -807,6 +992,14 @@ h3 { font-family: 'DM Sans', sans-serif; font-weight: 500; font-size: 1rem; }
   .planner-main { padding: 1.5rem; }
   .overview-body { padding: 1rem 1.5rem 3rem; }
   .overview-header { padding: 2rem 1.5rem 2rem; }
+
+  /* Welcome screen mobiel */
+  .welcome-hero { padding: 2.5rem 1.25rem 1.5rem; }
+  #screen-welcome h1 { font-size: 2.4rem; }
+  .welcome-trip-meta { flex-wrap: wrap; gap: 6px; font-size: 0.75rem; }
+  .welcome-card { padding: 1.75rem 1.25rem 2.5rem; border-radius: 22px 22px 0 0; }
+  .planning-modes { grid-template-columns: 1fr; }
+  .mode-card { padding: 1rem; }
 }
 
 /* Scrollbar */
@@ -1710,54 +1903,11 @@ h3 { font-family: 'DM Sans', sans-serif; font-weight: 500; font-size: 1rem; }
   .catalog-filters { gap: 8px; }
 }
 
-/* ── SYNC: welkomstscherm ──────────────────────────────── */
-.welcome-sync {
-  margin-top: 2rem;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 0.5rem;
-}
-.sync-divider {
-  font-size: 0.72rem;
-  color: rgba(255,255,255,0.35);
-  letter-spacing: 0.12em;
-  margin-bottom: 0.5rem;
-}
-.sync-panel {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  width: 100%;
-}
-.sync-form {
-  display: none;
-  flex-direction: column;
-  align-items: center;
-  gap: 10px;
-  margin-top: 0.75rem;
-  width: 100%;
-}
-.sync-form.open { display: flex; }
-.sync-form input {
-  background: rgba(255,255,255,0.1);
-  border: 1px solid rgba(255,255,255,0.25);
-  border-radius: 100px;
-  padding: 11px 22px;
-  color: white;
-  font-family: 'DM Sans', sans-serif;
-  font-size: 1rem;
-  font-weight: 600;
-  letter-spacing: 0.12em;
-  text-align: center;
-  text-transform: uppercase;
-  width: 100%;
-  max-width: 280px;
-  outline: none;
-  transition: border-color 0.2s, background 0.2s;
-}
-.sync-form input::placeholder { color: rgba(255,255,255,0.3); font-weight: 400; letter-spacing: 0; text-transform: none; font-size: 0.85rem; }
-.sync-form input:focus { border-color: rgba(255,255,255,0.6); background: rgba(255,255,255,0.15); }
+/* ── SYNC: welkomstscherm (niet meer gebruikt — vervangen door mode-cards) */
+.welcome-sync { display: none; }
+.sync-divider { display: none; }
+.sync-panel { display: none; }
+.sync-form { display: none; }
 
 /* ── SYNC: sidebar badge ──────────────────────────────── */
 .sync-badge {

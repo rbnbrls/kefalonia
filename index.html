@@ -20,56 +20,107 @@
 ══════════════════════════════════════════════ -->
 <div id="screen-welcome" class="screen active">
   <div class="welcome-bg"></div>
-  <div class="wave-decoration"></div>
-  <div class="content fade-up">
+
+  <!-- ① Reisinfo hero -->
+  <div class="welcome-hero fade-up">
     <div class="welcome-label">Jullie vakantie</div>
     <h1>Kefalonia,<br>wacht op ons.</h1>
-    <br>
     <div class="welcome-dates">
       13 juni <span>·</span> 27 juni <span>·</span> 14 nachten
     </div>
-    <br>
+    <div class="welcome-trip-meta">
+      <span>✈️ AMS → EFL</span>
+      <span class="trip-meta-dot">·</span>
+      <span>🏨 14 nachten</span>
+      <span class="trip-meta-dot">·</span>
+      <span>🌞 Griekenland</span>
+    </div>
+  </div>
 
+  <!-- ② + ③ Interactieve kaart -->
+  <div class="welcome-card fade-up">
+
+    <!-- Welkom-terug banner (verborgen tenzij opgeslagen plan) -->
     <div class="welcome-banner" id="welcome-banner">
+      <div class="banner-icon">👋</div>
       <p>Welkom terug! Je hebt al een plan klaarstaan.</p>
       <div class="banner-actions">
         <button class="btn-primary" onclick="resumeSaved()">Verder met mijn plan →</button>
-        <button class="btn-ghost" onclick="startFresh()">Opnieuw beginnen</button>
+        <button class="btn-outline" onclick="startFresh()">Opnieuw beginnen</button>
       </div>
     </div>
 
-    <div class="name-input-wrap">
-      <label>Wie gaat er plannen?</label>
-      <input type="text" id="planner-name" placeholder="Jouw naam…" maxlength="24" autocomplete="off">
+    <!-- Stap 1: Naam -->
+    <div class="welcome-section">
+      <div class="welcome-section-header">
+        <span class="welcome-step-badge">1</span>
+        <span class="welcome-section-title">Wie gaat er plannen?</span>
+      </div>
+      <div class="name-input-wrap">
+        <input type="text" id="planner-name" placeholder="Vul je naam in…" maxlength="24" autocomplete="off">
+      </div>
     </div>
-    <button class="btn-primary" id="btn-start" onclick="startPlanning()" disabled>
-      Vakantie plannen →
-    </button>
 
+    <!-- Stap 2: Keuze planmodus -->
+    <div class="welcome-section">
+      <div class="welcome-section-header">
+        <span class="welcome-step-badge">2</span>
+        <span class="welcome-section-title">Hoe wil je plannen?</span>
+      </div>
+      <div class="planning-modes">
+
+        <!-- Zelf plannen -->
+        <div class="mode-card mode-solo">
+          <div class="mode-card-top">
+            <span class="mode-card-icon">🗺️</span>
+            <div>
+              <div class="mode-card-title">Zelf plannen</div>
+              <div class="mode-card-desc">Plan in je eigen tempo. Je plan wordt bewaard en je kunt later verder via een code.</div>
+            </div>
+          </div>
+          <button class="btn-mode btn-mode-solo" id="btn-start" onclick="startPlanning()" disabled>
+            Beginnen →
+          </button>
+        </div>
+
+        <!-- Samen plannen -->
+        <div class="mode-card mode-collab">
+          <div class="mode-card-top">
+            <span class="mode-card-icon">👥</span>
+            <div>
+              <div class="mode-card-title">Samen plannen</div>
+              <div class="mode-card-desc">Plan realtime samen met anderen via een gedeelde sessiecode.</div>
+            </div>
+          </div>
+          <div class="collab-actions">
+            <button class="btn-mode btn-mode-collab" onclick="createSyncSession()">
+              Nieuw gedeeld plan starten
+            </button>
+            <div class="collab-divider">of doe mee met bestaand plan</div>
+            <div class="collab-join-row">
+              <input type="text" id="sync-code-input" placeholder="Code (bijv. KEF-A3X)"
+                     autocomplete="off" spellcheck="false" maxlength="7">
+              <button class="btn-mode-join" onclick="joinSyncSession()">Meedoen</button>
+            </div>
+            <span class="resume-error" id="sync-join-error"></span>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- Terugkeer-code -->
     <div class="welcome-resume">
-      <button class="resume-toggle" id="resume-toggle" onclick="toggleResumeForm()">Heb je al een code? Verder met je plan</button>
+      <button class="resume-toggle" id="resume-toggle" onclick="toggleResumeForm()">
+        Al eerder gepland? Verder met je opgeslagen code
+      </button>
       <div class="resume-form" id="resume-form">
         <input type="text" id="code-input" placeholder="Plak je code (KEF1-…)" autocomplete="off" spellcheck="false">
-        <button class="btn-ghost" onclick="resumeFromCode()">Verder met code</button>
+        <button class="btn-resume-submit" onclick="resumeFromCode()">Verder met code</button>
         <span class="resume-error" id="resume-error"></span>
       </div>
     </div>
 
-    <div class="welcome-sync">
-      <div class="sync-divider">— of plan samen —</div>
-      <div class="sync-panel">
-        <button class="resume-toggle" onclick="toggleSyncJoinForm()">Samen plannen met een code</button>
-        <div class="sync-form" id="sync-join-form">
-          <input type="text" id="sync-code-input" placeholder="Bijv. KEF-A3X"
-                 autocomplete="off" spellcheck="false" maxlength="7">
-          <button class="btn-ghost" onclick="joinSyncSession()">Meedoen →</button>
-          <span class="resume-error" id="sync-join-error"></span>
-        </div>
-      </div>
-      <div class="sync-panel">
-        <button class="resume-toggle" onclick="createSyncSession()">Nieuw gedeeld plan starten</button>
-      </div>
-    </div>
   </div>
 </div>
 
