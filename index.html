@@ -134,12 +134,17 @@
     </div>
     <div class="day-list" id="day-list"></div>
     <div class="sidebar-footer">
-      <button class="btn-catalog-link" onclick="showCatalog()">
-        <span style="font-size:1rem;">📋</span> Alle activiteiten bekijken
+      <button id="btn-sidebar-feedback" class="btn-sidebar-feedback" onclick="openFeedbackModal()" title="Geef feedback">
+        <span class="btn-sidebar-feedback-content">💬 Feedback</span>
       </button>
-      <button class="btn-add-activity" onclick="openAddActivityModal()">
-        <span style="font-size:1.1rem;">＋</span> Activiteit voorstellen
-      </button>
+      <div class="sidebar-footer-stack">
+        <button class="btn-catalog-link" onclick="showCatalog()">
+          <span style="font-size:0.95rem;">📋</span> Alle activiteiten
+        </button>
+        <button class="btn-add-activity" onclick="openAddActivityModal()">
+          <span style="font-size:1.05rem;">＋</span> Voorstellen
+        </button>
+      </div>
     </div>
   </aside>
 
@@ -396,11 +401,7 @@
   </div>
 </div>
 
-<!-- Feedback Tab Left & Modal -->
-<button id="btn-feedback-tab" class="feedback-tab-left" onclick="openFeedbackModal()">
-  <span class="feedback-tab-left-icon">💬</span>
-  <span class="feedback-tab-left-text">Feedback</span>
-</button>
+<!-- Feedback Modal -->
 
 <div id="modal-feedback" class="modal-backdrop" onclick="handleFeedbackBackdropClick(event)">
   <div class="modal-box">
