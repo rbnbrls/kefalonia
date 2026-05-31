@@ -224,21 +224,26 @@ const nameInput = document.getElementById('planner-name');
 const startBtn = document.getElementById('btn-start');
 
 function updateStartButtonState() {
-  startBtn.disabled = nameInput.value.trim().length < 1;
+  if (startBtn && nameInput) {
+    startBtn.disabled = nameInput.value.trim().length < 1;
+  }
 }
 
-['input', 'change', 'keyup', 'paste'].forEach(evt => {
-  nameInput.addEventListener(evt, updateStartButtonState);
-});
+if (nameInput) {
+  ['input', 'change', 'keyup', 'paste'].forEach(evt => {
+    nameInput.addEventListener(evt, updateStartButtonState);
+  });
 
-nameInput.addEventListener('keydown', function(e) {
-  if (e.key === 'Enter' && !startBtn.disabled) {
-    startPlanning();
-  }
-});
+  nameInput.addEventListener('keydown', function(e) {
+    if (e.key === 'Enter' && startBtn && !startBtn.disabled) {
+      startPlanning();
+    }
+  });
+}
 
 function startPlanning() {
-  state.name = document.getElementById('planner-name').value.trim() || 'Jij';
+  const nameEl = document.getElementById('planner-name');
+  state.name = nameEl ? (nameEl.value.trim() || 'Jij') : 'Jij';
   state.currentDay = 'heen';
   showScreen('screen-planner');
   renderSidebar();
@@ -1696,8 +1701,10 @@ function resetAll() {
   pendingSaved = null;
   document.getElementById('welcome-banner').classList.remove('open');
   document.getElementById('code-box').classList.remove('open');
-  document.getElementById('planner-name').value = '';
-  document.getElementById('btn-start').disabled = true;
+  const nameEl = document.getElementById('planner-name');
+  if (nameEl) nameEl.value = '';
+  const startEl = document.getElementById('btn-start');
+  if (startEl && nameEl) startEl.disabled = true;
   showScreen('screen-welcome');
 }
 
@@ -2093,7 +2100,8 @@ async function joinSyncSession() {
   if (!code) { err.textContent = 'Voer een code in.'; return; }
   err.textContent = 'Zoeken…';
   try {
-    const name = (document.getElementById('planner-name').value || '').trim() || 'Jij';
+    const nameEl = document.getElementById('planner-name');
+    const name = nameEl ? ((nameEl.value || '').trim() || 'Jij') : 'Jij';
     const result = await sync.loadSession(code);
     if (!result) { err.textContent = 'Code niet gevonden.'; return; }
     const hydrated = hydratePlan(result.plan);
@@ -2108,12 +2116,7 @@ async function joinSyncSession() {
 
 async function createSyncSession() {
   const nameInput = document.getElementById('planner-name');
-  const name = (nameInput ? nameInput.value : '').trim();
-  if (!name) {
-    nameInput.focus();
-    nameInput.placeholder = 'Vul eerst je naam in…';
-    return;
-  }
+  const name = (nameInput ? nameInput.value : '').trim() || 'Jij';
   state.name = name;
   state.currentDay = 'heen';
   try {

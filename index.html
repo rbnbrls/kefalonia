@@ -28,13 +28,6 @@
     <div class="welcome-dates">
       13 juni <span>·</span> 27 juni <span>·</span> 14 nachten
     </div>
-    <div class="welcome-trip-meta">
-      <span>✈️ AMS → EFL</span>
-      <span class="trip-meta-dot">·</span>
-      <span>🏨 14 nachten</span>
-      <span class="trip-meta-dot">·</span>
-      <span>🌞 Griekenland</span>
-    </div>
   </div>
 
   <!-- ② + ③ Interactieve kaart -->
@@ -50,22 +43,11 @@
       </div>
     </div>
 
-    <!-- Stap 1: Naam -->
+    <!-- Keuze planmodus -->
     <div class="welcome-section">
-      <div class="welcome-section-header">
-        <span class="welcome-step-badge">1</span>
-        <span class="welcome-section-title">Wie gaat er plannen?</span>
-      </div>
-      <div class="name-input-wrap">
-        <input type="text" id="planner-name" placeholder="Vul je naam in…" maxlength="24" autocomplete="off">
-      </div>
-    </div>
-
-    <!-- Stap 2: Keuze planmodus -->
-    <div class="welcome-section">
-      <div class="welcome-section-header">
-        <span class="welcome-step-badge">2</span>
-        <span class="welcome-section-title">Hoe wil je plannen?</span>
+      <div class="welcome-intro">
+        <h2>Hoe wil je plannen?</h2>
+        <p>Kies een modus om direct te beginnen met het samenstellen van jullie droomreis op Kefalonia.</p>
       </div>
       <div class="planning-modes">
 
@@ -78,7 +60,7 @@
               <div class="mode-card-desc">Plan in je eigen tempo. Je plan wordt bewaard en je kunt later verder via een code.</div>
             </div>
           </div>
-          <button class="btn-mode btn-mode-solo" id="btn-start" onclick="startPlanning()" disabled>
+          <button class="btn-mode btn-mode-solo" id="btn-start" onclick="startPlanning()">
             Beginnen →
           </button>
         </div>

@@ -155,6 +155,25 @@ h3 { font-family: 'DM Sans', sans-serif; font-weight: 500; font-size: 1rem; }
 /* Secties binnen de kaart */
 .welcome-section { margin-bottom: 1.75rem; }
 
+.welcome-intro {
+  text-align: center;
+  margin-bottom: 2rem;
+}
+.welcome-intro h2 {
+  font-family: 'Cormorant Garamond', Georgia, serif;
+  font-size: 1.8rem;
+  font-weight: 400;
+  color: var(--sea-deep);
+  margin-bottom: 0.5rem;
+}
+.welcome-intro p {
+  font-size: 0.88rem;
+  color: var(--muted);
+  line-height: 1.5;
+  max-width: 440px;
+  margin: 0 auto;
+}
+
 .welcome-section-header {
   display: flex;
   align-items: center;
