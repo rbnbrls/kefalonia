@@ -1028,51 +1028,8 @@ h3 { font-family: 'DM Sans', sans-serif; font-weight: 500; font-size: 1rem; }
 
 /* ── SIDEBAR ADD-ACTIVITY BUTTON ─────────────────────────── */
 .sidebar-footer {
-  display: flex;
-  gap: 10px;
-  align-items: stretch;
-  padding: 1rem 1.25rem 1.25rem;
+  padding: 1rem 1.5rem 1.5rem;
   border-top: 1px solid rgba(255,255,255,0.08);
-}
-.btn-sidebar-feedback {
-  width: 72px;
-  background: var(--terracotta);
-  border: 1.5px solid var(--white);
-  border-radius: var(--radius);
-  color: var(--white);
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 3px;
-  cursor: pointer;
-  transition: background 0.2s ease, transform 0.15s ease;
-  flex-shrink: 0;
-  padding: 8px 4px;
-}
-.btn-sidebar-feedback:hover {
-  background: #d35400;
-  transform: scale(1.05);
-}
-.btn-sidebar-feedback-text {
-  font-family: 'DM Sans', sans-serif;
-  font-size: 0.62rem;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.04em;
-  opacity: 0.95;
-}
-.sidebar-footer-stack {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-}
-.sidebar-footer-stack .btn-catalog-link,
-.sidebar-footer-stack .btn-add-activity {
-  font-size: 0.78rem;
-  padding: 8px 12px;
-  margin-bottom: 0;
 }
 .btn-add-activity {
   width: 100%;
@@ -2159,5 +2116,47 @@ h3 { font-family: 'DM Sans', sans-serif; font-weight: 500; font-size: 1rem; }
   .feedback-tab-icon {
     font-size: 0.95rem;
   }
+  .feedback-tab-left {
+    display: none !important;
+  }
 }
+
+/* ── LEFT FEEDBACK TAB (Desktop style match with activities buttons) ── */
+.feedback-tab-left {
+  position: fixed;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%) rotate(-90deg);
+  transform-origin: left center;
+  z-index: 99999;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1.5px solid rgba(255, 255, 255, 0.15);
+  border-radius: var(--radius) var(--radius) 0 0;
+  padding: 10px 18px;
+  cursor: pointer;
+  box-shadow: 0 -4px 16px rgba(0,0,0,0.15);
+  color: rgba(255, 255, 255, 0.5);
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.82rem;
+  font-weight: 500;
+  transition: all 0.2s ease;
+  margin-left: -32px;
+}
+
+.feedback-tab-left:hover {
+  background: rgba(255, 255, 255, 0.1);
+  border-color: rgba(255, 255, 255, 0.28);
+  color: rgba(255, 255, 255, 0.8);
+  margin-left: -6px;
+}
+
+.feedback-tab-left-icon {
+  font-size: 1rem;
+  transform: rotate(90deg);
+  display: inline-block;
+}
+
 
