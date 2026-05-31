@@ -388,6 +388,46 @@
   </div>
 </div>
 
+<!-- Feedback Tab & Modal -->
+<button id="btn-feedback-tab" class="feedback-tab" onclick="openFeedbackModal()">
+  <span class="feedback-tab-icon">💬</span>
+  <span class="feedback-tab-text">Feedback</span>
+</button>
+
+<div id="modal-feedback" class="modal-backdrop" onclick="handleFeedbackBackdropClick(event)">
+  <div class="modal-box">
+    <div class="modal-title">Geef ons feedback!</div>
+    <div class="modal-subtitle">We horen heel graag wat we kunnen verbeteren of wat je van de reisplanner vindt.</div>
+    
+    <div class="modal-field">
+      <label for="feedback-name-input">Naam (optioneel)</label>
+      <input type="text" id="feedback-name-input" placeholder="Je naam…" maxlength="50">
+    </div>
+    
+    <div class="modal-field">
+      <label>Hoe bevalt de planner?</label>
+      <div class="feedback-stars" id="feedback-stars">
+        <span class="star-btn" data-value="1" onclick="setFeedbackRating(1)">⭐</span>
+        <span class="star-btn" data-value="2" onclick="setFeedbackRating(2)">⭐</span>
+        <span class="star-btn" data-value="3" onclick="setFeedbackRating(3)">⭐</span>
+        <span class="star-btn" data-value="4" onclick="setFeedbackRating(4)">⭐</span>
+        <span class="star-btn" data-value="5" onclick="setFeedbackRating(5)">⭐</span>
+      </div>
+    </div>
+    
+    <div class="modal-field">
+      <label for="feedback-text-input">Jouw opmerkingen of tips</label>
+      <textarea id="feedback-text-input" rows="4" placeholder="Schrijf hier je feedback of ideeën…" maxlength="1000"></textarea>
+    </div>
+    
+    <div class="modal-status" id="feedback-status"></div>
+    <div class="modal-actions">
+      <button class="btn-cancel" onclick="closeFeedbackModal()">Annuleren</button>
+      <button class="btn-primary" id="btn-submit-feedback" onclick="submitFeedbackRequest()">Versturen</button>
+    </div>
+  </div>
+</div>
+
 <!-- ═══════════════════════════════════════════
      MODAL: ACTIVITEIT TOEVOEGEN
 ══════════════════════════════════════════════ -->

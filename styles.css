@@ -2037,3 +2037,83 @@ h3 { font-family: 'DM Sans', sans-serif; font-weight: 500; font-size: 1rem; }
   0%, 100% { opacity: 1; }
   50% { opacity: 0.35; }
 }
+
+/* ── FEEDBACK BUTTON & MODAL STYLES ─────────────────────────── */
+.feedback-tab {
+  position: fixed;
+  right: 0;
+  top: 50%;
+  transform: translateY(-50%) rotate(-90deg);
+  transform-origin: right center;
+  z-index: 4000; /* stays visible but below top modals */
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--sea-deep);
+  border: 1.5px solid var(--white);
+  border-right: none;
+  border-radius: var(--radius) var(--radius) 0 0;
+  padding: 12px 20px;
+  cursor: pointer;
+  box-shadow: 0 -4px 16px rgba(0,0,0,0.15);
+  color: var(--white);
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.85rem;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  transition: background 0.2s, color 0.2s, padding 0.2s;
+  margin-right: -42px; /* Pulls half of the button out when rotated */
+}
+
+.feedback-tab:hover {
+  background: var(--sea);
+  margin-right: -36px; /* Pops out slightly on hover */
+}
+
+.feedback-tab-icon {
+  font-size: 1.1rem;
+  transform: rotate(90deg); /* Counter rotate icon to remain upright */
+  display: inline-block;
+}
+
+/* Star rating styles */
+.feedback-stars {
+  display: flex;
+  gap: 12px;
+  margin-top: 8px;
+  margin-bottom: 4px;
+}
+
+.star-btn {
+  font-size: 2.2rem;
+  cursor: pointer;
+  filter: grayscale(100%);
+  transition: transform 0.2s ease, filter 0.2s ease;
+  user-select: none;
+}
+
+.star-btn:hover {
+  transform: scale(1.25);
+}
+
+.star-btn.active {
+  filter: grayscale(0%);
+  text-shadow: 0 0 12px rgba(201,150,42,0.4);
+}
+
+/* Responsive adjustment for Mobile to prevent covering critical actions */
+@media (max-width: 768px) {
+  .feedback-tab {
+    top: 30%; /* Move higher up on mobile screens */
+    padding: 10px 14px;
+    font-size: 0.78rem;
+    margin-right: -34px;
+  }
+  .feedback-tab:hover {
+    margin-right: -30px;
+  }
+  .feedback-tab-icon {
+    font-size: 0.95rem;
+  }
+}
+

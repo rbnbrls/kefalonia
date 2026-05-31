@@ -2165,3 +2165,94 @@ function copySessionCode() {
   hint.textContent = '✓ Gekopieerd!';
   setTimeout(() => { hint.textContent = ''; }, 2000);
 }
+
+// ═══════════════════════════════════════════════════════
+//  FEEDBACK FUNCTIONALITY
+// ═══════════════════════════════════════════════════════
+let currentFeedbackRating = 0;
+
+function openFeedbackModal() {
+  document.getElementById('feedback-name-input').value = state.name || '';
+  document.getElementById('feedback-text-input').value = '';
+  document.getElementById('feedback-status').textContent = '';
+  document.getElementById('btn-submit-feedback').disabled = false;
+  
+  setFeedbackRating(0); // Reset stars
+  
+  document.getElementById('modal-feedback').classList.add('open');
+  setTimeout(() => document.getElementById('feedback-text-input').focus(), 50);
+}
+
+function closeFeedbackModal() {
+  document.getElementById('modal-feedback').classList.remove('open');
+}
+
+function handleFeedbackBackdropClick(e) {
+  if (e.target === document.getElementById('modal-feedback')) {
+    closeFeedbackModal();
+  }
+}
+
+function setFeedbackRating(rating) {
+  currentFeedbackRating = rating;
+  const stars = document.querySelectorAll('#feedback-stars .star-btn');
+  stars.forEach((star, idx) => {
+    if (idx < rating) {
+      star.classList.add('active');
+    } else {
+      star.classList.remove('active');
+    }
+  });
+}
+
+async function submitFeedbackRequest() {
+  const name = document.getElementById('feedback-name-input').value.trim();
+  const text = document.getElementById('feedback-text-input').value.trim();
+  const status = document.getElementById('feedback-status');
+  const btn = document.getElementById('btn-submit-feedback');
+
+  if (currentFeedbackRating === 0 && !text) {
+    status.style.color = 'var(--terracotta)';
+    status.textContent = 'Geef een beoordeling of vul feedback in.';
+    return;
+  }
+
+  btn.disabled = true;
+  status.style.color = 'var(--muted)';
+  status.textContent = 'Versturen…';
+
+  try {
+    const res = await fetch('https://n8n.7rb.nl/webhook/feedback', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        naam: name || 'Anoniem',
+        beoordeling: currentFeedbackRating,
+        bericht: text,
+        tijdstip: new Date().toISOString(),
+        sessie_code: sync.sessionCode || 'Geen sync',
+      }),
+    });
+
+    if (res.status === 429) throw new Error('ratelimit');
+    if (!res.ok) throw new Error(`server:${res.status}`);
+
+    status.style.color = 'var(--olive)';
+    status.textContent = '✓ Bedankt voor je feedback!';
+    fireConfetti(); // Play confetti animation for a premium feel
+    setTimeout(closeFeedbackModal, 2000);
+  } catch (err) {
+    status.style.color = 'var(--terracotta)';
+    if (err.message === 'ratelimit') {
+      status.textContent = 'Te veel verzoeken — wacht even en probeer opnieuw.';
+    } else if (err.message && err.message.startsWith('server:')) {
+      status.textContent = 'De server is tijdelijk niet beschikbaar. Probeer het later opnieuw.';
+    } else if (err.name === 'TypeError') {
+      status.textContent = 'Geen verbinding. Controleer je internetverbinding.';
+    } else {
+      status.textContent = 'Er ging iets mis bij het versturen. Probeer het opnieuw.';
+    }
+    btn.disabled = false;
+  }
+}
+
