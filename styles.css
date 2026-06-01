@@ -524,9 +524,18 @@ h3 { font-family: 'DM Sans', sans-serif; font-weight: 500; font-size: 1rem; }
 .day-item.current .day-dot { border-color: var(--gold); color: var(--gold); }
 
 .day-meta { flex: 1; min-width: 0; }
-.day-date { font-size: 0.7rem; color: rgba(255,255,255,0.35); margin-bottom: 1px; }
+.day-date { font-size: 0.7rem; color: rgba(255,255,255,0.35); margin-bottom: 1px; display: flex; align-items: center; gap: 4px; }
 .day-name { font-size: 0.85rem; color: rgba(255,255,255,0.8); font-weight: 500; }
 .day-activity { font-size: 0.75rem; color: rgba(255,255,255,0.4); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-top: 2px; }
+
+/* Weerbadge in sidebar dag-items */
+.weather-badge {
+  font-size: 0.65rem;
+  color: rgba(255,255,255,0.5);
+  white-space: nowrap;
+  margin-left: auto;
+  flex-shrink: 0;
+}
 
 .special-badge {
   font-size: 0.65rem;
@@ -559,6 +568,23 @@ h3 { font-family: 'DM Sans', sans-serif; font-weight: 500; font-size: 1rem; }
 }
 .planner-day-title { margin-bottom: 0.5rem; }
 .planner-day-subtitle { color: var(--muted); font-size: 0.9rem; }
+
+/* Weersstrip in dag-planner header */
+.weather-strip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 10px;
+  padding: 5px 12px;
+  background: var(--sand-dark);
+  border-radius: 100px;
+  border: 1px solid rgba(0,0,0,0.06);
+  font-size: 0.8rem;
+}
+.weather-icon { font-size: 1rem; line-height: 1; }
+.weather-label { color: var(--ink); font-weight: 500; }
+.weather-temps { color: var(--muted); }
+.weather-precip { color: var(--sea-deep); font-weight: 600; }
 
 .category-section { margin-bottom: 2rem; }
 .category-label {

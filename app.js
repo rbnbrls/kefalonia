@@ -56,13 +56,108 @@ function escapeHtml(str) {
 }
 
 // ═══════════════════════════════════════════════════════
+//  WEERSVERWACHTING (Open-Meteo, gratis, geen API-sleutel)
+// ═══════════════════════════════════════════════════════
+
+const WEATHER_CACHE_KEY = 'kefalonia_weather_v1';
+const WEATHER_CACHE_TTL = 6 * 60 * 60 * 1000; // 6 uur
+
+const WMO = {
+  0:  { icon: '☀️',  label: 'Zonnig' },
+  1:  { icon: '🌤️', label: 'Overwegend helder' },
+  2:  { icon: '⛅',  label: 'Gedeeltelijk bewolkt' },
+  3:  { icon: '☁️',  label: 'Bewolkt' },
+  45: { icon: '🌫️', label: 'Mist' },
+  48: { icon: '🌫️', label: 'Rijpmist' },
+  51: { icon: '🌦️', label: 'Lichte motregen' },
+  53: { icon: '🌦️', label: 'Motregen' },
+  55: { icon: '🌧️', label: 'Zware motregen' },
+  61: { icon: '🌦️', label: 'Lichte regen' },
+  63: { icon: '🌧️', label: 'Regen' },
+  65: { icon: '🌧️', label: 'Zware regen' },
+  80: { icon: '🌦️', label: 'Lichte buien' },
+  81: { icon: '🌧️', label: 'Buien' },
+  82: { icon: '⛈️', label: 'Zware buien' },
+  95: { icon: '⛈️', label: 'Onweer' },
+  96: { icon: '⛈️', label: 'Onweer met hagel' },
+  99: { icon: '⛈️', label: 'Zwaar onweer' },
+};
+
+function wmoInfo(code) {
+  if (WMO[code]) return WMO[code];
+  // Zoek dichtstbijzijnde lagere code (bv. 53 → 51 → 45)
+  const keys = Object.keys(WMO).map(Number).sort((a, b) => b - a);
+  const match = keys.find(k => k <= code);
+  return WMO[match] || { icon: '🌡️', label: 'Onbekend' };
+}
+
+let weatherData = null; // { 'YYYY-MM-DD': { code, max, min, precip } }
+
+async function loadWeather() {
+  // Gebruik geldige cache als die niet verlopen is
+  try {
+    const raw = localStorage.getItem(WEATHER_CACHE_KEY);
+    if (raw) {
+      const cached = JSON.parse(raw);
+      if (Date.now() - cached.fetched < WEATHER_CACHE_TTL) {
+        weatherData = cached.days;
+        return;
+      }
+    }
+  } catch (_) { /* corrupte cache negeren */ }
+
+  // Haal weersdata op van Open-Meteo (hotelcoördinaten Lixouri)
+  const url = 'https://api.open-meteo.com/v1/forecast?latitude=38.188&longitude=20.407' +
+    '&daily=weathercode,temperature_2m_max,temperature_2m_min,precipitation_probability_max' +
+    '&forecast_days=16&timezone=Europe%2FAthens';
+  try {
+    const res = await fetch(url, { signal: AbortSignal.timeout(8000) });
+    const json = await res.json();
+    const days = {};
+    json.daily.time.forEach((date, i) => {
+      days[date] = {
+        code: json.daily.weathercode[i],
+        max: Math.round(json.daily.temperature_2m_max[i]),
+        min: Math.round(json.daily.temperature_2m_min[i]),
+        precip: json.daily.precipitation_probability_max[i] ?? 0,
+      };
+    });
+    weatherData = days;
+    localStorage.setItem(WEATHER_CACHE_KEY, JSON.stringify({ fetched: Date.now(), days }));
+  } catch (_) {
+    // Gebruik stale cache als fallback
+    if (!weatherData) {
+      try {
+        const raw = localStorage.getItem(WEATHER_CACHE_KEY);
+        if (raw) weatherData = JSON.parse(raw).days;
+      } catch (__) {}
+    }
+  }
+}
+
+function weatherHtmlForDay(date, compact = false) {
+  if (!weatherData || !weatherData[date]) return '';
+  const w = weatherData[date];
+  const { icon, label } = wmoInfo(w.code);
+  if (compact) {
+    return `<span class="weather-badge">${icon} ${w.max}°</span>`;
+  }
+  const rainBadge = w.precip > 20
+    ? `<span class="weather-precip">💧 ${w.precip}%</span>`
+    : '';
+  return `
+    <div class="weather-strip">
+      <span class="weather-icon">${icon}</span>
+      <span class="weather-label">${label}</span>
+      <span class="weather-temps">${w.min}°–${w.max}°C</span>
+      ${rainBadge}
+    </div>`;
+}
+
+// ═══════════════════════════════════════════════════════
 //  OPSLAAN / HERSTELLEN (localStorage + terugkeer-code)
 // ═══════════════════════════════════════════════════════
 const STORAGE_KEY = 'kefalonia_plan_v1';
-
-function escapeHtml(str) {
-  return String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
-}
 
 // Compacte representatie van het plan: alleen naam, huidige dag en
 // per dag de activiteit-id's (activiteiten komen altijd uit ACTIVITIES).
@@ -252,6 +347,7 @@ function startPlanning() {
   renderPlannerDay('heen');
   setTimeout(() => updateMap('heen'), 50);
   updateMobileBar();
+  loadWeather().then(() => { renderSidebar(); renderPlannerDay(state.currentDay); });
 }
 
 // Open de planner met een (herstelde) state.
@@ -261,6 +357,7 @@ function enterPlanner() {
   renderPlannerDay(state.currentDay);
   setTimeout(() => updateMap(state.currentDay), 50);
   updateMobileBar();
+  loadWeather().then(() => { renderSidebar(); renderPlannerDay(state.currentDay); });
   const saved = sync.getSavedSession();
   if (saved && !sync.recordId) {
     sync.sessionCode = saved.code;
@@ -369,11 +466,12 @@ function renderSidebar() {
     }
 
     const timeLabel = usedMin > 0 ? `<span style="font-size:0.65rem; color:var(--muted); margin-left:4px;">${dayIsFullDay(i) ? '🌅 hele dag' : Math.floor(usedMin/60) + 'u' + (usedMin%60>0?' '+(usedMin%60)+'m':'')}</span>` : '';
+    const weatherBadge = weatherHtmlForDay(day.date, true);
 
     item.innerHTML = `
       <div class="day-dot">${checkmark}</div>
       <div class="day-meta">
-        <div class="day-date">${day.short}${timeLabel}</div>
+        <div class="day-date">${day.short}${timeLabel}${weatherBadge}</div>
         <div class="day-name">${day.name}${warningIcon}</div>
         ${actText ? `<div class="day-activity">${actText}</div>` : ''}
       </div>
@@ -1052,12 +1150,15 @@ function renderPlannerDay(i) {
     </div>
   `;
 
+  const weatherStrip = weatherHtmlForDay(day.date);
+
   let html = `
     ${mobileStickyBudget}
     <div class="planner-day-header fade-up">
       <div class="planner-day-label">Dag ${i + 1} van ${totalDays}</div>
       <h2 class="planner-day-title">${day.label}</h2>
       <p class="planner-day-subtitle">${day.name}${isSpecial ? ' — maak er iets onvergetelijks van! ✨' : ''}</p>
+      ${weatherStrip}
     </div>
 
     ${budgetBarHtml}
