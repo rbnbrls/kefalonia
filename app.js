@@ -1845,6 +1845,122 @@ function copyPlanCode() {
 function printPlan() { window.print(); }
 
 // ═══════════════════════════════════════════════════════
+//  ICAL EXPORT
+// ═══════════════════════════════════════════════════════
+
+function formatIcalDate(dateStr, minutes) {
+  const [y, m, d] = dateStr.split('-');
+  const h = String(Math.floor(minutes / 60)).padStart(2, '0');
+  const min = String(minutes % 60).padStart(2, '0');
+  return `${y}${m}${d}T${h}${min}00`;
+}
+
+function escapeIcal(str) {
+  return (str || '').replace(/\\/g, '\\\\').replace(/;/g, '\\;').replace(/,/g, '\\,').replace(/\n/g, '\\n');
+}
+
+function foldIcalLine(line) {
+  if (line.length <= 75) return line;
+  let result = '';
+  while (line.length > 75) {
+    result += line.slice(0, 75) + '\r\n ';
+    line = line.slice(75);
+  }
+  return result + line;
+}
+
+function exportToIcal() {
+  const lines = [
+    'BEGIN:VCALENDAR',
+    'VERSION:2.0',
+    'PRODID:-//Kefalonia Planner//NL',
+    'CALSCALE:GREGORIAN',
+    'METHOD:PUBLISH',
+    'X-WR-CALNAME:Kefalonia 2026',
+    'X-WR-TIMEZONE:Europe/Athens',
+  ];
+
+  const addEvent = ({ uid, dtStart, dtEnd, summary, location, description, alarm }) => {
+    lines.push('BEGIN:VEVENT');
+    lines.push(`UID:${uid}`);
+    lines.push(foldIcalLine(`DTSTART;TZID=Europe/Athens:${dtStart}`));
+    lines.push(foldIcalLine(`DTEND;TZID=Europe/Athens:${dtEnd}`));
+    lines.push(foldIcalLine(`SUMMARY:${escapeIcal(summary)}`));
+    if (location) lines.push(foldIcalLine(`LOCATION:${escapeIcal(location)}`));
+    if (description) lines.push(foldIcalLine(`DESCRIPTION:${escapeIcal(description)}`));
+    if (alarm) {
+      lines.push('BEGIN:VALARM');
+      lines.push('TRIGGER:-P7D');
+      lines.push('ACTION:DISPLAY');
+      lines.push(`DESCRIPTION:${escapeIcal(alarm)}`);
+      lines.push('END:VALARM');
+    }
+    lines.push('END:VEVENT');
+  };
+
+  // Vaste vluchten
+  addEvent({
+    uid: 'kefalonia-flight-hv6563@planner',
+    dtStart: '20260613T050500',
+    dtEnd: '20260613T090500',
+    summary: '✈️ Vlucht HV 6563 — Amsterdam → Kefalonia',
+    location: 'Amsterdam Airport Schiphol (AMS)',
+    description: 'Transavia Airlines HV 6563\\nVertrek: 05:05 AMS\\nAankomst: 09:05 EFL',
+  });
+  addEvent({
+    uid: 'kefalonia-flight-hv6564@planner',
+    dtStart: '20260627T100500',
+    dtEnd: '20260627T122500',
+    summary: '✈️ Vlucht HV 6564 — Kefalonia → Amsterdam',
+    location: 'Kefalonia International Airport (EFL)',
+    description: 'Transavia Airlines HV 6564\\nVertrek: 10:05 EFL\\nAankomst: 12:25 AMS',
+  });
+
+  // Activiteiten per dag
+  DAYS.forEach((day, dayIndex) => {
+    const dayPlan = state.plan[dayIndex];
+    if (!dayPlan || !dayPlan.activities.length) return;
+
+    let startMinutes = 9 * 60; // 09:00
+
+    dayPlan.activities.forEach((activity) => {
+      const duration = activity.duration || 60;
+      const dtStart = formatIcalDate(day.date, startMinutes);
+      const dtEnd = formatIcalDate(day.date, startMinutes + duration);
+
+      const descParts = [activity.why];
+      if (activity.tip) descParts.push(`Tip: ${activity.tip}`);
+      if (activity.reservation) descParts.push('⚠️ Reservering nodig!');
+      if (activity.mapUrl) descParts.push(`📍 ${activity.mapUrl}`);
+      const description = descParts.join('\\n\\n');
+
+      addEvent({
+        uid: `kefalonia-${day.date}-${activity.id}@planner`,
+        dtStart,
+        dtEnd,
+        summary: `${activity.icon} ${activity.title}`,
+        location: activity.location,
+        description,
+        alarm: activity.reservation ? 'Vergeet niet te reserveren!' : null,
+      });
+
+      startMinutes += duration;
+    });
+  });
+
+  lines.push('END:VCALENDAR');
+
+  const icsContent = lines.join('\r\n');
+  const blob = new Blob([icsContent], { type: 'text/calendar;charset=utf-8' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = 'kefalonia-2026.ics';
+  a.click();
+  URL.revokeObjectURL(url);
+}
+
+// ═══════════════════════════════════════════════════════
 //  CONFETTI
 // ═══════════════════════════════════════════════════════
 function fireConfetti() {
