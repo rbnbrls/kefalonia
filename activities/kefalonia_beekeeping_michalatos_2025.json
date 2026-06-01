@@ -1,0 +1,16 @@
+{
+  "id": "kefalonia_beekeeping_michalatos_2025",
+  "cat": "cultuur",
+  "icon": "🏛️",
+  "title": "Beekeeping Experience at Michalatos Family Farm",
+  "duration": 2,
+  "why": "Experience traditional Greek beekeeping, taste award‑winning Kefalonian honey, and learn about sustainable honey production in the scenic village of Vlachata.",
+  "tip": "Book the tour in advance (limited spots), wear comfortable shoes, and bring a camera to capture the apiary and honey tasting.",
+  "cost": 10,
+  "location": "Vlachata, Kefalonia, Greece",
+  "mapUrl": "https://www.google.com/maps/search/?api=1&query=38.124642,20.627777",
+  "lat": 38.124642,
+  "lng": 20.627777,
+  "reservation": true,
+  "special": true
+}
