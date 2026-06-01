@@ -1648,6 +1648,17 @@ function closeMenuSheet() {
   document.getElementById('menu-sheet-backdrop').classList.remove('open');
 }
 
+function openMapOverlay() {
+  document.querySelector('.planner-map-container').classList.add('map-fullscreen-active');
+  document.body.classList.add('map-overlay-open');
+  setTimeout(() => { if (map) map.invalidateSize(); }, 150);
+}
+
+function closeMapOverlay() {
+  document.querySelector('.planner-map-container').classList.remove('map-fullscreen-active');
+  document.body.classList.remove('map-overlay-open');
+}
+
 function renderFlightPage(type) {
   const isHeen = type === 'heen';
   const flight = isHeen ? {

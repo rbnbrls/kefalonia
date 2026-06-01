@@ -150,6 +150,7 @@
   <!-- Mobile bottom navigation bar -->
   <div class="mobile-bottom-bar hidden" id="mobile-bottom-bar">
     <button class="mobile-nav-btn mobile-menu-btn" id="mobile-menu-btn" onclick="openMenuSheet()" aria-label="Menu">☰</button>
+    <button class="mobile-nav-btn mobile-map-btn" id="mobile-map-btn" onclick="openMapOverlay()" aria-label="Kaart">🗺</button>
     <button class="mobile-nav-btn" id="mobile-prev-btn" onclick="mobilePrevDay()">←</button>
     <div class="mobile-day-center" onclick="openDaySheet()">
       <div class="mobile-day-label" id="mobile-day-label">Dag 1</div>
@@ -230,6 +231,7 @@
   <div class="planner-map-container">
     <div id="map"></div>
     <div id="map-route-status" class="map-route-status"></div>
+    <button class="map-overlay-close" id="map-overlay-close" onclick="closeMapOverlay()" aria-label="Kaart sluiten">✕</button>
   </div>
 </div>
 
