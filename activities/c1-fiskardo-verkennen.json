@@ -12,5 +12,12 @@
   "lat": 38.461,
   "lng": 20.578,
   "reservation": false,
-  "special": false
+  "special": false,
+  "timeOfDay": "afternoon",
+  "highlights": [
+    "Enige Venetiaanse dorp dat de aardbeving van 1953 overleefde",
+    "Pastelkleurige huizen en sfeervolle jachthaven met zeiljachten",
+    "Beste sfeer laat in de middag als de dagjesmensen weg zijn"
+  ],
+  "combineWith": ["e6", "s6", "s7"]
 }

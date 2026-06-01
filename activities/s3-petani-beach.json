@@ -13,5 +13,11 @@
   "lng": 20.378,
   "reservation": false,
   "special": false,
-  "timeOfDay": "evening"
+  "timeOfDay": "evening",
+  "highlights": [
+    "Beste zonsondergangsstrand van Paliki — oranje en roze lucht",
+    "Minder druk dan Myrtos, intimer en rustiger",
+    "Erasmia Taverna direct aan het strand voor diner"
+  ],
+  "combineWith": ["b3", "e2", "c8"]
 }

@@ -13,5 +13,11 @@
   "lng": 20.584,
   "reservation": false,
   "special": false,
-  "timeOfDay": "morning"
+  "timeOfDay": "morning",
+  "highlights": [
+    "Kristalhelder water boven rotsen vol octopussen, zeeëgels en bontgekleurde vis",
+    "Nauwelijks bezocht — rustig en ongerept aan Noord-Kefalonia",
+    "Breng eigen snorkelset mee — er is geen verhuur ter plekke"
+  ],
+  "combineWith": ["s6", "n5", "c1"]
 }

@@ -12,5 +12,12 @@
   "lat": 38.228,
   "lng": 20.627,
   "reservation": false,
-  "special": false
+  "special": false,
+  "timeOfDay": "afternoon",
+  "highlights": [
+    "Druipsteen-zaal van 65 m breed — duizelingwekkend mooi",
+    "Fenomenale akoestiek — Maria Callas trad hier ooit op",
+    "Altijd koel (18°C) — ideale schuilplaats op een hete middag"
+  ],
+  "combineWith": ["c3", "e5", "s2"]
 }

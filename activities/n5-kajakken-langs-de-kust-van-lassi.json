@@ -12,5 +12,12 @@
   "lat": 38.157,
   "lng": 20.48,
   "reservation": true,
-  "special": false
+  "special": false,
+  "timeOfDay": "morning",
+  "highlights": [
+    "Zeekajak door zeegrotten en langs kalkstenen bogen",
+    "Gids wijst verborgen plekken die alleen te water bereikbaar zijn",
+    "Rustige ochtendtour — water is 's morgens spiegelglad"
+  ],
+  "combineWith": ["s9", "n7", "s9"]
 }

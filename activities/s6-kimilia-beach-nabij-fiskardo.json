@@ -12,5 +12,12 @@
   "lat": 38.455,
   "lng": 20.554,
   "reservation": false,
-  "special": false
+  "special": false,
+  "timeOfDay": "morning",
+  "highlights": [
+    "Beschutte cipressen-baai, altijd schaduw",
+    "Zwembadhelder water vol vis — snorkelen is fantastisch",
+    "Korte bosweg houdt het druktevrij en rustig"
+  ],
+  "combineWith": ["c1", "e6", "s7"]
 }

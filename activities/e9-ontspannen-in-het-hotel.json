@@ -12,5 +12,12 @@
   "lat": 38.188,
   "lng": 20.407,
   "reservation": true,
-  "special": false
+  "special": false,
+  "timeOfDay": "afternoon",
+  "highlights": [
+    "5-sterren health spa met massages, gezichtsbehandelingen en sauna",
+    "Infinity-zwembad met panoramisch uitzicht over zee en Argostoli",
+    "Geen vervoer nodig — ultieme rustdag aan het resort"
+  ],
+  "combineWith": []
 }

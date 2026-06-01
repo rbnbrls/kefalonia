@@ -12,5 +12,12 @@
   "lat": 38.139,
   "lng": 20.562,
   "reservation": false,
-  "special": false
+  "special": false,
+  "timeOfDay": "morning",
+  "highlights": [
+    "Middeleeuwse hoofdstad van Kefalonia van de 12e tot 18e eeuw",
+    "360° panoramisch uitzicht over het hele eiland en de zee",
+    "Kastro Cafe vlak naast de ingang voor ijskoffie met kasteelzicht"
+  ],
+  "combineWith": ["c5", "c9", "s8"]
 }

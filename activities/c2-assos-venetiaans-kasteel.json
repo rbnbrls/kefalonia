@@ -12,5 +12,12 @@
   "lat": 38.38,
   "lng": 20.536,
   "reservation": false,
-  "special": false
+  "special": false,
+  "timeOfDay": "morning",
+  "highlights": [
+    "Hoefijzervormige baai gezien vanuit het Venetiaanse kasteel",
+    "Gratis toegang — een van de mooiste kastelen van de Ionische eilanden",
+    "Na het kasteel direct zwemmen in de baai beneden"
+  ],
+  "combineWith": ["s1", "c1"]
 }

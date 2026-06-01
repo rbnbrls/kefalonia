@@ -1826,6 +1826,13 @@ function openActivityDetail(dayIndex, actId) {
   const day = typeof dayIndex === 'number' ? DAYS[dayIndex] : null;
   const catLabel = CAT_LABELS[act.cat] || '';
 
+  const timeLabels = { morning: '🌅 Ochtend', afternoon: '☀️ Middag', evening: '🌙 Avond', fullday: '📅 Hele dag' };
+  const timeLabel = act.timeOfDay ? timeLabels[act.timeOfDay] : null;
+
+  const combineActs = (act.combineWith || [])
+    .map(id => ACTIVITIES.find(a => a.id === id))
+    .filter(Boolean);
+
   document.getElementById('activity-detail-content').innerHTML = `
     <div style="text-align:center; margin-bottom:1rem;">
       <div style="font-size:2.8rem; margin-bottom:0.5rem;">${act.icon}</div>
@@ -1838,6 +1845,8 @@ function openActivityDetail(dayIndex, actId) {
       <span style="font-size:0.78rem; font-weight:700; color:${act.cost === 0 ? 'var(--olive)' : 'var(--terracotta)'}; background:${act.cost === 0 ? 'rgba(90,122,58,0.1)' : 'var(--terracotta-light)'}; border-radius:100px; padding:5px 14px;">
         ${act.cost === 0 ? '✓ Gratis' : `~€${act.cost} p.p. 2 pers.`}
       </span>
+      ${timeLabel ? `<span style="font-size:0.78rem; font-weight:700; color:var(--sea-deep); background:var(--sea-light); border-radius:100px; padding:5px 14px;">${timeLabel}</span>` : ''}
+      ${act.reservation ? `<span style="font-size:0.78rem; font-weight:700; color:#92400e; background:#fef3c7; border-radius:100px; padding:5px 14px;">📋 Reserveren aanbevolen</span>` : ''}
       ${day && day.special ? `<span style="font-size:0.78rem; font-weight:700; color:var(--gold); background:var(--gold-light); border-radius:100px; padding:5px 14px;">🎂 Verjaardagsidee</span>` : ''}
     </div>
 
@@ -1852,15 +1861,46 @@ function openActivityDetail(dayIndex, actId) {
       </a>
     ` : ''}
 
-    <div style="margin-bottom:1.25rem;">
-      <div style="font-size:0.68rem; font-weight:700; text-transform:uppercase; letter-spacing:0.12em; color:var(--muted); margin-bottom:8px;">Waarom deze activiteit?</div>
-      <div style="font-size:0.9rem; line-height:1.65; color:var(--ink);">${act.why}</div>
-    </div>
+    ${act.highlights && act.highlights.length ? `
+      <div style="margin-bottom:1.25rem;">
+        <div style="font-size:0.68rem; font-weight:700; text-transform:uppercase; letter-spacing:0.12em; color:var(--muted); margin-bottom:8px;">Waarom deze activiteit?</div>
+        <ul style="margin:0; padding:0; list-style:none; display:flex; flex-direction:column; gap:7px;">
+          ${act.highlights.map(h => `
+            <li style="display:flex; align-items:flex-start; gap:9px; font-size:0.88rem; line-height:1.5; color:var(--ink);">
+              <span style="color:var(--olive); font-size:0.85rem; margin-top:1px; flex-shrink:0;">✓</span>
+              <span>${h}</span>
+            </li>
+          `).join('')}
+        </ul>
+      </div>
+    ` : `
+      <div style="margin-bottom:1.25rem;">
+        <div style="font-size:0.68rem; font-weight:700; text-transform:uppercase; letter-spacing:0.12em; color:var(--muted); margin-bottom:8px;">Waarom deze activiteit?</div>
+        <div style="font-size:0.9rem; line-height:1.65; color:var(--ink);">${act.why}</div>
+      </div>
+    `}
 
-    <div style="background:var(--sand); border-radius:var(--radius); padding:14px 16px;">
+    <div style="background:var(--sand); border-radius:var(--radius); padding:14px 16px; margin-bottom:${combineActs.length ? '1.25rem' : '0'};">
       <div style="font-size:0.68rem; font-weight:700; text-transform:uppercase; letter-spacing:0.12em; color:var(--muted); margin-bottom:6px;">💡 Tip</div>
       <div style="font-size:0.88rem; line-height:1.55; color:var(--ink);">${act.tip}</div>
     </div>
+
+    ${combineActs.length ? `
+      <div>
+        <div style="font-size:0.68rem; font-weight:700; text-transform:uppercase; letter-spacing:0.12em; color:var(--muted); margin-bottom:8px;">🔗 Combineert goed met</div>
+        <div style="display:flex; flex-direction:column; gap:6px;">
+          ${combineActs.map(ca => `
+            <button onclick="openActivityDetail(${JSON.stringify(dayIndex)}, '${ca.id}')"
+              style="display:flex; align-items:center; gap:10px; background:var(--sand-dark); border:1px solid rgba(0,0,0,0.07); border-radius:var(--radius); padding:9px 12px; text-align:left; cursor:pointer; width:100%; transition:background 0.15s;"
+              onmouseover="this.style.background='var(--sand)'" onmouseout="this.style.background='var(--sand-dark)'">
+              <span style="font-size:1.2rem;">${ca.icon}</span>
+              <span style="font-size:0.85rem; font-weight:500; color:var(--ink); flex:1;">${ca.title}</span>
+              <span style="font-size:0.75rem; color:var(--muted);">→</span>
+            </button>
+          `).join('')}
+        </div>
+      </div>
+    ` : ''}
   `;
 
   const selectBtn = document.getElementById('btn-detail-select');

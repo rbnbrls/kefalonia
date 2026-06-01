@@ -12,5 +12,12 @@
   "lat": 38.262,
   "lng": 20.623,
   "reservation": false,
-  "special": false
+  "special": false,
+  "timeOfDay": "afternoon",
+  "highlights": [
+    "Rond 12:00 schijnt de zon recht naar binnen — boot lijkt te zweven",
+    "Ondergronds meer van 160 m lang met ingestort dak",
+    "UNESCO-beschermd gebied, verbonden met de zee via 30 km ondergrondse kanalen"
+  ],
+  "combineWith": ["c4", "e5", "s2"]
 }

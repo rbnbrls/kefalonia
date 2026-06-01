@@ -13,5 +13,11 @@
   "lng": 20.499,
   "reservation": false,
   "special": false,
-  "timeOfDay": "morning"
+  "timeOfDay": "morning",
+  "highlights": [
+    "Flamingo's, reigers en aalscholvers in een beschermd kustlagune",
+    "Gratis wandelpad van 3 km rondom het water",
+    "Op 10 minuten loopafstand van het centrum van Argostoli"
+  ],
+  "combineWith": ["n1", "c7", "c9"]
 }

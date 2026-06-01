@@ -12,5 +12,12 @@
   "lat": 38.259,
   "lng": 20.673,
   "reservation": false,
-  "special": false
+  "special": false,
+  "timeOfDay": "afternoon",
+  "highlights": [
+    "Weelderig groene heuvels spiegelen in turquoise water",
+    "Gratis ligbedden bij consumptie beachclub",
+    "Snorkelen direct voor het strand met vis en zeeëgels"
+  ],
+  "combineWith": ["c3", "c4"]
 }

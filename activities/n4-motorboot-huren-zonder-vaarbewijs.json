@@ -12,5 +12,12 @@
   "lat": 38.461,
   "lng": 20.578,
   "reservation": true,
-  "special": false
+  "special": false,
+  "timeOfDay": "morning",
+  "highlights": [
+    "Geen vaarbewijs nodig tot 30 pk — iedereen kan dit doen",
+    "Verborgen baaitjes en zeegrotten die alleen per boot bereikbaar zijn",
+    "Boek vroeg — bij slecht weer kun je gratis verzetten"
+  ],
+  "combineWith": ["s5", "s6", "n7"]
 }

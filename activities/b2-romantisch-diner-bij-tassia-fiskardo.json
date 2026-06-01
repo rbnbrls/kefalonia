@@ -13,5 +13,11 @@
   "lng": 20.579,
   "reservation": true,
   "special": true,
-  "timeOfDay": "evening"
+  "timeOfDay": "evening",
+  "highlights": [
+    "Gerund door Tassia Dendrinou — schrijfster van meerdere Griekse kookboeken",
+    "Seafront tafel met uitzicht op zeiljachten en de ondergaande zon",
+    "Verfijnde Griekse keuken met vis van de eigen kotter"
+  ],
+  "combineWith": ["b1", "c1"]
 }

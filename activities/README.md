@@ -34,18 +34,22 @@ Verzin geen nieuwe velden — onbekende velden laten de build falen. Draai daarn
 
 ## Verplicht template
 
+Zie [`_TEMPLATE.json`](_TEMPLATE.json) voor het volledig geannoteerde sjabloon met toegestane waarden per veld.
+
+Minimale geldige activiteit (verplichte velden, geen optionele):
+
 ```json
 {
-  "id": "s10",
-  "cat": "stranden",
-  "icon": "🏖️",
+  "id": "c10",
+  "cat": "cultuur",
+  "icon": "🏛️",
   "title": "Naam van de activiteit",
   "duration": 120,
   "why": "Waarom is dit de moeite waard? (1–2 zinnen)",
   "tip": "Praktische tip: beste tijd, wat meenemen, slim combineren.",
   "cost": 0,
   "location": "Locatienaam, Dorp, Kefalonia",
-  "mapUrl": "https://www.google.com/maps/search/?api=1&query=...+Kefalonia",
+  "mapUrl": "https://www.google.com/maps/search/?api=1&query=38.300,20.500",
   "lat": 38.300,
   "lng": 20.500,
   "reservation": false,

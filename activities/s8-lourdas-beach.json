@@ -12,5 +12,12 @@
   "lat": 38.117,
   "lng": 20.635,
   "reservation": false,
-  "special": false
+  "special": false,
+  "timeOfDay": "afternoon",
+  "highlights": [
+    "Breed rustig strand aan de minder drukke zuidkust",
+    "Uitzicht op Zakynthos op heldere dagen",
+    "Meerdere taverna's op loopafstand voor lunch of diner"
+  ],
+  "combineWith": ["c5", "c6"]
 }

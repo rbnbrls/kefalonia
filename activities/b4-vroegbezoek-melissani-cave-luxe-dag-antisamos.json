@@ -12,5 +12,12 @@
   "lat": 38.259,
   "lng": 20.673,
   "reservation": true,
-  "special": true
+  "special": true,
+  "timeOfDay": "morning",
+  "highlights": [
+    "Melissani Cave om 11:30 — magisch middaglicht met bijna geen drukte",
+    "Antisamos privé-cabana: ligbedden, parasol en directe strandservice",
+    "Twee van de mooiste plekken van Kefalonia op één dag"
+  ],
+  "combineWith": ["c4", "e5"]
 }

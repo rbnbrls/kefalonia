@@ -12,5 +12,12 @@
   "lat": 38.458,
   "lng": 20.563,
   "reservation": false,
-  "special": false
+  "special": false,
+  "timeOfDay": "morning",
+  "highlights": [
+    "Verborgen baai na 15 min wandeling door groen dal",
+    "Reële kans op spotting van de zeldzame Middellandse Monniksrob",
+    "Rustigst en meest afgelegen strand van Noord-Kefalonia"
+  ],
+  "combineWith": ["s6", "c1"]
 }

@@ -13,5 +13,11 @@
   "lng": 20.395,
   "reservation": true,
   "special": true,
-  "timeOfDay": "evening"
+  "timeOfDay": "afternoon",
+  "highlights": [
+    "Exclusieve privérondleiding over het 19e-eeuwse familielandgoed",
+    "Proeverij onder de bomen: Robola, Mavrodafni en Muscat",
+    "Petani Beach op 10 minuten rijden — perfecte zonsondergangscombo"
+  ],
+  "combineWith": ["s3", "b1", "e2"]
 }

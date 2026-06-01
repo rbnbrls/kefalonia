@@ -12,5 +12,12 @@
   "lat": 38.163,
   "lng": 20.414,
   "reservation": false,
-  "special": false
+  "special": false,
+  "timeOfDay": "afternoon",
+  "highlights": [
+    "Uniek roodbruin zand — nergens anders op Kefalonia",
+    "Witte kleiklippen: gratis moddermasker, goed voor de huid",
+    "Lang ondiep water, kalm en rustgevend"
+  ],
+  "combineWith": ["c8", "e2"]
 }

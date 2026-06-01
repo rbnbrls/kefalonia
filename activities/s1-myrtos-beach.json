@@ -12,5 +12,12 @@
   "lat": 38.343,
   "lng": 20.535,
   "reservation": false,
-  "special": false
+  "special": false,
+  "timeOfDay": "morning",
+  "highlights": [
+    "Spierwit kiezels met intens turquoise water",
+    "Iconische uitkijkpost bovenaan de weg voor het perfecte shot",
+    "Gratis toegang — wel druk tussen 11:00 en 17:00"
+  ],
+  "combineWith": ["c2", "s5"]
 }

@@ -12,5 +12,12 @@
   "lat": 38.232,
   "lng": 20.395,
   "reservation": true,
-  "special": false
+  "special": false,
+  "timeOfDay": "afternoon",
+  "highlights": [
+    "Familielandgoed uit 1860 — authentiekste wijnervaring van Kefalonia",
+    "Biologische wijnen: Robola, Mavrodafni en Muscat",
+    "Privéproeverij met mezze-plank in de tuin op afspraak"
+  ],
+  "combineWith": ["s3", "c8", "e2"]
 }

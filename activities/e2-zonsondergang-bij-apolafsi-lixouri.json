@@ -12,5 +12,12 @@
   "lat": 38.19,
   "lng": 20.418,
   "reservation": true,
-  "special": false
+  "special": false,
+  "timeOfDay": "evening",
+  "highlights": [
+    "Strand-restaurant met voeten in het zand en zicht op zee",
+    "Spectaculaire zonsondergang boven de Ionische Zee vanuit je stoel",
+    "Bestel de Kefalonitiki Kreatopita — dé traditionele vleespastei van Kefalonia"
+  ],
+  "combineWith": ["s3", "s4", "c8"]
 }

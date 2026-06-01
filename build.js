@@ -26,7 +26,7 @@ const OUT_FILE = path.join(__dirname, 'activities.generated.js');
 // ── Template-regels (moeten matchen met activities/README.md) ───────────────
 const REQUIRED_KEYS = ['id', 'cat', 'icon', 'title', 'duration', 'why', 'tip',
   'cost', 'location', 'mapUrl', 'lat', 'lng'];
-const OPTIONAL_KEYS = ['reservation', 'special', 'timeOfDay'];
+const OPTIONAL_KEYS = ['reservation', 'special', 'timeOfDay', 'highlights', 'combineWith'];
 const ALL_KEYS = [...REQUIRED_KEYS, ...OPTIONAL_KEYS];
 
 // Categorie-volgorde bepaalt de weergavevolgorde in de UI (pool + catalogus).
@@ -89,8 +89,16 @@ function validate(file, a) {
   if (a.special === true && a.cat !== 'bday') {
     fail(file, '"special: true" mag alleen bij cat:"bday"');
   }
-  if ('timeOfDay' in a && !['morning', 'evening'].includes(a.timeOfDay)) {
-    fail(file, '"timeOfDay" moet "morning" of "evening" zijn');
+  if ('timeOfDay' in a && !['morning', 'afternoon', 'evening', 'fullday'].includes(a.timeOfDay)) {
+    fail(file, '"timeOfDay" moet "morning", "afternoon", "evening" of "fullday" zijn');
+  }
+  if ('highlights' in a) {
+    if (!Array.isArray(a.highlights)) fail(file, '"highlights" moet een array zijn');
+    else if (a.highlights.some(h => typeof h !== 'string' || !h.trim())) fail(file, '"highlights" mag alleen niet-lege strings bevatten');
+  }
+  if ('combineWith' in a) {
+    if (!Array.isArray(a.combineWith)) fail(file, '"combineWith" moet een array zijn');
+    else if (a.combineWith.some(id => typeof id !== 'string' || !id.trim())) fail(file, '"combineWith" mag alleen niet-lege id-strings bevatten');
   }
 }
 
@@ -142,13 +150,16 @@ activities.sort((a, b) => {
 // ── Schrijven ───────────────────────────────────────────────────────────────
 // Uniforme key-volgorde + altijd reservation/special aanwezig (false default).
 const KEY_ORDER = ['id', 'cat', 'icon', 'title', 'duration', 'why', 'tip',
-  'cost', 'location', 'mapUrl', 'lat', 'lng', 'reservation', 'special', 'timeOfDay'];
+  'cost', 'location', 'mapUrl', 'lat', 'lng', 'reservation', 'special',
+  'timeOfDay', 'highlights', 'combineWith'];
 
 function normalize(a) {
   const out = {};
   for (const k of KEY_ORDER) {
     if (k === 'reservation' || k === 'special') out[k] = !!a[k];
-    else if (k === 'timeOfDay') { if (a[k]) out[k] = a[k]; } // only include when set
+    else if (k === 'timeOfDay') { if (a[k]) out[k] = a[k]; }
+    else if (k === 'highlights') { if (a[k]) out[k] = a[k]; }
+    else if (k === 'combineWith') { if (a[k]) out[k] = a[k]; }
     else out[k] = a[k];
   }
   return out;

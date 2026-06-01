@@ -12,5 +12,12 @@
   "lat": 38.157,
   "lng": 20.48,
   "reservation": false,
-  "special": false
+  "special": false,
+  "timeOfDay": "morning",
+  "highlights": [
+    "Twee stranden naast elkaar met bars en ligbedden",
+    "Vertrekpunt voor kajakexcursies langs de kalksteenkliffen",
+    "Makkelijkst bereikbaar vanuit Argostoli — ideaal bij aankomst"
+  ],
+  "combineWith": ["n5", "n1"]
 }

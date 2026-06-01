@@ -12,5 +12,12 @@
   "lat": 38.307,
   "lng": 20.477,
   "reservation": false,
-  "special": false
+  "special": false,
+  "timeOfDay": "morning",
+  "highlights": [
+    "Alleen bereikbaar per taxiboot — echte verlaten eiland-vibe",
+    "Nul faciliteiten: pure natuur en kristalhelder water",
+    "Breng genoeg water en eten mee — geen winkels in de buurt"
+  ],
+  "combineWith": ["s6", "n7"]
 }

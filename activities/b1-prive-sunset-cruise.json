@@ -13,5 +13,11 @@
   "lng": 20.578,
   "reservation": true,
   "special": true,
-  "timeOfDay": "evening"
+  "timeOfDay": "evening",
+  "highlights": [
+    "Privéboot met schipper — volledige privacy voor twee",
+    "Verlaten baaitjes bereiken die voor anderen ontoegankelijk zijn",
+    "Gekoelde Robola-wijn terwijl de zon in de Ionische Zee wegzakt"
+  ],
+  "combineWith": ["b2", "e6"]
 }

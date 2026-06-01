@@ -12,5 +12,12 @@
   "lat": 38.251,
   "lng": 20.647,
   "reservation": false,
-  "special": false
+  "special": false,
+  "timeOfDay": "morning",
+  "highlights": [
+    "Eeuwenoude ezelspaden (kalderimia) door olijfgaarden en druiven",
+    "Verlaten ruïnes en kapelletjes die je alleen te voet bereikt",
+    "Gratis en off-the-beaten-track — het echte Kefalonia"
+  ],
+  "combineWith": ["c5", "e3", "e4"]
 }

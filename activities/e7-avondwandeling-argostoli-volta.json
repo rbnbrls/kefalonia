@@ -12,5 +12,12 @@
   "lat": 38.175,
   "lng": 20.493,
   "reservation": false,
-  "special": false
+  "special": false,
+  "timeOfDay": "evening",
+  "highlights": [
+    "De Griekse volta: avondpromenade is een sociaal ritueel voor alle leeftijden",
+    "Loukoumades (warme honing-oliebollen) bij de lokale zoetwinkels",
+    "Vallianou-plein: levendigste plek van Kefalonia na zonsondergang"
+  ],
+  "combineWith": ["n1", "c7", "c9"]
 }

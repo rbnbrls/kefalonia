@@ -12,5 +12,12 @@
   "lat": 38.143,
   "lng": 20.505,
   "reservation": false,
-  "special": false
+  "special": false,
+  "timeOfDay": "afternoon",
+  "highlights": [
+    "Bekroonde Robola-wijn — de droge witte wijn van Kefalonia",
+    "Tasting in een weelderige schaduwrijke tuin met uitzicht op de wijngaarden",
+    "Kleine boutique-winery: persoonlijker en intemer dan grote tours"
+  ],
+  "combineWith": ["c5", "c6", "e4"]
 }

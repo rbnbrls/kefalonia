@@ -5,7 +5,7 @@
   "title": "Argostoli & De Bosset-brug",
   "duration": 90,
   "why": "De langste stenen zeebrug ter wereld, gevolgd door het ultieme Griekse stadsplein. Levendige sfeer.",
-  "tip": "Combineer met schildpaddenspoттen op de kade ('s ochtends vroeg).",
+  "tip": "Combineer met schildpadden spotten op de kade ('s ochtends vroeg).",
   "cost": 0,
   "location": "De Bosset Bridge, Argostoli, Kefalonia",
   "mapUrl": "https://www.google.com/maps/search/?api=1&query=De+Bosset+Bridge+Argostoli",
@@ -13,5 +13,11 @@
   "lng": 20.493,
   "reservation": false,
   "special": false,
-  "timeOfDay": "morning"
+  "timeOfDay": "morning",
+  "highlights": [
+    "Langste stenen zeebrug ter wereld (689 m), gebouwd in 1813",
+    "Beste plek op Kefalonia om schildpadden te zien bij de vissersboten",
+    "Levendig Grieks stadsplein Vallianou met terrassen en winkels"
+  ],
+  "combineWith": ["n1", "n8", "c9"]
 }

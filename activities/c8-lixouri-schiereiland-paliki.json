@@ -12,5 +12,12 @@
   "lat": 38.201,
   "lng": 20.438,
   "reservation": false,
-  "special": false
+  "special": false,
+  "timeOfDay": "afternoon",
+  "highlights": [
+    "Geen toeristen — échte Griekse dagelijkse sfeer op de pleinen",
+    "Veerbootje vanuit Argostoli (20 min) is een ervaring op zich",
+    "Toegang tot de unieke stranden Xi, Petani en Megas Lakkos"
+  ],
+  "combineWith": ["s4", "s3", "e2"]
 }

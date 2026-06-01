@@ -12,5 +12,12 @@
   "lat": 38.174,
   "lng": 20.583,
   "reservation": false,
-  "special": false
+  "special": false,
+  "timeOfDay": "afternoon",
+  "highlights": [
+    "Authentieke Griekse dorpstaverna's ver van toeristenroutes",
+    "Mezedes delen zoals de locals: stoofpotten, gevulde tomaten, brood",
+    "In de Omala-vallei — mooie omgeving vlak bij het Agios Gerasimos klooster"
+  ],
+  "combineWith": ["c5", "e1", "n2"]
 }

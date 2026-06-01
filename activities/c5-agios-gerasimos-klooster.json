@@ -12,5 +12,12 @@
   "lat": 38.167,
   "lng": 20.588,
   "reservation": false,
-  "special": false
+  "special": false,
+  "timeOfDay": "morning",
+  "highlights": [
+    "Beschermer-heilige van Kefalonia — reliekschrijn in het klooster",
+    "Ondergrondse grot waar Agios Gerasimos jarenlang woonde",
+    "Prachtige 16e-eeuwse fresco's, gratis toegang"
+  ],
+  "combineWith": ["e4", "c6", "e1"]
 }
