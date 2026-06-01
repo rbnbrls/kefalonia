@@ -2218,4 +2218,65 @@ h3 { font-family: 'DM Sans', sans-serif; font-weight: 500; font-size: 1rem; }
   /* Geen feedback-tab-left op mobiel */
 }
 
+/* ── DAGPLANNING TIJDLIJN ──────────────────────────────── */
+.tl-wrap {
+  margin-top: 14px;
+}
+
+.tl-track {
+  display: flex;
+  height: 34px;
+  border-radius: 8px;
+  overflow: hidden;
+  background: rgba(0,0,0,0.06);
+}
+
+.tl-block {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  cursor: pointer;
+  transition: filter 0.15s;
+  border-right: 1.5px solid rgba(255,255,255,0.25);
+}
+
+.tl-block:hover {
+  filter: brightness(1.15);
+}
+
+.tl-block:last-of-type {
+  border-right: none;
+}
+
+.tl-block-label {
+  font-size: 0.85rem;
+  line-height: 1;
+  user-select: none;
+  pointer-events: none;
+}
+
+.tl-gap {
+  /* visible as the grey track background */
+}
+
+.tl-ruler {
+  position: relative;
+  height: 18px;
+  margin-top: 3px;
+}
+
+.tl-tick {
+  position: absolute;
+  top: 0;
+  transform: translateX(-50%);
+  font-size: 0.58rem;
+  color: var(--muted);
+  white-space: nowrap;
+  line-height: 18px;
+}
+
+.tl-tick:first-child { transform: translateX(0); }
+.tl-tick:last-child  { transform: translateX(-100%); }
+
 

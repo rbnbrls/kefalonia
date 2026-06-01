@@ -293,6 +293,7 @@ let collapsedCategories = {
 
 let sortMode = 'category'; // 'category' | 'distance'
 let activitySearchQuery = '';
+let timelineView = false;
 
 // Track which activities are used
 function usedIds() {
@@ -538,6 +539,11 @@ window.setActivitySearch = function(query) {
     el.value = query;
     el.setSelectionRange(query.length, query.length);
   }
+};
+
+window.toggleTimelineView = function() {
+  timelineView = !timelineView;
+  renderPlannerDay(state.currentDay);
 };
 
 // ═══════════════════════════════════════════════════════
@@ -1042,6 +1048,51 @@ window.removeActivityFromMap = function(dayIndex, actId) {
 };
 
 // ═══════════════════════════════════════════════════════
+//  DAGPLANNING TIJDLIJN
+// ═══════════════════════════════════════════════════════
+const TL_CAT_COLORS = {
+  hotel:    '#1B6CA8',
+  bday:     '#C9962A',
+  stranden: '#3AA8D8',
+  cultuur:  '#C4622D',
+  natuur:   '#5A7A3A',
+  eten:     '#7C3AED',
+};
+
+function buildTimelineHtml(dayIndex, activities) {
+  const TOTAL_MIN = 540; // 09:00–18:00
+  let used = 0;
+  let blocks = '';
+
+  activities.forEach(act => {
+    const dur = Math.max(act.duration || 60, 30);
+    const clampedDur = Math.min(dur, TOTAL_MIN - used);
+    if (clampedDur <= 0) return;
+    const widthPct = (clampedDur / TOTAL_MIN) * 100;
+    const color = TL_CAT_COLORS[act.cat] || '#1B6CA8';
+    const startMin = 9 * 60 + used;
+    const timeStr = `${String(Math.floor(startMin / 60)).padStart(2, '0')}:${String(startMin % 60).padStart(2, '0')}`;
+    const tooltip = escapeHtml(`${act.icon} ${act.title} · vanaf ${timeStr} · ${formatDuration(act.duration || 60)}`);
+    const showLabel = widthPct >= 8;
+    blocks += `<div class="tl-block" style="flex:0 0 ${widthPct}%;background:${color};" title="${tooltip}" onclick="event.stopPropagation();openActivityDetail(${dayIndex},'${act.id}')">` +
+      (showLabel ? `<span class="tl-block-label">${act.icon}</span>` : '') +
+      `</div>`;
+    used += clampedDur;
+  });
+
+  if (used < TOTAL_MIN) {
+    blocks += `<div class="tl-gap" style="flex:0 0 ${((TOTAL_MIN - used) / TOTAL_MIN) * 100}%;"></div>`;
+  }
+
+  const ticks = [[0,'09:00'],[120,'11:00'],[240,'13:00'],[360,'15:00'],[480,'17:00'],[540,'18:00']];
+  const ruler = ticks.map(([m, lbl]) =>
+    `<span class="tl-tick" style="left:${(m / TOTAL_MIN) * 100}%;">${lbl}</span>`
+  ).join('');
+
+  return `<div class="tl-wrap"><div class="tl-track">${blocks}</div><div class="tl-ruler">${ruler}</div></div>`;
+}
+
+// ═══════════════════════════════════════════════════════
 //  PLANNER DAY
 // ═══════════════════════════════════════════════════════
 function renderPlannerDay(i) {
@@ -1135,7 +1186,12 @@ function renderPlannerDay(i) {
   const budgetBarHtml = `
     <div class="fade-up" style="background:var(--sand-dark); border-radius:var(--radius-lg); padding:1rem 1.5rem; margin-bottom:1.5rem; border:1px solid rgba(0,0,0,0.05);">
       <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:8px;">
-        <div style="font-size:0.82rem; font-weight:600; color:var(--ink);">⏱️ Dagplanning</div>
+        <div style="display:flex; align-items:center; gap:8px;">
+          <div style="font-size:0.82rem; font-weight:600; color:var(--ink);">⏱️ Dagplanning</div>
+          <button onclick="toggleTimelineView()"
+            style="font-size:0.68rem; padding:2px 9px; border-radius:100px; border:1.5px solid ${timelineView ? 'var(--sea-deep)' : 'rgba(0,0,0,0.12)'}; background:${timelineView ? 'var(--sea-deep)' : 'transparent'}; color:${timelineView ? 'white' : 'var(--muted)'}; cursor:pointer; font-family:'DM Sans',sans-serif; font-weight:500; transition:all 0.15s; line-height:1.6;"
+            title="${timelineView ? 'Tijdlijn verbergen' : 'Tijdlijn weergeven'}">📅 Tijdlijn</button>
+        </div>
         <div style="font-size:0.78rem; color:${budgetColor}; font-weight:600;">
           ${isFullDayAct ? 'Hele dag vol' : usedMin === 0 ? 'Leeg — voeg activiteiten toe' : `${Math.floor(usedMin / 60)}u${usedMin % 60 > 0 ? ' ' + (usedMin % 60) + 'm' : ''} / 9 uur${isOverBudget ? ' ⚠️ over budget' : ''}`}
         </div>
@@ -1152,6 +1208,7 @@ function renderPlannerDay(i) {
           `).join('')}
         </div>
       ` : ''}
+      ${timelineView ? buildTimelineHtml(i, plan.activities) : ''}
     </div>
   `;
 
