@@ -26,7 +26,7 @@ const OUT_FILE = path.join(__dirname, 'activities.generated.js');
 // ── Template-regels (moeten matchen met activities/README.md) ───────────────
 const REQUIRED_KEYS = ['id', 'cat', 'icon', 'title', 'duration', 'why', 'tip',
   'cost', 'location', 'mapUrl', 'lat', 'lng'];
-const OPTIONAL_KEYS = ['reservation', 'special'];
+const OPTIONAL_KEYS = ['reservation', 'special', 'timeOfDay'];
 const ALL_KEYS = [...REQUIRED_KEYS, ...OPTIONAL_KEYS];
 
 // Categorie-volgorde bepaalt de weergavevolgorde in de UI (pool + catalogus).
@@ -89,6 +89,9 @@ function validate(file, a) {
   if (a.special === true && a.cat !== 'bday') {
     fail(file, '"special: true" mag alleen bij cat:"bday"');
   }
+  if ('timeOfDay' in a && !['morning', 'evening'].includes(a.timeOfDay)) {
+    fail(file, '"timeOfDay" moet "morning" of "evening" zijn');
+  }
 }
 
 // ── Inlezen ─────────────────────────────────────────────────────────────────
@@ -139,12 +142,13 @@ activities.sort((a, b) => {
 // ── Schrijven ───────────────────────────────────────────────────────────────
 // Uniforme key-volgorde + altijd reservation/special aanwezig (false default).
 const KEY_ORDER = ['id', 'cat', 'icon', 'title', 'duration', 'why', 'tip',
-  'cost', 'location', 'mapUrl', 'lat', 'lng', 'reservation', 'special'];
+  'cost', 'location', 'mapUrl', 'lat', 'lng', 'reservation', 'special', 'timeOfDay'];
 
 function normalize(a) {
   const out = {};
   for (const k of KEY_ORDER) {
     if (k === 'reservation' || k === 'special') out[k] = !!a[k];
+    else if (k === 'timeOfDay') { if (a[k]) out[k] = a[k]; } // only include when set
     else out[k] = a[k];
   }
   return out;

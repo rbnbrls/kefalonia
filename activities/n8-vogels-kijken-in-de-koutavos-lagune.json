@@ -12,5 +12,6 @@
   "lat": 38.169,
   "lng": 20.499,
   "reservation": false,
-  "special": false
+  "special": false,
+  "timeOfDay": "morning"
 }

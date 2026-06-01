@@ -294,6 +294,7 @@ let collapsedCategories = {
 let sortMode = 'category'; // 'category' | 'distance'
 let activitySearchQuery = '';
 let timelineView = false;
+let routeProposal = null; // { dayIndex, proposedOrder, savedKm, alreadyOptimal } | null
 
 // Track which activities are used
 function usedIds() {
@@ -583,6 +584,81 @@ function calculateTravelStats(lat1, lng1, lat2, lng2) {
     distance: Math.round(roadDist * 10) / 10,
     time: Math.round(timeMins)
   };
+}
+
+// ── Route optimization (nearest-neighbor TSP) ─────────
+function nearestNeighborTSP(startLat, startLng, activities) {
+  if (activities.length === 0) return [];
+  const remaining = [...activities];
+  const ordered = [];
+  let curLat = startLat, curLng = startLng;
+  while (remaining.length > 0) {
+    let bestIdx = 0, bestDist = Infinity;
+    for (let j = 0; j < remaining.length; j++) {
+      const d = calculateTravelStats(curLat, curLng, remaining[j].lat, remaining[j].lng).distance;
+      if (d < bestDist) { bestDist = d; bestIdx = j; }
+    }
+    const picked = remaining.splice(bestIdx, 1)[0];
+    ordered.push(picked);
+    curLat = picked.lat; curLng = picked.lng;
+  }
+  return ordered;
+}
+
+function calcTotalRouteDistance(activities) {
+  if (activities.length === 0) return 0;
+  let total = calculateTravelStats(HOTEL_COORDS[0], HOTEL_COORDS[1], activities[0].lat, activities[0].lng).distance;
+  for (let k = 1; k < activities.length; k++) {
+    total += calculateTravelStats(activities[k - 1].lat, activities[k - 1].lng, activities[k].lat, activities[k].lng).distance;
+  }
+  total += calculateTravelStats(activities[activities.length - 1].lat, activities[activities.length - 1].lng, HOTEL_COORDS[0], HOTEL_COORDS[1]).distance;
+  return Math.round(total * 10) / 10;
+}
+
+function optimizeRouteOrder(dayIndex) {
+  const activities = state.plan[dayIndex].activities;
+  if (activities.length < 2) return [...activities];
+
+  const morning  = activities.filter(a => a.timeOfDay === 'morning');
+  const evening  = activities.filter(a => a.timeOfDay === 'evening');
+  const flexible = activities.filter(a => !a.timeOfDay);
+
+  const morningOrdered  = nearestNeighborTSP(HOTEL_COORDS[0], HOTEL_COORDS[1], morning);
+  const morningEnd      = morningOrdered.length > 0 ? morningOrdered[morningOrdered.length - 1] : { lat: HOTEL_COORDS[0], lng: HOTEL_COORDS[1] };
+  const flexOrdered     = nearestNeighborTSP(morningEnd.lat, morningEnd.lng, flexible);
+  const flexEnd         = flexOrdered.length > 0 ? flexOrdered[flexOrdered.length - 1] : morningEnd;
+  const eveningOrdered  = nearestNeighborTSP(flexEnd.lat, flexEnd.lng, evening);
+
+  return [...morningOrdered, ...flexOrdered, ...eveningOrdered];
+}
+
+function showOptimalRouteProposal(dayIndex) {
+  const activities = state.plan[dayIndex].activities;
+  if (activities.length < 2) return;
+
+  const currentDist  = calcTotalRouteDistance(activities);
+  const proposed     = optimizeRouteOrder(dayIndex);
+  const proposedDist = calcTotalRouteDistance(proposed);
+  const savedKm      = Math.round((currentDist - proposedDist) * 10) / 10;
+  const sameOrder    = proposed.every((a, idx) => a.id === activities[idx].id);
+
+  routeProposal = { dayIndex, proposedOrder: proposed, savedKm, alreadyOptimal: sameOrder || savedKm <= 0 };
+  renderPlannerDay(dayIndex);
+}
+
+function applyRouteProposal(dayIndex) {
+  if (!routeProposal || routeProposal.dayIndex !== dayIndex) return;
+  state.plan[dayIndex].activities = routeProposal.proposedOrder;
+  routeProposal = null;
+  renderSidebar(); // also calls saveState()
+  renderPlannerDay(dayIndex);
+  setTimeout(() => updateMap(dayIndex), 50);
+  updateMobileBar();
+}
+
+function dismissRouteProposal(dayIndex) {
+  routeProposal = null;
+  renderPlannerDay(dayIndex);
 }
 
 // ── OSRM real road distances ──────────────────────────
@@ -1191,6 +1267,11 @@ function renderPlannerDay(i) {
           <button onclick="toggleTimelineView()"
             style="font-size:0.68rem; padding:2px 9px; border-radius:100px; border:1.5px solid ${timelineView ? 'var(--sea-deep)' : 'rgba(0,0,0,0.12)'}; background:${timelineView ? 'var(--sea-deep)' : 'transparent'}; color:${timelineView ? 'white' : 'var(--muted)'}; cursor:pointer; font-family:'DM Sans',sans-serif; font-weight:500; transition:all 0.15s; line-height:1.6;"
             title="${timelineView ? 'Tijdlijn verbergen' : 'Tijdlijn weergeven'}">📅 Tijdlijn</button>
+        ${plan.activities.length >= 2 ? `<button onclick="showOptimalRouteProposal(${i})"
+            style="font-size:0.68rem; padding:2px 9px; border-radius:100px; border:1.5px solid rgba(0,0,0,0.12); background:transparent; color:var(--muted); cursor:pointer; font-family:'DM Sans',sans-serif; font-weight:500; transition:all 0.15s; line-height:1.6;"
+            onmouseover="this.style.borderColor='var(--olive)'; this.style.color='var(--olive)';"
+            onmouseout="this.style.borderColor='rgba(0,0,0,0.12)'; this.style.color='var(--muted)';"
+            title="Bereken de volgorde met minimale rijafstand">🗺 Optimale volgorde</button>` : ''}
         </div>
         <div style="font-size:0.78rem; color:${budgetColor}; font-weight:600;">
           ${isFullDayAct ? 'Hele dag vol' : usedMin === 0 ? 'Leeg — voeg activiteiten toe' : `${Math.floor(usedMin / 60)}u${usedMin % 60 > 0 ? ' ' + (usedMin % 60) + 'm' : ''} / 9 uur${isOverBudget ? ' ⚠️ over budget' : ''}`}
@@ -1225,6 +1306,42 @@ function renderPlannerDay(i) {
 
   const weatherStrip = weatherHtmlForDay(day.date);
 
+  let proposalHtml = '';
+  if (routeProposal && routeProposal.dayIndex === i) {
+    if (routeProposal.alreadyOptimal) {
+      proposalHtml = `
+        <div class="fade-up" style="background:var(--sand-dark); border-radius:var(--radius-lg); padding:1rem 1.5rem; margin-bottom:1.5rem; border:1.5px solid var(--olive); display:flex; align-items:center; justify-content:space-between; gap:1rem;">
+          <div style="font-size:0.85rem; color:var(--olive); font-weight:600;">✓ Volgorde is al optimaal — geen besparing mogelijk.</div>
+          <button onclick="dismissRouteProposal(${i})" style="background:none; border:none; cursor:pointer; font-size:0.85rem; color:var(--muted); padding:2px 8px; border-radius:100px;" onmouseover="this.style.color='var(--ink)'" onmouseout="this.style.color='var(--muted)'">✕</button>
+        </div>
+      `;
+    } else {
+      const proposedList = routeProposal.proposedOrder.map(a => `${a.icon} ${a.title}`).join(' → ');
+      proposalHtml = `
+        <div class="fade-up" style="background:var(--sand-dark); border-radius:var(--radius-lg); padding:1.2rem 1.5rem; margin-bottom:1.5rem; border:1.5px solid var(--sea);">
+          <div style="display:flex; align-items:flex-start; justify-content:space-between; margin-bottom:10px;">
+            <div style="font-size:0.85rem; font-weight:600; color:var(--ink);">🗺 Voorgestelde volgorde</div>
+            <button onclick="dismissRouteProposal(${i})" style="background:none; border:none; cursor:pointer; font-size:0.85rem; color:var(--muted); padding:2px 8px; border-radius:100px;" onmouseover="this.style.color='var(--ink)'" onmouseout="this.style.color='var(--muted)'">✕</button>
+          </div>
+          <div style="font-size:0.8rem; color:var(--ink); margin-bottom:6px; line-height:1.6;">${proposedList}</div>
+          <div style="font-size:0.75rem; color:var(--olive); font-weight:600; margin-bottom:14px;">~${routeProposal.savedKm} km minder rijden</div>
+          <div style="display:flex; gap:8px;">
+            <button onclick="applyRouteProposal(${i})"
+              style="font-size:0.8rem; padding:7px 18px; border-radius:100px; border:none; background:var(--sea-deep); color:white; cursor:pointer; font-family:'DM Sans',sans-serif; font-weight:600; transition:background 0.15s;"
+              onmouseover="this.style.background='var(--sea)'" onmouseout="this.style.background='var(--sea-deep)'">
+              ✓ Toepassen
+            </button>
+            <button onclick="dismissRouteProposal(${i})"
+              style="font-size:0.8rem; padding:7px 18px; border-radius:100px; border:1.5px solid rgba(0,0,0,0.12); background:transparent; color:var(--muted); cursor:pointer; font-family:'DM Sans',sans-serif; font-weight:500;"
+              onmouseover="this.style.borderColor='var(--muted)'; this.style.color='var(--ink)'" onmouseout="this.style.borderColor='rgba(0,0,0,0.12)'; this.style.color='var(--muted)'">
+              Negeren
+            </button>
+          </div>
+        </div>
+      `;
+    }
+  }
+
   let html = `
     ${mobileStickyBudget}
     <div class="planner-day-header fade-up">
@@ -1235,6 +1352,8 @@ function renderPlannerDay(i) {
     </div>
 
     ${budgetBarHtml}
+
+    ${proposalHtml}
 
     ${statsHtml}
   `;
@@ -1397,6 +1516,7 @@ function renderPlannerDay(i) {
 
 function goDay(i) {
   activitySearchQuery = '';
+  if (routeProposal && routeProposal.dayIndex !== i) routeProposal = null;
   state.currentDay = i;
   renderSidebar();
   renderPlannerDay(i);
@@ -1618,6 +1738,7 @@ function renderFlightPage(type) {
 }
 
 function selectActivity(dayIndex, actId) {
+  routeProposal = null;
   const act = ACTIVITIES.find(a => a.id === actId);
   const plan = state.plan[dayIndex];
 
