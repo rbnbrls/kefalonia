@@ -136,9 +136,6 @@
     </div>
     <div class="day-list" id="day-list"></div>
     <div class="sidebar-footer">
-      <button id="btn-sidebar-feedback" class="btn-sidebar-feedback" onclick="openFeedbackModal()" title="Geef feedback">
-        <span class="btn-sidebar-feedback-content">Feedback 💬</span>
-      </button>
       <div class="sidebar-footer-stack">
         <button class="btn-catalog-link" onclick="showCatalog()">
           <span style="font-size:0.95rem;">📋</span> Alle activiteiten
@@ -487,6 +484,11 @@
 <script src="sync.js?v=3"></script>
 <script src="activities.generated.js?v=3"></script>
 <script src="app.js?v=3"></script>
+<!-- Fixed feedback tab (desktop only) -->
+<button id="btn-sidebar-feedback" class="btn-sidebar-feedback" onclick="openFeedbackModal()" title="Geef feedback">
+  <span class="btn-sidebar-feedback-content">Feedback 💬</span>
+</button>
+
 <script>
   if ('serviceWorker' in navigator) {
     navigator.serviceWorker.register('/service-worker.js');
