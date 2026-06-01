@@ -92,6 +92,7 @@ function wmoInfo(code) {
 }
 
 let weatherData = null; // { 'YYYY-MM-DD': { code, max, min, precip } }
+let weatherLoading = false;
 
 async function loadWeather() {
   // Gebruik geldige cache als die niet verlopen is
@@ -110,6 +111,7 @@ async function loadWeather() {
   const url = 'https://api.open-meteo.com/v1/forecast?latitude=38.188&longitude=20.407' +
     '&daily=weathercode,temperature_2m_max,temperature_2m_min,precipitation_probability_max' +
     '&forecast_days=16&timezone=Europe%2FAthens';
+  weatherLoading = true;
   try {
     const res = await fetch(url, { signal: AbortSignal.timeout(8000) });
     const json = await res.json();
@@ -132,21 +134,35 @@ async function loadWeather() {
         if (raw) weatherData = JSON.parse(raw).days;
       } catch (__) {}
     }
+  } finally {
+    weatherLoading = false;
   }
 }
 
 function weatherHtmlForDay(date, compact = false) {
-  if (!weatherData || !weatherData[date]) return '';
+  if (!weatherData) {
+    // Nog aan het laden: toon skeleton in compact modus
+    return compact && weatherLoading
+      ? `<span class="weather-badge weather-badge--loading">…</span>`
+      : '';
+  }
+  if (!weatherData[date]) {
+    // Datum valt buiten het prognose-bereik (>16 dagen vooruit)
+    return compact
+      ? `<span class="weather-badge weather-badge--soon" title="Prognose nog niet beschikbaar">📅</span>`
+      : '';
+  }
   const w = weatherData[date];
   const { icon, label } = wmoInfo(w.code);
   if (compact) {
-    return `<span class="weather-badge">${icon} ${w.max}°</span>`;
+    const rainClass = w.precip > 60 ? ' weather-badge--rain' : '';
+    return `<span class="weather-badge${rainClass}">${icon} ${w.max}°</span>`;
   }
   const rainBadge = w.precip > 20
     ? `<span class="weather-precip">💧 ${w.precip}%</span>`
     : '';
   return `
-    <div class="weather-strip">
+    <div class="weather-strip${w.precip > 60 ? ' weather-strip--rain' : ''}">
       <span class="weather-icon">${icon}</span>
       <span class="weather-label">${label}</span>
       <span class="weather-temps">${w.min}°–${w.max}°C</span>
@@ -1770,7 +1786,7 @@ function showOverview() {
     };
 
     card.innerHTML = `
-      <div class="ov-date">${day.short}</div>
+      <div class="ov-date">${day.short}${weatherHtmlForDay(day.date, true)}</div>
       <div class="ov-day">${day.name}</div>
       ${day.special ? '<div class="ov-bday-badge">🎂 Verjaardag</div>' : ''}
       <div class="ov-activities" style="margin-top:8px; display:flex; flex-direction:column; gap:8px;">

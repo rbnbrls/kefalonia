@@ -536,6 +536,18 @@ h3 { font-family: 'DM Sans', sans-serif; font-weight: 500; font-size: 1rem; }
   margin-left: auto;
   flex-shrink: 0;
 }
+.weather-badge--rain {
+  color: #7ec8e3;
+  font-weight: 600;
+}
+.weather-badge--soon {
+  opacity: 0.4;
+  font-size: 0.6rem;
+}
+.weather-badge--loading {
+  opacity: 0.3;
+  letter-spacing: 0.05em;
+}
 
 .special-badge {
   font-size: 0.65rem;
@@ -585,6 +597,10 @@ h3 { font-family: 'DM Sans', sans-serif; font-weight: 500; font-size: 1rem; }
 .weather-label { color: var(--ink); font-weight: 500; }
 .weather-temps { color: var(--muted); }
 .weather-precip { color: var(--sea-deep); font-weight: 600; }
+.weather-strip--rain {
+  background: #e8f4fb;
+  border-color: #b3ddf0;
+}
 
 .category-section { margin-bottom: 2rem; }
 .category-label {
@@ -880,7 +896,8 @@ h3 { font-family: 'DM Sans', sans-serif; font-weight: 500; font-size: 1rem; }
 .overview-card:not(.special)::before { background: var(--sea); }
 .overview-card.special::before { background: var(--gold); }
 
-.ov-date { font-size: 0.68rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); margin-bottom: 3px; }
+.ov-date { font-size: 0.68rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); margin-bottom: 3px; display: flex; align-items: center; gap: 6px; }
+.ov-date .weather-badge { margin-left: 0; }
 .ov-day { font-family: 'Cormorant Garamond', serif; font-size: 1.1rem; font-weight: 400; margin-bottom: 8px; }
 .ov-activities { display: flex; flex-direction: column; gap: 5px; }
 .ov-act { display: flex; align-items: flex-start; gap: 6px; font-size: 0.75rem; }
