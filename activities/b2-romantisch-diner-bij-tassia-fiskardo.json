@@ -19,5 +19,10 @@
     "Seafront tafel met uitzicht op zeiljachten en de ondergaande zon",
     "Verfijnde Griekse keuken met vis van de eigen kotter"
   ],
-  "combineWith": ["b1", "c1"]
+  "combineWith": [
+    "b1",
+    "c1"
+  ],
+  "googleRating": 3.9,
+  "googleReviewCount": 1536
 }

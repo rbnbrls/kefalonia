@@ -19,5 +19,10 @@
     "Nul faciliteiten: pure natuur en kristalhelder water",
     "Breng genoeg water en eten mee — geen winkels in de buurt"
   ],
-  "combineWith": ["s6", "n7"]
+  "combineWith": [
+    "s6",
+    "n7"
+  ],
+  "googleRating": 4.7,
+  "googleReviewCount": 1264
 }

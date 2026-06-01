@@ -19,5 +19,11 @@
     "Gratis wandelpad van 3 km rondom het water",
     "Op 10 minuten loopafstand van het centrum van Argostoli"
   ],
-  "combineWith": ["n1", "c7", "c9"]
+  "combineWith": [
+    "n1",
+    "c7",
+    "c9"
+  ],
+  "googleRating": 4.5,
+  "googleReviewCount": 212
 }

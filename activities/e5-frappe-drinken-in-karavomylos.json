@@ -19,5 +19,10 @@
     "Schaduwrijke terrassen aan het meer — ontspanning ten top",
     "Ideale tussenstop voor of na Melissani Cave en Drogarati Cave"
   ],
-  "combineWith": ["c3", "c4"]
+  "combineWith": [
+    "c3",
+    "c4"
+  ],
+  "googleRating": 4.6,
+  "googleReviewCount": 2705
 }

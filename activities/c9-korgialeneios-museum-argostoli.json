@@ -19,5 +19,11 @@
     "Rijke collectie gebruiksvoorwerpen en traditionele klederdrachten",
     "Airconditioned — ideaal voor het hete middaguur of bewolkte dag"
   ],
-  "combineWith": ["c7", "e7", "n1"]
+  "combineWith": [
+    "c7",
+    "e7",
+    "n1"
+  ],
+  "googleRating": 4.5,
+  "googleReviewCount": 237
 }

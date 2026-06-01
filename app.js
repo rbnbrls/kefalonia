@@ -1848,6 +1848,7 @@ function openActivityDetail(dayIndex, actId) {
       ${timeLabel ? `<span style="font-size:0.78rem; font-weight:700; color:var(--sea-deep); background:var(--sea-light); border-radius:100px; padding:5px 14px;">${timeLabel}</span>` : ''}
       ${act.reservation ? `<span style="font-size:0.78rem; font-weight:700; color:#92400e; background:#fef3c7; border-radius:100px; padding:5px 14px;">📋 Reserveren aanbevolen</span>` : ''}
       ${day && day.special ? `<span style="font-size:0.78rem; font-weight:700; color:var(--gold); background:var(--gold-light); border-radius:100px; padding:5px 14px;">🎂 Verjaardagsidee</span>` : ''}
+      ${act.googleRating != null ? `<span style="font-size:0.78rem; font-weight:700; color:#92400e; background:#fff7ed; border-radius:100px; padding:5px 14px;">⭐ ${act.googleRating.toFixed(1)} <span style="font-weight:400; color:var(--muted);">(${act.googleReviewCount.toLocaleString('nl-NL')} reviews)</span></span>` : ''}
     </div>
 
     ${act.location ? `
@@ -2283,7 +2284,8 @@ function applyCatalogFilters() {
       case 'duration':    va = a.duration;               vb = b.duration;               break;
       case 'cost':        va = a.cost;                   vb = b.cost;                   break;
       case 'location':    va = a.location.toLowerCase(); vb = b.location.toLowerCase(); break;
-      case 'reservation': va = a.reservation ? 1 : 0;   vb = b.reservation ? 1 : 0;   break;
+      case 'reservation':   va = a.reservation ? 1 : 0;      vb = b.reservation ? 1 : 0;      break;
+      case 'googleRating':  va = a.googleRating ?? -1;        vb = b.googleRating ?? -1;        break;
       default: return 0;
     }
     if (va < vb) return catalogSortDir === 'asc' ? -1 : 1;
@@ -2292,7 +2294,7 @@ function applyCatalogFilters() {
   });
 
   // Update sort header visuals
-  const cols = ['title', 'cat', 'duration', 'cost', 'location', 'reservation'];
+  const cols = ['title', 'cat', 'duration', 'cost', 'location', 'reservation', 'googleRating'];
   cols.forEach(col => {
     const icon = document.getElementById('sort-icon-' + col);
     if (!icon) return;
@@ -2318,7 +2320,7 @@ function applyCatalogFilters() {
 
   const tbody = document.getElementById('catalog-tbody');
   if (filtered.length === 0) {
-    tbody.innerHTML = `<tr><td colspan="7" class="catalog-empty">Geen activiteiten gevonden met deze filters.</td></tr>`;
+    tbody.innerHTML = `<tr><td colspan="8" class="catalog-empty">Geen activiteiten gevonden met deze filters.</td></tr>`;
     return;
   }
 
@@ -2358,6 +2360,11 @@ function applyCatalogFilters() {
       <td class="catalog-td">
         ${a.reservation
           ? `<span class="res-pill">📋 Ja</span>`
+          : `<span class="catalog-muted">—</span>`}
+      </td>
+      <td class="catalog-td hide-mob" style="white-space:nowrap;">
+        ${a.googleRating != null
+          ? `⭐ ${a.googleRating.toFixed(1)} <span class="catalog-muted">(${a.googleReviewCount.toLocaleString('nl-NL')})</span>`
           : `<span class="catalog-muted">—</span>`}
       </td>
       <td class="catalog-td hide-mob">

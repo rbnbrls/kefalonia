@@ -19,5 +19,11 @@
     "Ondergronds meer van 160 m lang met ingestort dak",
     "UNESCO-beschermd gebied, verbonden met de zee via 30 km ondergrondse kanalen"
   ],
-  "combineWith": ["c4", "e5", "s2"]
+  "combineWith": [
+    "c4",
+    "e5",
+    "s2"
+  ],
+  "googleRating": 4.6,
+  "googleReviewCount": 2705
 }

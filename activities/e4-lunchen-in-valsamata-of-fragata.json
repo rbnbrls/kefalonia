@@ -19,5 +19,11 @@
     "Mezedes delen zoals de locals: stoofpotten, gevulde tomaten, brood",
     "In de Omala-vallei — mooie omgeving vlak bij het Agios Gerasimos klooster"
   ],
-  "combineWith": ["c5", "e1", "n2"]
+  "combineWith": [
+    "c5",
+    "e1",
+    "n2"
+  ],
+  "googleRating": 4.7,
+  "googleReviewCount": 162
 }

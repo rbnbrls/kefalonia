@@ -19,5 +19,11 @@
     "Zwembadhelder water vol vis — snorkelen is fantastisch",
     "Korte bosweg houdt het druktevrij en rustig"
   ],
-  "combineWith": ["c1", "e6", "s7"]
+  "combineWith": [
+    "c1",
+    "e6",
+    "s7"
+  ],
+  "googleRating": 4.7,
+  "googleReviewCount": 708
 }

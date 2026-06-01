@@ -19,5 +19,10 @@
     "Gratis ligbedden bij consumptie beachclub",
     "Snorkelen direct voor het strand met vis en zeeëgels"
   ],
-  "combineWith": ["c3", "c4"]
+  "combineWith": [
+    "c3",
+    "c4"
+  ],
+  "googleRating": 4.5,
+  "googleReviewCount": 9260
 }

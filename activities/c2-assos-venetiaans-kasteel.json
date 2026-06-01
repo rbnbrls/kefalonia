@@ -19,5 +19,10 @@
     "Gratis toegang — een van de mooiste kastelen van de Ionische eilanden",
     "Na het kasteel direct zwemmen in de baai beneden"
   ],
-  "combineWith": ["s1", "c1"]
+  "combineWith": [
+    "s1",
+    "c1"
+  ],
+  "googleRating": 4.3,
+  "googleReviewCount": 344
 }

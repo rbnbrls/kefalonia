@@ -19,5 +19,11 @@
     "Gids wijst verborgen plekken die alleen te water bereikbaar zijn",
     "Rustige ochtendtour — water is 's morgens spiegelglad"
   ],
-  "combineWith": ["s9", "n7", "s9"]
+  "combineWith": [
+    "s9",
+    "n7",
+    "s9"
+  ],
+  "googleRating": 5,
+  "googleReviewCount": 30
 }

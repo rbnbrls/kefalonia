@@ -19,5 +19,11 @@
     "Loukoumades (warme honing-oliebollen) bij de lokale zoetwinkels",
     "Vallianou-plein: levendigste plek van Kefalonia na zonsondergang"
   ],
-  "combineWith": ["n1", "c7", "c9"]
+  "combineWith": [
+    "n1",
+    "c7",
+    "c9"
+  ],
+  "googleRating": 4.6,
+  "googleReviewCount": 1093
 }

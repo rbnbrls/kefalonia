@@ -19,5 +19,10 @@
     "Uitzicht op Zakynthos op heldere dagen",
     "Meerdere taverna's op loopafstand voor lunch of diner"
   ],
-  "combineWith": ["c5", "c6"]
+  "combineWith": [
+    "c5",
+    "c6"
+  ],
+  "googleRating": 4.2,
+  "googleReviewCount": 40
 }

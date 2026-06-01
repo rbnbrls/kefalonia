@@ -19,5 +19,11 @@
     "Spectaculaire zonsondergang boven de Ionische Zee vanuit je stoel",
     "Bestel de Kefalonitiki Kreatopita — dé traditionele vleespastei van Kefalonia"
   ],
-  "combineWith": ["s3", "s4", "c8"]
+  "combineWith": [
+    "s3",
+    "s4",
+    "c8"
+  ],
+  "googleRating": 4.7,
+  "googleReviewCount": 496
 }

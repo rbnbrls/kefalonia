@@ -19,5 +19,10 @@
     "Reële kans op spotting van de zeldzame Middellandse Monniksrob",
     "Rustigst en meest afgelegen strand van Noord-Kefalonia"
   ],
-  "combineWith": ["s6", "c1"]
+  "combineWith": [
+    "s6",
+    "c1"
+  ],
+  "googleRating": 4.6,
+  "googleReviewCount": 924
 }

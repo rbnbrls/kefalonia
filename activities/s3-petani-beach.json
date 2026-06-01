@@ -19,5 +19,11 @@
     "Minder druk dan Myrtos, intimer en rustiger",
     "Erasmia Taverna direct aan het strand voor diner"
   ],
-  "combineWith": ["b3", "e2", "c8"]
+  "combineWith": [
+    "b3",
+    "e2",
+    "c8"
+  ],
+  "googleRating": 4.7,
+  "googleReviewCount": 2653
 }

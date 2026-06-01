@@ -19,5 +19,11 @@
     "360° panoramisch uitzicht over het hele eiland en de zee",
     "Kastro Cafe vlak naast de ingang voor ijskoffie met kasteelzicht"
   ],
-  "combineWith": ["c5", "c9", "s8"]
+  "combineWith": [
+    "c5",
+    "c9",
+    "s8"
+  ],
+  "googleRating": 4.4,
+  "googleReviewCount": 1449
 }

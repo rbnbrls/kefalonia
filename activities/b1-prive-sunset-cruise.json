@@ -19,5 +19,10 @@
     "Verlaten baaitjes bereiken die voor anderen ontoegankelijk zijn",
     "Gekoelde Robola-wijn terwijl de zon in de Ionische Zee wegzakt"
   ],
-  "combineWith": ["b2", "e6"]
+  "combineWith": [
+    "b2",
+    "e6"
+  ],
+  "googleRating": 4.6,
+  "googleReviewCount": 98
 }

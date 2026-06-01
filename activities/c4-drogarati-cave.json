@@ -19,5 +19,11 @@
     "Fenomenale akoestiek — Maria Callas trad hier ooit op",
     "Altijd koel (18°C) — ideale schuilplaats op een hete middag"
   ],
-  "combineWith": ["c3", "e5", "s2"]
+  "combineWith": [
+    "c3",
+    "e5",
+    "s2"
+  ],
+  "googleRating": 4.5,
+  "googleReviewCount": 8327
 }

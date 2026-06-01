@@ -19,5 +19,11 @@
     "Verborgen baaitjes en zeegrotten die alleen per boot bereikbaar zijn",
     "Boek vroeg — bij slecht weer kun je gratis verzetten"
   ],
-  "combineWith": ["s5", "s6", "n7"]
+  "combineWith": [
+    "s5",
+    "s6",
+    "n7"
+  ],
+  "googleRating": 5,
+  "googleReviewCount": 14
 }

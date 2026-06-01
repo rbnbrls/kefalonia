@@ -19,5 +19,10 @@
     "Iconische uitkijkpost bovenaan de weg voor het perfecte shot",
     "Gratis toegang — wel druk tussen 11:00 en 17:00"
   ],
-  "combineWith": ["c2", "s5"]
+  "combineWith": [
+    "c2",
+    "s5"
+  ],
+  "googleRating": 4.7,
+  "googleReviewCount": 5798
 }

@@ -19,5 +19,11 @@
     "Verlaten ruïnes en kapelletjes die je alleen te voet bereikt",
     "Gratis en off-the-beaten-track — het echte Kefalonia"
   ],
-  "combineWith": ["c5", "e3", "e4"]
+  "combineWith": [
+    "c5",
+    "e3",
+    "e4"
+  ],
+  "googleRating": 4.6,
+  "googleReviewCount": 295
 }

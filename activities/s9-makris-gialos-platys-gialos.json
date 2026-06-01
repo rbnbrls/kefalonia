@@ -19,5 +19,10 @@
     "Vertrekpunt voor kajakexcursies langs de kalksteenkliffen",
     "Makkelijkst bereikbaar vanuit Argostoli — ideaal bij aankomst"
   ],
-  "combineWith": ["n5", "n1"]
+  "combineWith": [
+    "n5",
+    "n1"
+  ],
+  "googleRating": 4.5,
+  "googleReviewCount": 5289
 }

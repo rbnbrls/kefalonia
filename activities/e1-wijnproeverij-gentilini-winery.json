@@ -19,5 +19,11 @@
     "Tasting in een weelderige schaduwrijke tuin met uitzicht op de wijngaarden",
     "Kleine boutique-winery: persoonlijker en intemer dan grote tours"
   ],
-  "combineWith": ["c5", "c6", "e4"]
+  "combineWith": [
+    "c5",
+    "c6",
+    "e4"
+  ],
+  "googleRating": 4.6,
+  "googleReviewCount": 466
 }

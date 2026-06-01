@@ -19,5 +19,11 @@
     "Proeverij onder de bomen: Robola, Mavrodafni en Muscat",
     "Petani Beach op 10 minuten rijden — perfecte zonsondergangscombo"
   ],
-  "combineWith": ["s3", "b1", "e2"]
+  "combineWith": [
+    "s3",
+    "b1",
+    "e2"
+  ],
+  "googleRating": 4.9,
+  "googleReviewCount": 211
 }

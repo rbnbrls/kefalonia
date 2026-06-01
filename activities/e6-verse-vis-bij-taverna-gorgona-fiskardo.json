@@ -19,5 +19,10 @@
     "Sfeervolle locatie pal aan de kade van Fiskardo",
     "Gegrilde oktopus en zeebaars van topkwaliteit"
   ],
-  "combineWith": ["c1", "s6"]
+  "combineWith": [
+    "c1",
+    "s6"
+  ],
+  "googleRating": 4.2,
+  "googleReviewCount": 495
 }

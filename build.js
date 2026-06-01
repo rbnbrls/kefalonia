@@ -26,7 +26,8 @@ const OUT_FILE = path.join(__dirname, 'activities.generated.js');
 // ── Template-regels (moeten matchen met activities/README.md) ───────────────
 const REQUIRED_KEYS = ['id', 'cat', 'icon', 'title', 'duration', 'why', 'tip',
   'cost', 'location', 'mapUrl', 'lat', 'lng'];
-const OPTIONAL_KEYS = ['reservation', 'special', 'timeOfDay', 'highlights', 'combineWith'];
+const OPTIONAL_KEYS = ['reservation', 'special', 'timeOfDay', 'highlights', 'combineWith',
+  'googleRating', 'googleReviewCount'];
 const ALL_KEYS = [...REQUIRED_KEYS, ...OPTIONAL_KEYS];
 
 // Categorie-volgorde bepaalt de weergavevolgorde in de UI (pool + catalogus).
@@ -100,6 +101,15 @@ function validate(file, a) {
     if (!Array.isArray(a.combineWith)) fail(file, '"combineWith" moet een array zijn');
     else if (a.combineWith.some(id => typeof id !== 'string' || !id.trim())) fail(file, '"combineWith" mag alleen niet-lege id-strings bevatten');
   }
+  if ('googleRating' in a && (!isNumber(a.googleRating) || a.googleRating < 0 || a.googleRating > 5)) {
+    fail(file, '"googleRating" moet een getal tussen 0.0 en 5.0 zijn');
+  }
+  if ('googleReviewCount' in a && (!isNumber(a.googleReviewCount) || !Number.isInteger(a.googleReviewCount) || a.googleReviewCount < 0)) {
+    fail(file, '"googleReviewCount" moet een geheel getal ≥ 0 zijn');
+  }
+  if (('googleRating' in a) !== ('googleReviewCount' in a)) {
+    fail(file, '"googleRating" en "googleReviewCount" moeten altijd samen worden opgegeven');
+  }
 }
 
 // ── Inlezen ─────────────────────────────────────────────────────────────────
@@ -151,7 +161,7 @@ activities.sort((a, b) => {
 // Uniforme key-volgorde + altijd reservation/special aanwezig (false default).
 const KEY_ORDER = ['id', 'cat', 'icon', 'title', 'duration', 'why', 'tip',
   'cost', 'location', 'mapUrl', 'lat', 'lng', 'reservation', 'special',
-  'timeOfDay', 'highlights', 'combineWith'];
+  'timeOfDay', 'highlights', 'combineWith', 'googleRating', 'googleReviewCount'];
 
 function normalize(a) {
   const out = {};
@@ -160,6 +170,8 @@ function normalize(a) {
     else if (k === 'timeOfDay') { if (a[k]) out[k] = a[k]; }
     else if (k === 'highlights') { if (a[k]) out[k] = a[k]; }
     else if (k === 'combineWith') { if (a[k]) out[k] = a[k]; }
+    else if (k === 'googleRating') { if (a[k] !== undefined) out[k] = a[k]; }
+    else if (k === 'googleReviewCount') { if (a[k] !== undefined) out[k] = a[k]; }
     else out[k] = a[k];
   }
   return out;

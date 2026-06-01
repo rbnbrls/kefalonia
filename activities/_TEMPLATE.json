@@ -76,7 +76,15 @@
   "highlights": ["Hoogtepunt 1", "Hoogtepunt 2"],
   // ↑ Lijst van korte highlights (array van niet-lege strings).
 
-  "combineWith": ["c1", "c2"]
+  "combineWith": ["c1", "c2"],
   // ↑ Id's van activiteiten die goed combineren met deze (array van strings).
+
+  "googleRating": 4.7,
+  // ↑ Google Maps steroordeel (decimaal getal, 0.0–5.0).
+  //   ⚠️  Altijd samen met googleReviewCount opgeven — beide of geen van beide.
+
+  "googleReviewCount": 1284
+  // ↑ Aantal Google-reviews (geheel getal ≥ 0).
+  //   ⚠️  Altijd samen met googleRating opgeven — beide of geen van beide.
   //   Geen komma na het laatste veld!
 }

@@ -19,5 +19,10 @@
     "Antisamos privé-cabana: ligbedden, parasol en directe strandservice",
     "Twee van de mooiste plekken van Kefalonia op één dag"
   ],
-  "combineWith": ["c4", "e5"]
+  "combineWith": [
+    "c4",
+    "e5"
+  ],
+  "googleRating": 4.5,
+  "googleReviewCount": 9260
 }

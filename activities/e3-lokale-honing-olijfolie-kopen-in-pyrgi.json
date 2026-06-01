@@ -19,5 +19,10 @@
     "Koudgeperste extra vierge olijfolie: mee naar huis als cadeautje",
     "Lokale kraampjes langs de bergwegen — geen supermarkt, direct van de boer"
   ],
-  "combineWith": ["n2", "c5"]
+  "combineWith": [
+    "n2",
+    "c5"
+  ],
+  "googleRating": 4.6,
+  "googleReviewCount": 541
 }

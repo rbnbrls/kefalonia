@@ -19,5 +19,11 @@
     "Beste plek op Kefalonia om schildpadden te zien bij de vissersboten",
     "Levendig Grieks stadsplein Vallianou met terrassen en winkels"
   ],
-  "combineWith": ["n1", "n8", "c9"]
+  "combineWith": [
+    "n1",
+    "n8",
+    "c9"
+  ],
+  "googleRating": 4.8,
+  "googleReviewCount": 738
 }

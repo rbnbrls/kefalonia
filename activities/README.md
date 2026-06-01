@@ -73,8 +73,10 @@ Minimale geldige activiteit (verplichte velden, geen optionele):
 | `mapUrl`      | string    | ✅        | Google Maps-link die opent bij klik op de locatienaam.                        |
 | `lat`         | number    | ✅        | Breedtegraad (decimaal, ~5 decimalen) voor Leaflet + OSRM. Rond Kefalonia (≈ 37.5–39). |
 | `lng`         | number    | ✅        | Lengtegraad (decimaal, ~5 decimalen). Rond Kefalonia (≈ 19.5–21.5).           |
-| `reservation` | boolean   | —         | `true` = toont "📋 Reserveer vooraf!"-badge en telt in de reserveringsteller. Default `false`. |
-| `special`     | boolean   | —         | `true` = gouden "Verjaardagsidee"-stijl. **Alleen toegestaan bij `cat: "bday"`.** Default `false`. |
+| `reservation`        | boolean   | —         | `true` = toont "📋 Reserveer vooraf!"-badge en telt in de reserveringsteller. Default `false`. |
+| `special`            | boolean   | —         | `true` = gouden "Verjaardagsidee"-stijl. **Alleen toegestaan bij `cat: "bday"`.** Default `false`. |
+| `googleRating`       | number    | —         | Google Maps steroordeel (0.0–5.0). **Altijd samen met `googleReviewCount` opgeven.** |
+| `googleReviewCount`  | number    | —         | Aantal Google-reviews (geheel getal ≥ 0). **Altijd samen met `googleRating` opgeven.** |
 
 ### Toegestane categorieën (`cat`)
 
