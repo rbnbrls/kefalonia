@@ -1,0 +1,26 @@
+{
+  "id": "e10",
+  "cat": "eten",
+  "icon": "🍽️",
+  "title": "Restaurant Amalia",
+  "duration": 120,
+  "why": "Een authentiek familie-run restaurant in Agia Effimia dat al sinds 2000 bestaat. Vernoemd naar oma Amalia, die een uitstekende kok was. Het restaurant serveert traditionele Griekse gerechten met eigen boerderijproducten en heeft een prachtig uitzicht over de Ionische Zee.",
+  "tip": "Reserveer van tevoren zeker tijdens het hoogseizoen. Probeer de beroemde 12-uurs gebraden varkensvleesspecialiteit en de Kefalonische vleespie. Volle maan op het terras is extra bijzonder.",
+  "cost": 30,
+  "location": "Agia Effimia, Kefalonia",
+  "mapUrl": "https://www.google.com/maps/search/?api=1&query=38.3058107,20.6044164",
+  "lat": 38.3058107,
+  "lng": 20.6044164,
+  "reservation": true,
+  "special": false,
+  "timeOfDay": "evening",
+  "highlights": [
+    "Authentiek familie-run restaurant sinds 2000",
+    "Prachtig uitzicht over de Ionische Zee",
+    "Traditionele Griekse keuken met lokale specialiteiten",
+    "Eigen boerderijproducten",
+    "Slow-cook specialiteit: 12-uurs gebraden varkensvlees"
+  ],
+  "googleRating": 4.4,
+  "googleReviewCount": 324
+}
