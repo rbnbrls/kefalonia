@@ -1651,7 +1651,12 @@ function closeMenuSheet() {
 function openMapOverlay() {
   document.querySelector('.planner-map-container').classList.add('map-fullscreen-active');
   document.body.classList.add('map-overlay-open');
-  setTimeout(() => { if (map) map.invalidateSize(); }, 150);
+  setTimeout(() => {
+    if (map) {
+      map.invalidateSize();
+      updateMap(state.currentDay);
+    }
+  }, 150);
 }
 
 function closeMapOverlay() {

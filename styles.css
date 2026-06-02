@@ -1102,7 +1102,7 @@ h3 { font-family: 'DM Sans', sans-serif; font-weight: 500; font-size: 1rem; }
 }
 .btn-sidebar-feedback-content {
   writing-mode: vertical-rl;
-  text-orientation: mixed;
+  text-orientation: sideways;
   transform: rotate(180deg);
   white-space: nowrap;
   display: flex;
@@ -1467,7 +1467,7 @@ h3 { font-family: 'DM Sans', sans-serif; font-weight: 500; font-size: 1rem; }
   height: 100%;
 }
 @media (max-width: 1100px) {
-  .planner-map-container {
+  .planner-map-container:not(.map-fullscreen-active) {
     display: none !important;
   }
 }
