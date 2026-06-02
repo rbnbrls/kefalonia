@@ -1,0 +1,27 @@
+{
+  "id": "s10",
+  "cat": "stranden",
+  "icon": "🏖️",
+  "title": "Skala Beach",
+  "duration": 240,
+  "why": "Een van de langste en meest populaire zandstranden van Kefalonia, met kristalhelder water en volop faciliteiten.",
+  "tip": "Neem waterschoenen mee voor de kiezelachtige delen en geniet van de gezellige taverna's langs de boulevard.",
+  "cost": 0,
+  "location": "Skala, Kefalonia",
+  "mapUrl": "https://www.google.com/maps/search/?api=1&query=38.07410,20.80030",
+  "lat": 38.0741,
+  "lng": 20.8003,
+  "reservation": false,
+  "special": false,
+  "timeOfDay": "afternoon",
+  "highlights": [
+    "Kilometers lang goudgeel zand- en kiezelstrand",
+    "Gezellige strandboulevard met talloze taverna's en winkels",
+    "Goede faciliteiten zoals ligbedjes, parasols en watersporten"
+  ],
+  "combineWith": [
+    "s8"
+  ],
+  "googleRating": 4.6,
+  "googleReviewCount": 2548
+}

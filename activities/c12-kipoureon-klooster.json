@@ -1,0 +1,27 @@
+{
+  "id": "c12",
+  "cat": "cultuur",
+  "icon": "🏛️",
+  "title": "Kipoureon Klooster",
+  "duration": 90,
+  "why": "Een historisch 17e-eeuws klooster, spectaculair gebouwd op een steile klif 90 meter boven de Ionian Zee.",
+  "tip": "Zorg voor gepaste kleding (bedekte schouders en benen). Het klooster is bekend om de adembenemende zonsondergang.",
+  "cost": 0,
+  "location": "Lixouri, Kefalonia",
+  "mapUrl": "https://www.google.com/maps/search/?api=1&query=38.20321,20.34816",
+  "lat": 38.20321,
+  "lng": 20.34816,
+  "reservation": false,
+  "special": false,
+  "timeOfDay": "evening",
+  "highlights": [
+    "Spectaculaire kliflocatie met 90 meter diepe afgrond",
+    "Prachtige rustige binnenplaats en historische religieuze kunst",
+    "Een van de beste zonsonderganglocaties op het schiereiland Paliki"
+  ],
+  "combineWith": [
+    "c8"
+  ],
+  "googleRating": 4.3,
+  "googleReviewCount": 348
+}

@@ -1,0 +1,27 @@
+{
+  "id": "s14",
+  "cat": "stranden",
+  "icon": "🏖️",
+  "title": "Koroni Beach",
+  "duration": 180,
+  "why": "Een prachtig, afgelegen zandstrand omgeven door steile, weelderige kliffen. Een oase van rust.",
+  "tip": "De toegangsweg is steil en onverhard; rijd voorzichtig. Neem zelf voldoende water en snacks mee.",
+  "cost": 0,
+  "location": "Thiromnas, Kefalonia",
+  "mapUrl": "https://www.google.com/maps/search/?api=1&query=38.08039,20.69034",
+  "lat": 38.08039,
+  "lng": 20.69034,
+  "reservation": false,
+  "special": false,
+  "timeOfDay": "afternoon",
+  "highlights": [
+    "Uitzonderlijk rustig zandstrand ver weg van de massa",
+    "Prachtige natuurlijke, weelderige kliffen rondom de baai",
+    "Gouden zand en kristalhelder water ideaal voor ontspanning"
+  ],
+  "combineWith": [
+    "s8"
+  ],
+  "googleRating": 4.5,
+  "googleReviewCount": 365
+}

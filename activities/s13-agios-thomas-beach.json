@@ -1,0 +1,28 @@
+{
+  "id": "s13",
+  "cat": "stranden",
+  "icon": "🏖️",
+  "title": "Agios Thomas Beach",
+  "duration": 120,
+  "why": "Een schilderachtige dubbele baai met fijn zand, indrukwekkende rotsplateaus en ondiep, helder water.",
+  "tip": "Je kunt heerlijk zonnen op de platte rotsen en vanaf daar het water in duiken. De strandtent serveert koude drankjes en hapjes.",
+  "cost": 0,
+  "location": "Karavados, Kefalonia",
+  "mapUrl": "https://www.google.com/maps/search/?api=1&query=38.11595,20.59943",
+  "lat": 38.11595,
+  "lng": 20.59943,
+  "reservation": false,
+  "special": false,
+  "timeOfDay": "morning",
+  "highlights": [
+    "Unieke dubbele zandbaai gescheiden door rotsen",
+    "Grote, platte kalkstenen rotsen die ideaal zijn als zonnedak",
+    "Prachtige turquoise poelen om in te zwemmen en te waden"
+  ],
+  "combineWith": [
+    "c5",
+    "c6"
+  ],
+  "googleRating": 4.5,
+  "googleReviewCount": 482
+}

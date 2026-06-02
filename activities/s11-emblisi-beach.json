@@ -1,0 +1,28 @@
+{
+  "id": "s11",
+  "cat": "stranden",
+  "icon": "🏖️",
+  "title": "Emblisi Beach",
+  "duration": 180,
+  "why": "Een prachtige, beschutte baai met gladde witte rotsen en intens turquoise water, vlakbij Fiskardo.",
+  "tip": "Ideaal om te snorkelen langs de rotswanden. Kom vroeg in het hoogseizoen, want de parkeerplaats is klein.",
+  "cost": 0,
+  "location": "Fiskardo, Kefalonia",
+  "mapUrl": "https://www.google.com/maps/search/?api=1&query=38.46190,20.57520",
+  "lat": 38.4619,
+  "lng": 20.5752,
+  "reservation": false,
+  "special": false,
+  "timeOfDay": "morning",
+  "highlights": [
+    "Kristalhelder water in een beschutte, groene baai",
+    "Grote platte witte rotsen aan de zijkant om op te zonnen",
+    "Uitstekende snorkelplek langs de kliffen en rotsformaties"
+  ],
+  "combineWith": [
+    "c1",
+    "s6"
+  ],
+  "googleRating": 4.6,
+  "googleReviewCount": 1124
+}

@@ -1,0 +1,28 @@
+{
+  "id": "s12",
+  "cat": "stranden",
+  "icon": "🏖️",
+  "title": "Avithos Beach",
+  "duration": 180,
+  "why": "Een fijn, goudgeel zandstrand met een rustige sfeer, ondiep water en een mooi uitzicht op het eilandje Dias.",
+  "tip": "Erg geschikt voor gezinnen vanwege de geleidelijke afloop in zee. Eet na afloop een hapje bij de nabijgelegen taverna.",
+  "cost": 0,
+  "location": "Svoronata, Kefalonia",
+  "mapUrl": "https://www.google.com/maps/search/?api=1&query=38.11350,20.53670",
+  "lat": 38.1135,
+  "lng": 20.5367,
+  "reservation": false,
+  "special": false,
+  "timeOfDay": "afternoon",
+  "highlights": [
+    "Prachtig zacht goudgeel zand en heldere zee",
+    "Zeer kindvriendelijk strand door het langzaam dieper wordende water",
+    "Mooi uitzicht op het onbewoonde rotseilandje Dias"
+  ],
+  "combineWith": [
+    "e1",
+    "s9"
+  ],
+  "googleRating": 4.5,
+  "googleReviewCount": 1250
+}

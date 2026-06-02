@@ -1,0 +1,28 @@
+{
+  "id": "s15",
+  "cat": "stranden",
+  "icon": "🏖️",
+  "title": "Pessada Beach",
+  "duration": 120,
+  "why": "Een verborgen en idyllisch zandstrandje met spectaculair helder water, bereikbaar via een stenen trap.",
+  "tip": "Er zijn hier geen faciliteiten, dus neem je eigen spullen mee. Perfect te combineren met de ferry naar Zakynthos vanaf de nabijgelegen haven.",
+  "cost": 0,
+  "location": "Pessada, Kefalonia",
+  "mapUrl": "https://www.google.com/maps/search/?api=1&query=38.10638,20.58633",
+  "lat": 38.10638,
+  "lng": 20.58633,
+  "reservation": false,
+  "special": false,
+  "timeOfDay": "morning",
+  "highlights": [
+    "Schitterende kleine zandbaai verscholen tussen de kliffen",
+    "Zeer helder turquoise water dat eruitziet als een zwembad",
+    "Goede snorkelmogelijkheden rondom de rotspartijen"
+  ],
+  "combineWith": [
+    "s13",
+    "e1"
+  ],
+  "googleRating": 4.0,
+  "googleReviewCount": 158
+}

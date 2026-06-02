@@ -1,0 +1,28 @@
+{
+  "id": "c11",
+  "cat": "cultuur",
+  "icon": "🏛️",
+  "title": "Vuurtoren van Saint Theodoroi",
+  "duration": 45,
+  "why": "Een unieke, cirkelvormige vuurtoren met 20 Dorische zuilen, gelegen op een landtong bij Argostoli.",
+  "tip": "Bezoek de vuurtoren rond zonsondergang voor de meest romantische sfeer en prachtige foto's.",
+  "cost": 0,
+  "location": "Argostoli, Kefalonia",
+  "mapUrl": "https://www.google.com/maps/search/?api=1&query=38.19139,20.46778",
+  "lat": 38.19139,
+  "lng": 20.46778,
+  "reservation": false,
+  "special": false,
+  "timeOfDay": "evening",
+  "highlights": [
+    "Unieke cirkelvormige architectuur met Dorische kolommen",
+    "Prachtige fotolocatie, vooral populair bij zonsondergang",
+    "Gelegen op een rustige landtong vlakbij Lassi en Argostoli"
+  ],
+  "combineWith": [
+    "c7",
+    "e7"
+  ],
+  "googleRating": 4.6,
+  "googleReviewCount": 824
+}
