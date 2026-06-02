@@ -39,22 +39,97 @@ Zie [`_TEMPLATE.json`](_TEMPLATE.json) voor het volledig geannoteerde sjabloon m
 Minimale geldige activiteit (verplichte velden, geen optionele):
 
 ```json
+// Kefalonia Activiteiten — Sjabloon voor nieuwe activiteiten
+// ─────────────────────────────────────────────────────────────────────────────
+// GEBRUIK: Kopieer dit bestand naar een nieuw bestand: <id>-<slug>.json
+//          (bijv. c10-venetiaans-fort.json). Verwijder ALLE commentaren
+//          voordat je het opslaat, anders mislukt JSON.parse. Draai daarna:
+//              npm run build
+//
+// ID-prefix per categorie:
+//   s = stranden · c = cultuur · n = natuur · e = eten · b = bday
+//   Het volgnummer bepaalt de positie in de UI (s1, s2, … s9, s10, …).
+//   Het hotelverblijf gebruikt historisch id "e9".
+//
+// Onbekende velden laten de build falen — voeg niets toe buiten dit template.
+// ─────────────────────────────────────────────────────────────────────────────
 {
   "id": "c10",
+  // ↑ string — uniek in de hele app; prefix (zie boven) + oplopend volgnummer.
+
   "cat": "cultuur",
+  // ↑ KIES PRECIES ÉÉN van de volgende waarden (zonder aanhalingstekens aanpassen):
+  //   "stranden"  →  🏖️  Stranden & Baaien       (stranden, baaien, zwemplekken)
+  //   "cultuur"   →  🏛️  Cultuur & Dorpjes        (dorpen, kastelen, musea, grotten, kloosters)
+  //   "natuur"    →  🌿  Natuur & Actief           (wandelen, kajakken, boten, parken)
+  //   "eten"      →  🍷  Eten, Drinken & Ervaringen (restaurants, proeverijen, markten, cafés)
+  //   "hotel"     →  🏨  Hotel & Relaxen           (alleen voor hotel- en spa-activiteiten)
+  //   "bday"      →  🎂  Verjaardagsideeën         (exclusief; alleen zichtbaar op 15 juni)
+
   "icon": "🏛️",
+  // ↑ Één emoji; verschijnt als marker op de kaart en op de activiteitenkaart.
+
   "title": "Naam van de activiteit",
+  // ↑ Weergavenaam in het Nederlands.
+
   "duration": 120,
-  "why": "Waarom is dit de moeite waard? (1–2 zinnen)",
-  "tip": "Praktische tip: beste tijd, wat meenemen, slim combineren.",
+  // ↑ Duur in MINUTEN (niet uren!). Telt mee in het dagbudget van 9 uur.
+  //   KIES PRECIES ÉÉN van deze waarden:
+  //   0 | 45 | 60 | 90 | 120 | 150 | 180 | 240 | 360 | 480
+  //   0   = geen tijdsindicatie (bijv. hotel/spa-ontspanning)
+  //   480 = hele dag; blokkeert andere activiteiten op dezelfde dag
+
+  "why": "Waarom is dit de moeite waard? (1–2 zinnen, in het Nederlands)",
+  // ↑ Motivatietekst in de detail-modal ("Waarom dit?").
+
+  "tip": "Praktische tip: beste tijd, wat meenemen, slim combineren. (Nederlands)",
+  // ↑ Praktisch advies in de detail-modal.
+
   "cost": 0,
+  // ↑ Geschatte kosten in € — geheel getal ≥ 0. Gebruik 0 voor gratis.
+
   "location": "Locatienaam, Dorp, Kefalonia",
+  // ↑ Leesbare locatiestring voor tooltip en overzicht.
+
   "mapUrl": "https://www.google.com/maps/search/?api=1&query=38.300,20.500",
+  // ↑ Google Maps-link; vervang de coördinaten door de echte lat,lng hieronder.
+
   "lat": 38.300,
+  // ↑ Breedtegraad (decimaal, ~5 decimalen). Kefalonia ligt tussen ≈ 37.5 en 39.0.
+
   "lng": 20.500,
+  // ↑ Lengtegraad (decimaal, ~5 decimalen). Kefalonia ligt tussen ≈ 19.5 en 21.5.
+
   "reservation": false,
-  "special": false
+  // ↑ true = toont "📋 Reserveer vooraf!"-badge en telt in reserveringsteller.
+  //   false = geen reservering nodig (default).
+
+  "special": false,
+  // ↑ true = gouden "Verjaardagsidee"-stijl.
+  //   ⚠️  ALLEEN toegestaan bij cat:"bday". Bij elke andere cat MOET dit false zijn.
+
+  // ── Optionele velden — verwijder onderstaande regels als je ze niet gebruikt ──
+
+  "timeOfDay": "morning",
+  // ↑ Aanbevolen dagdeel. KIES PRECIES ÉÉN:
+  //   "morning" | "afternoon" | "evening" | "fullday"
+
+  "highlights": ["Hoogtepunt 1", "Hoogtepunt 2"],
+  // ↑ Lijst van korte highlights (array van niet-lege strings).
+
+  "combineWith": ["c1", "c2"],
+  // ↑ Id's van activiteiten die goed combineren met deze (array van strings).
+
+  "googleRating": 4.7,
+  // ↑ Google Maps steroordeel (decimaal getal, 0.0–5.0).
+  //   ⚠️  Altijd samen met googleReviewCount opgeven — beide of geen van beide.
+
+  "googleReviewCount": 1284
+  // ↑ Aantal Google-reviews (geheel getal ≥ 0).
+  //   ⚠️  Altijd samen met googleRating opgeven — beide of geen van beide.
+  //   Geen komma na het laatste veld!
 }
+
 ```
 
 ## Velden
