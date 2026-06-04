@@ -266,7 +266,9 @@ function saveState() {
   } catch (e) {
     // private mode / quota — stilletjes negeren
   }
-  sync.push(serialized);
+  if (!isApplyingRemoteUpdate) {
+    sync.push(serialized);
+  }
 }
 
 function loadState() {
@@ -447,6 +449,7 @@ function enterPlanner() {
 
 // ── Welkom-terug banner (auto-herstel via localStorage) ──
 let pendingSaved = null;
+let isApplyingRemoteUpdate = false;
 
 function resumeSaved() {
   if (!pendingSaved) return;
@@ -2865,14 +2868,7 @@ function mergeRemotePlan(localState, remoteObj) {
     const remoteIds = remoteDay.activities.map(a => a.id).join(',');
     if (localIds !== remoteIds) {
       changedDays.push(i);
-      const mergedActivities = new Map();
-      remoteDay.activities.forEach(a => mergedActivities.set(a.id, a));
-      localDay.activities.forEach(a => {
-        if (!mergedActivities.has(a.id)) {
-          mergedActivities.set(a.id, a);
-        }
-      });
-      return { activities: [...mergedActivities.values()] };
+      return { activities: remoteDay.activities };
     }
     return localDay;
   });
@@ -2885,12 +2881,17 @@ function onRemoteUpdate(remotePlanObj) {
   const { merged, changedDays } = result;
   if (changedDays.length === 0) return;
   state = merged;
-  try { localStorage.setItem(STORAGE_KEY, JSON.stringify(serializePlan(state))); } catch (e) {}
-  renderSidebar();
-  const currentIdx = typeof state.currentDay === 'number' ? state.currentDay : -1;
-  if (changedDays.includes(currentIdx)) {
-    renderPlannerDay(state.currentDay);
-    setTimeout(() => updateMap(state.currentDay), 50);
+  isApplyingRemoteUpdate = true;
+  try {
+    try { localStorage.setItem(STORAGE_KEY, JSON.stringify(serializePlan(state))); } catch (e) {}
+    renderSidebar();
+    const currentIdx = typeof state.currentDay === 'number' ? state.currentDay : -1;
+    if (changedDays.includes(currentIdx)) {
+      renderPlannerDay(state.currentDay);
+      setTimeout(() => updateMap(state.currentDay), 50);
+    }
+  } finally {
+    isApplyingRemoteUpdate = false;
   }
   showSyncToast(changedDays);
 }
