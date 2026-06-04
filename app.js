@@ -182,7 +182,7 @@ function serializePlan(s) {
     v: 1,
     n: s.name,
     c: s.currentDay,
-    d: s.plan.map(day => day.activities.map(a => a.id)),
+    d: s.plan.map(day => day.activities.map(a => ({ id: a.id, t: a.startTime }))),
   };
 }
 
@@ -191,9 +191,19 @@ function hydratePlan(obj) {
   if (!obj || typeof obj !== 'object') return null;
   const days = Array.isArray(obj.d) ? obj.d : [];
   const plan = Array(14).fill(null).map((_, i) => {
-    const ids = Array.isArray(days[i]) ? days[i] : [];
-    const activities = ids
-      .map(id => ACTIVITIES.find(a => a.id === id))
+    const items = Array.isArray(days[i]) ? days[i] : [];
+    const activities = items
+      .map(item => {
+        const id = typeof item === 'string' ? item : item.id;
+        const act = ACTIVITIES.find(a => a.id === id);
+        if (!act) return null;
+        // Clone to avoid sharing references between days
+        const cloned = { ...act };
+        if (typeof item === 'object' && typeof item.t === 'number') {
+          cloned.startTime = item.t;
+        }
+        return cloned;
+      })
       .filter(Boolean);
     return { activities };
   });
@@ -206,6 +216,43 @@ function hydratePlan(obj) {
     currentDay,
     plan,
   };
+}
+
+function minsToClockStr(mins) {
+  const totalMins = 9 * 60 + mins;
+  const h = Math.floor(totalMins / 60);
+  const m = totalMins % 60;
+  const positiveH = (h + 24) % 24;
+  return `${String(positiveH).padStart(2, '0')}:${String(m).padStart(2, '0')}`;
+}
+
+function ensureActivityStartTimes(dayIndex, forceReset = false) {
+  const plan = state.plan[dayIndex];
+  if (!plan || !plan.activities || plan.activities.length === 0) return;
+
+  if (plan.activities.some(a => a.duration >= 420)) {
+    plan.activities.forEach(a => {
+      a.startTime = 0;
+    });
+    return;
+  }
+
+  let currentEnd = 0; // minutes from 09:00
+  let prevLat = HOTEL_COORDS[0];
+  let prevLng = HOTEL_COORDS[1];
+
+  plan.activities.forEach((act) => {
+    if (forceReset || typeof act.startTime !== 'number') {
+      const travel = calculateTravelStats(prevLat, prevLng, act.lat, act.lng);
+      act.startTime = currentEnd + travel.time;
+    }
+    currentEnd = act.startTime + (act.duration || 60);
+    prevLat = act.lat;
+    prevLng = act.lng;
+  });
+
+  // Sorteer op starttijd om chronologische volgorde te behouden
+  plan.activities.sort((a, b) => a.startTime - b.startTime);
 }
 
 function planHasContent(s) {
@@ -262,7 +309,21 @@ function decodePlanCode(code) {
 }
 
 function dayUsedMinutes(dayIndex) {
-  return state.plan[dayIndex].activities.reduce((s, a) => s + (a.duration || 0), 0);
+  const plan = state.plan[dayIndex];
+  if (!plan || !plan.activities || plan.activities.length === 0) return 0;
+
+  if (plan.activities.some(a => a.duration >= 420)) {
+    return 540;
+  }
+
+  ensureActivityStartTimes(dayIndex);
+
+  const sorted = [...plan.activities].sort((a, b) => a.startTime - b.startTime);
+  const lastAct = sorted[sorted.length - 1];
+  const lastActEnd = lastAct.startTime + lastAct.duration;
+  const travelBack = calculateTravelStats(lastAct.lat, lastAct.lng, HOTEL_COORDS[0], HOTEL_COORDS[1]);
+
+  return lastActEnd + travelBack.time;
 }
 
 function dayIsFullDay(dayIndex) {
@@ -648,7 +709,8 @@ function showOptimalRouteProposal(dayIndex) {
 
 function applyRouteProposal(dayIndex) {
   if (!routeProposal || routeProposal.dayIndex !== dayIndex) return;
-  state.plan[dayIndex].activities = routeProposal.proposedOrder;
+  state.plan[dayIndex].activities = routeProposal.proposedOrder.map(a => ({ ...a }));
+  ensureActivityStartTimes(dayIndex, true);
   routeProposal = null;
   renderSidebar(); // also calls saveState()
   renderPlannerDay(dayIndex);
@@ -1135,37 +1197,355 @@ const TL_CAT_COLORS = {
   eten:     '#7C3AED',
 };
 
-function buildTimelineHtml(dayIndex, activities) {
-  const TOTAL_MIN = 540; // 09:00–18:00
-  let used = 0;
-  let blocks = '';
+function getTimelineBlocks(dayIndex, activities) {
+  const blocks = [];
+  const TOTAL_MIN = 540; // 09:00-18:00
+  
+  if (activities.length === 0) {
+    blocks.push({
+      type: 'pause',
+      title: 'Pauze / Vrije tijd',
+      icon: '☕',
+      startMins: 0,
+      endMins: TOTAL_MIN,
+      duration: TOTAL_MIN,
+      color: 'rgba(0,0,0,0.03)',
+      tooltip: 'Pauze · hele dag'
+    });
+    return blocks;
+  }
 
-  activities.forEach(act => {
-    const dur = Math.max(act.duration || 60, 30);
-    const clampedDur = Math.min(dur, TOTAL_MIN - used);
-    if (clampedDur <= 0) return;
-    const widthPct = (clampedDur / TOTAL_MIN) * 100;
-    const color = TL_CAT_COLORS[act.cat] || '#1B6CA8';
-    const startMin = 9 * 60 + used;
-    const timeStr = `${String(Math.floor(startMin / 60)).padStart(2, '0')}:${String(startMin % 60).padStart(2, '0')}`;
-    const tooltip = escapeHtml(`${act.icon} ${act.title} · vanaf ${timeStr} · ${formatDuration(act.duration || 60)}`);
-    const showLabel = widthPct >= 8;
-    blocks += `<div class="tl-block" style="flex:0 0 ${widthPct}%;background:${color};" title="${tooltip}" onclick="event.stopPropagation();openActivityDetail(${dayIndex},'${act.id}')">` +
-      (showLabel ? `<span class="tl-block-label">${act.icon}</span>` : '') +
-      `</div>`;
-    used += clampedDur;
+  // Check for full-day activity
+  const fullDay = activities.find(a => a.duration >= 420);
+  if (fullDay) {
+    blocks.push({
+      type: 'activity',
+      id: fullDay.id,
+      title: fullDay.title,
+      icon: fullDay.icon,
+      startMins: 0,
+      endMins: TOTAL_MIN,
+      duration: TOTAL_MIN,
+      color: TL_CAT_COLORS[fullDay.cat] || '#1B6CA8',
+      tooltip: `${fullDay.icon} ${fullDay.title} · Hele dag`
+    });
+    return blocks;
+  }
+
+  // Standard activities (already sorted by startTime)
+  let currentTime = 0; // minutes since 09:00
+  let prevLat = HOTEL_COORDS[0];
+  let prevLng = HOTEL_COORDS[1];
+  let prevName = 'Apollonion Asterias Resort';
+
+  activities.forEach((act) => {
+    const travel = calculateTravelStats(prevLat, prevLng, act.lat, act.lng);
+    const travelTime = travel.time;
+
+    // 1. Pause before travel (if any)
+    const travelStart = act.startTime - travelTime;
+    const pauseDur = travelStart - currentTime;
+    if (pauseDur > 0) {
+      blocks.push({
+        type: 'pause',
+        title: 'Pauze',
+        icon: '☕',
+        startMins: currentTime,
+        endMins: travelStart,
+        duration: pauseDur,
+        color: 'rgba(0,0,0,0.03)',
+        tooltip: `Pauze · vanaf ${minsToClockStr(currentTime)} · ${formatDuration(pauseDur)}`
+      });
+    }
+
+    // 2. Travel to activity (if any distance/time and locations are different)
+    if (travelTime > 0 && (prevLat !== act.lat || prevLng !== act.lng)) {
+      blocks.push({
+        type: 'travel',
+        title: `Reistijd naar ${act.title}`,
+        icon: '🚗',
+        startMins: travelStart,
+        endMins: act.startTime,
+        duration: travelTime,
+        color: '#5b697c',
+        tooltip: `🚗 Reistijd: ${prevName.split(' ')[0]} ➔ ${act.title.split(' ')[0]} · vertrek om ${minsToClockStr(travelStart)} · ${travelTime} min (${travel.distance} km)`
+      });
+    }
+
+    // 3. The Activity itself
+    const actEnd = act.startTime + act.duration;
+    blocks.push({
+      type: 'activity',
+      id: act.id,
+      title: act.title,
+      icon: act.icon,
+      startMins: act.startTime,
+      endMins: actEnd,
+      duration: act.duration,
+      color: TL_CAT_COLORS[act.cat] || '#1B6CA8',
+      tooltip: `${act.icon} ${act.title} · vanaf ${minsToClockStr(act.startTime)} tot ${minsToClockStr(actEnd)} · ${formatDuration(act.duration)}`
+    });
+
+    currentTime = actEnd;
+    prevLat = act.lat;
+    prevLng = act.lng;
+    prevName = act.title;
   });
 
-  if (used < TOTAL_MIN) {
-    blocks += `<div class="tl-gap" style="flex:0 0 ${((TOTAL_MIN - used) / TOTAL_MIN) * 100}%;"></div>`;
+  // 4. Travel back to Hotel after the last activity
+  const lastAct = activities[activities.length - 1];
+  const travelBack = calculateTravelStats(lastAct.lat, lastAct.lng, HOTEL_COORDS[0], HOTEL_COORDS[1]);
+  const travelBackTime = travelBack.time;
+  const travelBackEnd = currentTime + travelBackTime;
+
+  if (travelBackTime > 0 && (lastAct.lat !== HOTEL_COORDS[0] || lastAct.lng !== HOTEL_COORDS[1])) {
+    blocks.push({
+      type: 'travel',
+      title: 'Reistijd naar Hotel',
+      icon: '🚗',
+      startMins: currentTime,
+      endMins: travelBackEnd,
+      duration: travelBackTime,
+      color: '#5b697c',
+      tooltip: `🚗 Reistijd terug naar Hotel · vertrek om ${minsToClockStr(currentTime)} · ${travelBackTime} min (${travelBack.distance} km)`
+    });
+    currentTime = travelBackEnd;
   }
+
+  // 5. Final pause back at hotel (if any time left before 18:00)
+  if (currentTime < TOTAL_MIN) {
+    blocks.push({
+      type: 'pause',
+      title: 'Pauze',
+      icon: '☕',
+      startMins: currentTime,
+      endMins: TOTAL_MIN,
+      duration: TOTAL_MIN - currentTime,
+      color: 'rgba(0,0,0,0.03)',
+      tooltip: `Pauze bij Hotel · vanaf ${minsToClockStr(currentTime)} · ${formatDuration(TOTAL_MIN - currentTime)}`
+    });
+  }
+
+  return blocks;
+}
+
+function buildTimelineHtml(dayIndex, activities) {
+  // Ensure all activities have start times
+  ensureActivityStartTimes(dayIndex);
+
+  const blocks = getTimelineBlocks(dayIndex, activities);
+  const TOTAL_MIN = 540;
+  let blocksHtml = '';
+
+  blocks.forEach(b => {
+    // We clamp the start and end to the timeline limits (0 to 540) for rendering
+    const startClamped = Math.max(0, Math.min(TOTAL_MIN, b.startMins));
+    const endClamped = Math.max(0, Math.min(TOTAL_MIN, b.endMins));
+    const widthPct = ((endClamped - startClamped) / TOTAL_MIN) * 100;
+    const leftPct = (startClamped / TOTAL_MIN) * 100;
+
+    if (widthPct <= 0) return;
+
+    let classList = 'tl-block';
+    if (b.type === 'travel') classList += ' tl-block-travel';
+    if (b.type === 'pause') classList += ' tl-block-pause';
+
+    let content = '';
+    const showIcon = widthPct >= 5;
+    const showLabel = widthPct >= 12;
+
+    if (showIcon) {
+      content += `<span class="tl-block-label" style="font-size: 0.85rem; pointer-events:none;">${b.icon}</span>`;
+    }
+    if (b.type === 'activity' && showLabel) {
+      content += `<span class="tl-block-title" style="font-size: 0.65rem; font-weight: 600; color: white; margin-left: 4px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 80%; pointer-events:none;">${b.title}</span>`;
+    }
+
+    const clickAttr = b.type === 'activity'
+      ? `onclick="event.stopPropagation();openActivityDetail(${dayIndex},'${b.id}')"`
+      : `onclick="event.stopPropagation();"`;
+
+    const dragAttr = b.type === 'activity'
+      ? `onmousedown="initTimelineDrag(event, ${dayIndex}, '${b.id}')" ontouchstart="initTimelineDrag(event, ${dayIndex}, '${b.id}')"`
+      : '';
+
+    const cursorStyle = b.type === 'activity' ? 'cursor: grab;' : 'cursor: default;';
+    const borderStyle = b.type === 'activity' ? 'border-right: 1.5px solid rgba(255,255,255,0.25);' : '';
+
+    blocksHtml += `
+      <div class="${classList}" 
+           style="position: absolute; left: ${leftPct}%; width: ${widthPct}%; height: 100%; background: ${b.color}; display: flex; align-items: center; justify-content: center; ${borderStyle} ${cursorStyle}" 
+           title="${escapeHtml(b.tooltip)}" 
+           ${clickAttr} 
+           ${dragAttr}>
+        ${content}
+      </div>
+    `;
+  });
 
   const ticks = [[0,'09:00'],[120,'11:00'],[240,'13:00'],[360,'15:00'],[480,'17:00'],[540,'18:00']];
   const ruler = ticks.map(([m, lbl]) =>
     `<span class="tl-tick" style="left:${(m / TOTAL_MIN) * 100}%;">${lbl}</span>`
   ).join('');
 
-  return `<div class="tl-wrap"><div class="tl-track">${blocks}</div><div class="tl-ruler">${ruler}</div></div>`;
+  return `
+    <div class="tl-wrap">
+      <div class="tl-track" style="position: relative; overflow: hidden;">
+        ${blocksHtml}
+      </div>
+      <div class="tl-ruler" style="position: relative;">
+        ${ruler}
+      </div>
+    </div>
+  `;
+}
+
+// ── Drag & Drop Handlers ──────────────────────────────
+let dragData = null;
+
+window.initTimelineDrag = function(event, dayIndex, actId) {
+  // Check touch status
+  const isTouch = event.type.startsWith('touch');
+  const pointerEvent = isTouch ? event.touches[0] : event;
+
+  const blockEl = event.currentTarget;
+  const trackEl = blockEl.parentElement;
+  const trackRect = trackEl.getBoundingClientRect();
+
+  const plan = state.plan[dayIndex];
+  const act = plan.activities.find(a => a.id === actId);
+  if (!act) return;
+
+  dragData = {
+    dayIndex,
+    actId,
+    trackWidth: trackRect.width,
+    trackLeft: trackRect.left,
+    startX: pointerEvent.clientX,
+    initialStartTime: act.startTime,
+    duration: act.duration,
+    trackEl,
+    blockEl
+  };
+
+  blockEl.classList.add('dragging');
+
+  if (isTouch) {
+    window.addEventListener('touchmove', handleTimelineDragMove, { passive: false });
+    window.addEventListener('touchend', handleTimelineDragEnd);
+  } else {
+    window.addEventListener('mousemove', handleTimelineDragMove);
+    window.addEventListener('mouseup', handleTimelineDragEnd);
+  }
+};
+
+function handleTimelineDragMove(event) {
+  if (!dragData) return;
+  
+  // Prevent scrolling
+  event.preventDefault();
+
+  const isTouch = event.type.startsWith('touch');
+  const pointerEvent = isTouch ? event.touches[0] : event;
+
+  const deltaX = pointerEvent.clientX - dragData.startX;
+  const TOTAL_MIN = 540;
+
+  // Convert pixels to minutes
+  const deltaMins = Math.round((deltaX / dragData.trackWidth) * TOTAL_MIN);
+  let newStartTime = dragData.initialStartTime + deltaMins;
+
+  // Clamp start time between 09:00 and 18:00
+  newStartTime = Math.max(0, Math.min(TOTAL_MIN - dragData.duration, newStartTime));
+
+  const plan = state.plan[dragData.dayIndex];
+  const act = plan.activities.find(a => a.id === dragData.actId);
+  if (!act) return;
+
+  act.startTime = newStartTime;
+
+  // Sort immediately to reorder activities chronologically as they pass each other
+  plan.activities.sort((a, b) => a.startTime - b.startTime);
+
+  // Update elements inside track element
+  const trackEl = dragData.trackEl;
+  const newBlocks = getTimelineBlocks(dragData.dayIndex, plan.activities);
+  
+  let newBlocksHtml = '';
+  newBlocks.forEach(b => {
+    const startClamped = Math.max(0, Math.min(TOTAL_MIN, b.startMins));
+    const endClamped = Math.max(0, Math.min(TOTAL_MIN, b.endMins));
+    const widthPct = ((endClamped - startClamped) / TOTAL_MIN) * 100;
+    const leftPct = (startClamped / TOTAL_MIN) * 100;
+
+    if (widthPct <= 0) return;
+
+    let classList = 'tl-block';
+    if (b.type === 'travel') classList += ' tl-block-travel';
+    if (b.type === 'pause') classList += ' tl-block-pause';
+
+    let content = '';
+    const showIcon = widthPct >= 5;
+    const showLabel = widthPct >= 12;
+
+    if (showIcon) {
+      content += `<span class="tl-block-label" style="font-size: 0.85rem; pointer-events:none;">${b.icon}</span>`;
+    }
+    if (b.type === 'activity' && showLabel) {
+      content += `<span class="tl-block-title" style="font-size: 0.65rem; font-weight: 600; color: white; margin-left: 4px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 80%; pointer-events:none;">${b.title}</span>`;
+    }
+
+    const isDraggedAct = (b.type === 'activity' && b.id === dragData.actId);
+    const cursorStyle = b.type === 'activity' ? (isDraggedAct ? 'cursor: grabbing;' : 'cursor: grab;') : 'cursor: default;';
+    const activeClass = isDraggedAct ? ' dragging' : '';
+    const borderStyle = b.type === 'activity' ? 'border-right: 1.5px solid rgba(255,255,255,0.25);' : '';
+
+    const clickAttr = b.type === 'activity'
+      ? `onclick="event.stopPropagation();openActivityDetail(${dragData.dayIndex},'${b.id}')"`
+      : `onclick="event.stopPropagation();"`;
+
+    const dragAttr = b.type === 'activity'
+      ? `onmousedown="initTimelineDrag(event, ${dragData.dayIndex}, '${b.id}')" ontouchstart="initTimelineDrag(event, ${dragData.dayIndex}, '${b.id}')"`
+      : '';
+
+    newBlocksHtml += `
+      <div class="${classList}${activeClass}" 
+           style="position: absolute; left: ${leftPct}%; width: ${widthPct}%; height: 100%; background: ${b.color}; display: flex; align-items: center; justify-content: center; ${borderStyle} ${cursorStyle}" 
+           title="${escapeHtml(b.tooltip)}" 
+           ${clickAttr} 
+           ${dragAttr}>
+        ${content}
+      </div>
+    `;
+  });
+
+  trackEl.innerHTML = newBlocksHtml;
+}
+
+function handleTimelineDragEnd(event) {
+  if (!dragData) return;
+
+  const isTouch = event.type.startsWith('touch');
+  if (isTouch) {
+    window.removeEventListener('touchmove', handleTimelineDragMove);
+    window.removeEventListener('touchend', handleTimelineDragEnd);
+  } else {
+    window.removeEventListener('mousemove', handleTimelineDragMove);
+    window.removeEventListener('mouseup', handleTimelineDragEnd);
+  }
+
+  const dayIndex = dragData.dayIndex;
+  
+  // Chronological sort
+  state.plan[dayIndex].activities.sort((a, b) => a.startTime - b.startTime);
+
+  dragData = null;
+
+  saveState();
+  renderPlannerDay(dayIndex);
+  renderSidebar();
+  setTimeout(() => updateMap(dayIndex), 50);
+  updateMobileBar();
 }
 
 // ═══════════════════════════════════════════════════════
@@ -1783,7 +2163,8 @@ function selectActivity(dayIndex, actId) {
     return;
   }
 
-  plan.activities.push(act);
+  plan.activities.push({ ...act });
+  ensureActivityStartTimes(dayIndex);
 
   const isFullDay = act.duration >= 420;
   if (isFullDay) {

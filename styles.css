@@ -1009,10 +1009,48 @@ h3 { font-family: 'DM Sans', sans-serif; font-weight: 500; font-size: 1rem; }
 /* ── PRINT STYLES ─────────────────────────────────────── */
 @media print {
   #screen-welcome, #screen-planner { display: none !important; }
-  #screen-overview { display: flex !important; }
+  #screen-overview { 
+    display: block !important; 
+    min-height: auto !important; 
+    background: transparent !important;
+  }
+  body {
+    background: transparent !important;
+  }
+  .overview-body {
+    padding: 1rem 0 !important;
+    max-width: 100% !important;
+  }
   .overview-actions { display: none !important; }
   .code-box { display: none !important; }
-  .overview-header { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  .overview-header {
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+    background: var(--sea-deep) !important;
+    color: white !important;
+    padding: 2rem !important;
+  }
+  .overview-header h1 {
+    color: white !important;
+  }
+  .overview-header p {
+    color: rgba(255,255,255,0.7) !important;
+  }
+  .overview-header::after {
+    display: none !important;
+  }
+
+  /* Zorg dat kaarten en belangrijke secties niet in tweeën worden gesneden */
+  .overview-card,
+  .flight-ticket,
+  .overview-flights-card,
+  .overview-map-card,
+  .stat-card {
+    break-inside: avoid;
+    page-break-inside: avoid;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
 }
 
 /* ── ANIMATIONS ─────────────────────────────────────── */
@@ -2264,41 +2302,59 @@ body.map-overlay-open {
 }
 
 .tl-track {
-  display: flex;
-  height: 34px;
-  border-radius: 8px;
+  position: relative;
+  height: 36px;
+  border-radius: 10px;
   overflow: hidden;
-  background: rgba(0,0,0,0.06);
+  background: rgba(0,0,0,0.05);
+  box-shadow: inset 0 2px 4px rgba(0,0,0,0.06);
 }
 
 .tl-block {
+  position: absolute;
+  height: 100%;
   display: flex;
   align-items: center;
   justify-content: center;
   overflow: hidden;
-  cursor: pointer;
-  transition: filter 0.15s;
-  border-right: 1.5px solid rgba(255,255,255,0.25);
+  box-sizing: border-box;
+  transition: filter 0.15s, box-shadow 0.15s;
+  user-select: none;
 }
 
 .tl-block:hover {
+  filter: brightness(1.1);
+}
+
+.tl-block-travel {
+  background-color: #5b697c !important;
+  background-image: linear-gradient(45deg, rgba(255,255,255,0.06) 25%, transparent 25%, transparent 50%, rgba(255,255,255,0.06) 50%, rgba(255,255,255,0.06) 75%, transparent 75%, transparent);
+  background-size: 16px 16px;
+  cursor: default;
+  opacity: 0.9;
+}
+
+.tl-block-travel:hover {
+  filter: none;
+}
+
+.tl-block-pause {
+  background-color: rgba(0,0,0,0.03) !important;
+  cursor: default;
+}
+
+.tl-block-pause:hover {
+  background-color: rgba(0,0,0,0.05) !important;
+  filter: none;
+}
+
+.tl-block.dragging {
+  opacity: 0.88;
   filter: brightness(1.15);
+  box-shadow: 0 4px 10px rgba(0,0,0,0.25);
+  z-index: 10;
 }
 
-.tl-block:last-of-type {
-  border-right: none;
-}
-
-.tl-block-label {
-  font-size: 0.85rem;
-  line-height: 1;
-  user-select: none;
-  pointer-events: none;
-}
-
-.tl-gap {
-  /* visible as the grey track background */
-}
 
 .tl-ruler {
   position: relative;
