@@ -16,6 +16,10 @@ const PRECACHE_ASSETS = [
   '/app.js',
   '/activities.generated.js',
   '/manifest.json',
+  '/favicon.svg',
+  '/favicon.png',
+  '/icon-192.png',
+  '/icon-512.png',
 ];
 
 // ── Install: pre-cache lokale bestanden ──────────────────
