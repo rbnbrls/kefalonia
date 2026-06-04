@@ -1,0 +1,24 @@
+{
+  "id": "e14",
+  "cat": "eten",
+  "icon": "🍽️",
+  "title": "Il Borgo",
+  "duration": 120,
+  "why": "Gelegen aan de voet van het kasteel van Agios Georgios. Bekend om de uitstekende mediterraan-Griekse fusion en het fenomenale terras.",
+  "tip": "Reserveer een tafel voor zonsondergang. Combineer een bezoek aan het kasteel in de middag met een diner bij Il Borgo.",
+  "cost": 35,
+  "location": "Kastro, Kefalonia",
+  "mapUrl": "https://www.google.com/maps/search/?api=1&query=38.1388,20.5502",
+  "lat": 38.1388,
+  "lng": 20.5502,
+  "reservation": true,
+  "special": false,
+  "timeOfDay": "evening",
+  "highlights": [
+    "Adembenemend uitzicht over de vallei en de zuidkust",
+    "Gelegen bij de historische ruïnes van St. George's Castle",
+    "Verfijnde en moderne varianten op traditionele recepten"
+  ],
+  "googleRating": 4.5,
+  "googleReviewCount": 1200
+}

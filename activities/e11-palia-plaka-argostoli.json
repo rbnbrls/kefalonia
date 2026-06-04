@@ -1,0 +1,24 @@
+{
+  "id": "e11",
+  "cat": "eten",
+  "icon": "🍽️",
+  "title": "Palia Plaka",
+  "duration": 120,
+  "why": "Een legendarisch en authentiek familierestaurant dat bekendstaat om zijn uitstekende traditionele Griekse gerechten en warme sfeer.",
+  "tip": "Dit is een lunchrestaurant dat open is van 12:00 tot 18:00. Kom vroeg op de middag, want de populairste dagschotels raken snel uitverkocht!",
+  "cost": 25,
+  "location": "Argostoli, Kefalonia",
+  "mapUrl": "https://www.google.com/maps/search/?api=1&query=38.176,20.488",
+  "lat": 38.176,
+  "lng": 20.488,
+  "reservation": false,
+  "special": false,
+  "timeOfDay": "afternoon",
+  "highlights": [
+    "Authentieke huisgemaakte dagschotels",
+    "Groot en gezellig terras met zeezicht",
+    "Vegetarisch- en veganvriendelijk met duidelijke opties"
+  ],
+  "googleRating": 4.7,
+  "googleReviewCount": 2893
+}

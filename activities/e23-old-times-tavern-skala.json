@@ -1,0 +1,24 @@
+{
+  "id": "e23",
+  "cat": "eten",
+  "icon": "🍽️",
+  "title": "Old Times Tavern",
+  "duration": 120,
+  "why": "Gelegen langs de schilderachtige kustweg van Skala naar Poros. Biedt traditionele Griekse gerechten in een rustige, romantische sfeer.",
+  "tip": "Probeer de huisgemaakte moussaka, stifado of souvlaki. Een geweldige plek om de drukte van het centrum van Skala te ontvluchten.",
+  "cost": 30,
+  "location": "Skala, Kefalonia",
+  "mapUrl": "https://www.google.com/maps/search/?api=1&query=38.0825,20.8031",
+  "lat": 38.0825,
+  "lng": 20.8031,
+  "reservation": true,
+  "special": false,
+  "timeOfDay": "evening",
+  "highlights": [
+    "Rustige ligging met mooi uitzicht over de kustweg en de zee",
+    "Groot aanbod van klassieke Griekse taverna-gerechten",
+    "Vriendelijke, informele en zeer ontspannen service"
+  ],
+  "googleRating": 4.6,
+  "googleReviewCount": 481
+}

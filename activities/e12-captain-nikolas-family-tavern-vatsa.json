@@ -1,0 +1,24 @@
+{
+  "id": "e12",
+  "cat": "eten",
+  "icon": "🐟",
+  "title": "Captain Nikolas Family Tavern",
+  "duration": 120,
+  "why": "Eten met je voeten letterlijk in het zand aan de waterkant. Een van de meest sfeervolle en ontspannen visrestaurants van het eiland.",
+  "tip": "Probeer de dagverse vis van de grill en de garnalen. Reserveer vooraf een tafel dicht bij het water voor de ultieme ervaring.",
+  "cost": 35,
+  "location": "Vatsa (Lixouri), Kefalonia",
+  "mapUrl": "https://www.google.com/maps/search/?api=1&query=38.16601,20.37686",
+  "lat": 38.16601,
+  "lng": 20.37686,
+  "reservation": true,
+  "special": false,
+  "timeOfDay": "evening",
+  "highlights": [
+    "Tafels direct op het zandstrand van Vatsa Bay",
+    "Dagelijks verse vis van de lokale vissers",
+    "Zeer ontspannen, informele en kindvriendelijke sfeer"
+  ],
+  "googleRating": 4.8,
+  "googleReviewCount": 2489
+}

@@ -1,0 +1,24 @@
+{
+  "id": "e20",
+  "cat": "eten",
+  "icon": "🍽️",
+  "title": "The Pines",
+  "duration": 120,
+  "why": "Een zeer gastvrije, door een familie gerunde taverna vlak bij het strand van Skala. Bekend om zijn heerlijke gerechten en warme sfeer.",
+  "tip": "Probeer de huisgemaakte stifado (stoofpot) of de moussaka. De gastvrijheid is hier legendarisch, je voelt je direct thuis.",
+  "cost": 30,
+  "location": "Skala, Kefalonia",
+  "mapUrl": "https://www.google.com/maps/search/?api=1&query=38.07,20.79",
+  "lat": 38.07,
+  "lng": 20.79,
+  "reservation": true,
+  "special": false,
+  "timeOfDay": "evening",
+  "highlights": [
+    "Gezellig en ruim terras in een groene omgeving",
+    "Echte, traditionele Griekse familierecepten",
+    "Slechts een korte wandeling verwijderd van Skala Beach"
+  ],
+  "googleRating": 4.6,
+  "googleReviewCount": 723
+}

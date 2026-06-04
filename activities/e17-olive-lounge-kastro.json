@@ -1,0 +1,24 @@
+{
+  "id": "e17",
+  "cat": "eten",
+  "icon": "🍷",
+  "title": "Olive Lounge",
+  "duration": 120,
+  "why": "Een van de best beoordeelde fine-dining restaurants van Kefalonia. Biedt een moderne, creatieve twist op traditionele Griekse gerechten.",
+  "tip": "Absoluut vooraf reserveren, want deze populaire plek zit snel vol. De lamsschotel en de huisgemaakte desserts zijn fantastisch.",
+  "cost": 45,
+  "location": "Kastro, Kefalonia",
+  "mapUrl": "https://www.google.com/maps/search/?api=1&query=38.13837,20.55639",
+  "lat": 38.13837,
+  "lng": 20.55639,
+  "reservation": true,
+  "special": false,
+  "timeOfDay": "evening",
+  "highlights": [
+    "Prachtig terras met uitzicht op Lourdas Bay en de kustlijn",
+    "Moderne mediterrane en Griekse fusion-keuken van hoog niveau",
+    "Zeer professionele en uiterst gastvrije service"
+  ],
+  "googleRating": 4.7,
+  "googleReviewCount": 1004
+}

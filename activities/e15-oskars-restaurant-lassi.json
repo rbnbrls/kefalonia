@@ -1,0 +1,24 @@
+{
+  "id": "e15",
+  "cat": "eten",
+  "icon": "🍽️",
+  "title": "Oskars Restaurant",
+  "duration": 120,
+  "why": "Een zeer geliefd en levendig restaurant in Lassi. Bekend om zijn heerlijke gerechten en het schitterende uitzicht op de ondergaande zon.",
+  "tip": "Probeer de zeevruchtenrisotto of de gegrilde octopus. Vraag bij de reservering expliciet om een tafel aan de rand voor het zonsondergang-zicht.",
+  "cost": 30,
+  "location": "Lassi, Kefalonia",
+  "mapUrl": "https://www.google.com/maps/search/?api=1&query=38.17570,20.48074",
+  "lat": 38.1757,
+  "lng": 20.48074,
+  "reservation": true,
+  "special": false,
+  "timeOfDay": "evening",
+  "highlights": [
+    "Panoramisch uitzicht op de zee en de vuurtoren van Argostoli",
+    "Uitstekende mix van traditionele en moderne Griekse gerechten",
+    "Zeer vriendelijke service en een gezellige sfeer"
+  ],
+  "googleRating": 4.7,
+  "googleReviewCount": 1200
+}

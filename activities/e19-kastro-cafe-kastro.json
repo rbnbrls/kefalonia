@@ -1,0 +1,24 @@
+{
+  "id": "e19",
+  "cat": "eten",
+  "icon": "☕",
+  "title": "Kastro Cafe",
+  "duration": 90,
+  "why": "Een charmante, informele plek aan de voet van het St. George kasteel met een van de hoogste beoordelingen van het eiland.",
+  "tip": "Perfect voor een lunch, een ijskoffie of een heerlijk stuk zelfgebakken cake of taart na je bezoek aan het kasteel.",
+  "cost": 15,
+  "location": "Kastro, Kefalonia",
+  "mapUrl": "https://www.google.com/maps/search/?api=1&query=38.138,20.548",
+  "lat": 38.138,
+  "lng": 20.548,
+  "reservation": false,
+  "special": false,
+  "timeOfDay": "afternoon",
+  "highlights": [
+    "Adembenemend weids uitzicht over het landschap en de zee",
+    "Geweldige selectie van huisgemaakt gebak and frisse drankjes",
+    "Zeer ontspannen sfeer en uiterst vriendelijke service"
+  ],
+  "googleRating": 4.9,
+  "googleReviewCount": 985
+}

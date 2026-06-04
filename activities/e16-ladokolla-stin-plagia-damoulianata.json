@@ -1,0 +1,24 @@
+{
+  "id": "e16",
+  "cat": "eten",
+  "icon": "🍽️",
+  "title": "Ladokolla stin Plagia",
+  "duration": 120,
+  "why": "Een authentieke bergtaverna op de Paliki-peninsula. Beroemd om de gezellige, schoolachtige sfeer en het ongeëvenaarde uitzicht op de zonsondergang.",
+  "tip": "Het menu wordt gepresenteerd in een schoolschrift. Vraag de bediening om een kijkje in de keuken te nemen om je gerechten te kiezen.",
+  "cost": 30,
+  "location": "Damoulianata, Kefalonia",
+  "mapUrl": "https://www.google.com/maps/search/?api=1&query=38.23911,20.37361",
+  "lat": 38.23911,
+  "lng": 20.37361,
+  "reservation": true,
+  "special": false,
+  "timeOfDay": "evening",
+  "highlights": [
+    "Spectaculair panoramisch uitzicht over de westkust van Paliki",
+    "Uniek concept met schoolthema-menu's en keukenbezoeken",
+    "Huisgemaakte vleesspecialiteiten en de bekende Kefalonische vleespie"
+  ],
+  "googleRating": 4.8,
+  "googleReviewCount": 1000
+}

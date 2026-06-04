@@ -1,0 +1,24 @@
+{
+  "id": "e22",
+  "cat": "eten",
+  "icon": "🍲",
+  "title": "Maklithari Taverna",
+  "duration": 120,
+  "why": "Een authentieke dorpstaverna in de heuvels boven Agia Efimia. Hier proef je het echte, traditionele Griekse dorpsleven.",
+  "tip": "Bezoek deze taverna op vrijdag- of zaterdagavond voor hun befaamde spit-roasted vleesspecialiteiten (zoals lam of varken).",
+  "cost": 25,
+  "location": "Makriotika, Kefalonia",
+  "mapUrl": "https://www.google.com/maps/search/?api=1&query=38.3083,20.5569",
+  "lat": 38.3083,
+  "lng": 20.5569,
+  "reservation": true,
+  "special": false,
+  "timeOfDay": "evening",
+  "highlights": [
+    "Sfeervol terras op het gezellige dorpsplein van Makriotika",
+    "Traditioneel stoofvlees, vleespastei en heerlijke lokale mezzes",
+    "Beroemde spit-roasted vleesspecialiteiten in het weekend"
+  ],
+  "googleRating": 4.7,
+  "googleReviewCount": 600
+}

@@ -1,0 +1,24 @@
+{
+  "id": "e18",
+  "cat": "eten",
+  "icon": "🍽️",
+  "title": "Jerry's Elliniko",
+  "duration": 120,
+  "why": "Eet in een sprookjesachtige, romantische binnentuin in het vissersdorpje Katelios. Eigenaar Jerry zorgt voor een warm en persoonlijk welkom.",
+  "tip": "Probeer de Kleftiko (langzaam gegaard lamsvlees) of de visspaghetti. Zorg dat je op tijd reserveert voor een tafel in de tuin.",
+  "cost": 30,
+  "location": "Katelios, Kefalonia",
+  "mapUrl": "https://www.google.com/maps/search/?api=1&query=38.0772,20.7523",
+  "lat": 38.0772,
+  "lng": 20.7523,
+  "reservation": true,
+  "special": false,
+  "timeOfDay": "evening",
+  "highlights": [
+    "Prachtige, verlichte binnentuin vol bloemen en planten",
+    "Zeer vriendelijke en gastvrije bediening door Jerry en zijn team",
+    "Uitstekende traditionele Griekse gerechten met royale porties"
+  ],
+  "googleRating": 4.7,
+  "googleReviewCount": 1000
+}

@@ -1,0 +1,24 @@
+{
+  "id": "e21",
+  "cat": "eten",
+  "icon": "🐟",
+  "title": "Denis Restaurant",
+  "duration": 120,
+  "why": "Een prachtige taverna direct aan het strand van Trapezaki. Geniet van heerlijke Griekse gerechten met het geluid van de golven op de achtergrond.",
+  "tip": "Absoluut een aanrader voor verse visliefhebbers. Neem na een middagje strand plaats op het gezellige overdekte terras.",
+  "cost": 35,
+  "location": "Trapezaki, Kefalonia",
+  "mapUrl": "https://www.google.com/maps/search/?api=1&query=38.1179,20.6088",
+  "lat": 38.1179,
+  "lng": 20.6088,
+  "reservation": true,
+  "special": false,
+  "timeOfDay": "evening",
+  "highlights": [
+    "Geweldige ligging direct aan het zandstrand van Trapezaki",
+    "Heerlijke verse vis, inktvis en zeevruchten van de grill",
+    "Gezellig terras met koel briesje en uitzicht op zee"
+  ],
+  "googleRating": 4.6,
+  "googleReviewCount": 686
+}
