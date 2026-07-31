@@ -1,0 +1,27 @@
+{
+  "id": "e10",
+  "cat": "eten",
+  "icon": "🍴",
+  "title": "Restaurant Amalia Kefalonia",
+  "duration": 3,
+  "why": "Best restaurant in Agia Effimia with family recipes from their grandmother and fresh products from their own farm",
+  "tip": "Try their traditional Greek dishes made with locally sourced ingredients",
+  "cost": 25,
+  "location": "Agia Effimia, Kefalonia",
+  "mapUrl": "https://maps.google.com/?q=39.65,20.05",
+  "lat": 39.65,
+  "lng": 20.05,
+  "reservation": false,
+  "special": true,
+  "timeOfDay": "lunchtime/dinnertime",
+  "highlights": [
+    "Family recipes",
+    "Local farm products",
+    "Cozy atmosphere"
+  ],
+  "combineWith": [
+    "Walking tour of Agia Effimia"
+  ],
+  "googleRating": 4.5,
+  "googleReviewCount": 120
+}
