@@ -1,0 +1,27 @@
+{
+  "id": "c13",
+  "cat": "c",
+  "icon": "",
+  "title": "Karaoke bij Bar One in Lassi",
+  "duration": 2,
+  "why": "Karaoke in een gezellige bar tussen de lokale bewoners creëert een onvergetelijke avond, ideaal om je zangtalent te laten zien en te genieten van de nachtelijke sfeer van Kefalonia.",
+  "tip": "Onlangs zijn er verschillende themaavonden en open mic‑sessions gedaan. Voor de beste ervaring reserveer een tafel of vraag bij de receptie over het huidige karaoke‑rooster. Het zit vaak vol, dus een plek voor jezelf of een paar vrienden bespaart onnodige wachttijden.",
+  "cost": 0,
+  "location": "Lassi, Kefalonia",
+  "mapUrl": "https://www.google.com/maps/place/Lassi,+Kefalonia",
+  "lat": 38.9555,
+  "lng": 20.8739,
+  "reservation": true,
+  "special": false,
+  "timeOfDay": "avontuur rond 20:00 – 23:00",
+  "highlights": [
+    "Live karaoke nights in een lokale bar",
+    "Interactieve avond met internationale en Griekse nummers",
+    "Potentieel gratis drankje bij eerste optreden",
+    "Prachtig uitzicht op de zee bij zonsondergang",
+    "Relaxed sfeer, ideaal voor het loslaten van je dagelijkse routine"
+  ],
+  "combineWith": [],
+  "googleRating": 4,
+  "googleReviewCount": 150
+}
