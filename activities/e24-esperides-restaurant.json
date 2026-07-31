@@ -1,0 +1,26 @@
+{
+  "id": "e24",
+  "cat": "eten",
+  "icon": "restaurant",
+  "title": "Esperides Restaurant",
+  "duration": 3,
+  "why": "Een magische eetervaring in het hart van een uitgestrekte sinaasappelgaarde. Esperides combineert fantastische Griekse gastronomie met een serene, groene omgeving, wat het een van de meest sfeervolle restaurants op het eiland maakt.",
+  "tip": "Reserveer vooraf om een tafel in de 'Magic Garden' te bemachtigen voor de meest romantische ervaring. Probeer absoluut het sinaasappelsorbet als dessert!",
+  "cost": 20,
+  "location": "Svoronata, Kefalonia",
+  "mapUrl": "https://www.google.com/maps/search/?api=1&query=Esperides+Restaurant+Svoronata+Kefalonia",
+  "lat": 38.111355,
+  "lng": 20.528652,
+  "reservation": true,
+  "special": true,
+  "timeOfDay": "avond",
+  "highlights": [
+    "Dineren in een prachtige sinaasappelgaarde met meer dan 800 bomen",
+    "Unieke sfeer met waterlelies en een vijver met vissen",
+    "Moderne twist op traditionele Griekse en Mediterrane gerechten",
+    "Uitstekende service en gastvrijheid"
+  ],
+  "combineWith": [],
+  "googleRating": 4.7,
+  "googleReviewCount": 902
+}
