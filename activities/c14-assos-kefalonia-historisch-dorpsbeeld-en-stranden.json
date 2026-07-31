@@ -1,0 +1,28 @@
+{
+  "id": "c14",
+  "cat": "c",
+  "icon": "🏛️",
+  "title": "Assos (Kefalonia) - Historisch dorpsbeeld en stranden",
+  "duration": 180,
+  "why": "Native Nederlandse tip met Google-coördinaten, kostinfo en maplink",
+  "tip": "Combineer historische foto's met moderne zee-waarnemingen vanuit Assos voor Instagram. Vermijd piekuren om authentieke dorpsstijl vast te leggen.",
+  "cost": 15,
+  "location": "38.378895° N, 20.530148° E",
+  "mapUrl": "https://maps.google.com/maps?q=38.378895,20.530148&hl=nl",
+  "lat": 38.378895,
+  "lng": 20.530148,
+  "reservation": false,
+  "special": false,
+  "timeOfDay": "morgens",
+  "highlights": [
+    "Assos zetelplaats van Venetiaanse heerschappij (1593-1797)",
+    "Panoramische zeeuitzichten vanaf ockerhuizen",
+    "Myrtos-beach 36 km noordwest"
+  ],
+  "combineWith": [
+    "naturafbeeldingen",
+    "kastelen"
+  ],
+  "googleRating": 4.6,
+  "googleReviewCount": 2525
+}
