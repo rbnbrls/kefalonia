@@ -34,6 +34,15 @@ const ALL_KEYS = [...REQUIRED_KEYS, ...OPTIONAL_KEYS];
 const CAT_ORDER = ['stranden', 'cultuur', 'natuur', 'eten', 'hotel', 'bday'];
 const ALLOWED_DURATIONS = [0, 45, 60, 90, 120, 150, 180, 240, 360, 480];
 
+// ── Kefalonia-bbox ──────────────────────────────────────────────────────────
+// Bbox van het eiland Kefalonia (OSM-relatie "Κεφαλονιά", island), opgehaald
+// 2026-09-20: lat 38.0566–38.4755 · lng 20.3367–20.8159. Ruimere marge (~0.05°,
+// ~5 km) zodat strandjes en boottochten net voor de kust blijven passeren.
+// Moet matchen met activities/README.md. Issue #8: met de oude sanity-box
+// (lat 37.5–39 · lng 19.5–21.5) glipte een punt op het vasteland, 90 km van
+// Lassi, door de validatie.
+const BBOX = { latMin: 38.00, latMax: 38.53, lngMin: 20.28, lngMax: 20.85 };
+
 // Verzamel alle validatiefouten zodat we ze in één keer kunnen tonen.
 const errors = [];
 const seenIds = new Map(); // id -> bestandsnaam (voor duplicaat-detectie)
@@ -79,11 +88,11 @@ function validate(file, a) {
   }
   if ('location' in a && !isString(a.location)) fail(file, '"location" moet een niet-lege string zijn');
   if ('mapUrl' in a && !isString(a.mapUrl)) fail(file, '"mapUrl" moet een niet-lege string zijn');
-  if ('lat' in a && (!isNumber(a.lat) || a.lat < 37.5 || a.lat > 39)) {
-    fail(file, '"lat" moet een breedtegraad op/rond Kefalonia zijn (≈ 37.5–39)');
+  if ('lat' in a && (!isNumber(a.lat) || a.lat < BBOX.latMin || a.lat > BBOX.latMax)) {
+    fail(file, `"lat" ${JSON.stringify(a.lat)} ligt niet op Kefalonia (verwacht ${BBOX.latMin}–${BBOX.latMax}; zie activities/README.md)`);
   }
-  if ('lng' in a && (!isNumber(a.lng) || a.lng < 19.5 || a.lng > 21.5)) {
-    fail(file, '"lng" moet een lengtegraad op/rond Kefalonia zijn (≈ 19.5–21.5)');
+  if ('lng' in a && (!isNumber(a.lng) || a.lng < BBOX.lngMin || a.lng > BBOX.lngMax)) {
+    fail(file, `"lng" ${JSON.stringify(a.lng)} ligt niet op Kefalonia (verwacht ${BBOX.lngMin}–${BBOX.lngMax}; zie activities/README.md)`);
   }
   if ('reservation' in a && typeof a.reservation !== 'boolean') fail(file, '"reservation" moet true/false zijn');
   if ('special' in a && typeof a.special !== 'boolean') fail(file, '"special" moet true/false zijn');

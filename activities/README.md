@@ -95,10 +95,10 @@ Minimale geldige activiteit (verplichte velden, geen optionele):
   // ↑ Google Maps-link; vervang de coördinaten door de echte lat,lng hieronder.
 
   "lat": 38.300,
-  // ↑ Breedtegraad (decimaal, ~5 decimalen). Kefalonia ligt tussen ≈ 37.5 en 39.0.
+  // ↑ Breedtegraad (decimaal, ~5 decimalen). Moet op Kefalonia liggen: 38.00–38.53.
 
   "lng": 20.500,
-  // ↑ Lengtegraad (decimaal, ~5 decimalen). Kefalonia ligt tussen ≈ 19.5 en 21.5.
+  // ↑ Lengtegraad (decimaal, ~5 decimalen). Moet op Kefalonia liggen: 20.28–20.85.
 
   "reservation": false,
   // ↑ true = toont "📋 Reserveer vooraf!"-badge en telt in reserveringsteller.
@@ -145,9 +145,9 @@ Minimale geldige activiteit (verplichte velden, geen optionele):
 | `tip`         | string    | ✅        | Praktisch advies in de detail-modal.                                          |
 | `cost`        | number    | ✅        | Geschatte kosten in € (geheel getal ≥ 0; `0` = gratis).                       |
 | `location`    | string    | ✅        | Leesbare locatie voor tooltip en overzicht.                                   |
-| `mapUrl`      | string    | ✅        | Google Maps-link die opent bij klik op de locatienaam.                        |
-| `lat`         | number    | ✅        | Breedtegraad (decimaal, ~5 decimalen) voor Leaflet + OSRM. Rond Kefalonia (≈ 37.5–39). |
-| `lng`         | number    | ✅        | Lengtegraad (decimaal, ~5 decimalen). Rond Kefalonia (≈ 19.5–21.5).           |
+| `mapUrl`      | string    | ✅        | Google Maps-link die opent bij klik op de locatienaam. **Vorm: `https://www.google.com/maps/search/?api=1&query=<lat>,<lng>`** — andere Maps-URL's (zoals `/maps/place/…` of `maps.google.com/maps?q=…`) falen in `test/activities.test.js`. |
+| `lat`         | number    | ✅        | Breedtegraad (decimaal, ~5 decimalen) voor Leaflet + OSRM. **Moet op Kefalonia liggen: 38.00–38.53.** Buiten die bbox faalt de build (issue #8). |
+| `lng`         | number    | ✅        | Lengtegraad (decimaal, ~5 decimalen). **Moet op Kefalonia liggen: 20.28–20.85.** Buiten die bbox faalt de build. |
 | `reservation`        | boolean   | —         | `true` = toont "📋 Reserveer vooraf!"-badge en telt in de reserveringsteller. Default `false`. |
 | `special`            | boolean   | —         | `true` = gouden "Verjaardagsidee"-stijl. **Alleen toegestaan bij `cat: "bday"`.** Default `false`. |
 | `googleRating`       | number    | —         | Google Maps steroordeel (0.0–5.0). **Altijd samen met `googleReviewCount` opgeven.** |

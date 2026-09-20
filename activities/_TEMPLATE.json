@@ -54,10 +54,12 @@
   // ↑ Google Maps-link; vervang de coördinaten door de echte lat,lng hieronder.
 
   "lat": 38.300,
-  // ↑ Breedtegraad (decimaal, ~5 decimalen). Kefalonia ligt tussen ≈ 37.5 en 39.0.
+  // ↑ Breedtegraad (decimaal, ~5 decimalen). Moet op Kefalonia liggen: 38.00–38.53
+  //   (build.js weigert alles daarbuiten).
 
   "lng": 20.500,
-  // ↑ Lengtegraad (decimaal, ~5 decimalen). Kefalonia ligt tussen ≈ 19.5 en 21.5.
+  // ↑ Lengtegraad (decimaal, ~5 decimalen). Moet op Kefalonia liggen: 20.28–20.85
+  //   (build.js weigert alles daarbuiten).
 
   "reservation": false,
   // ↑ true = toont "📋 Reserveer vooraf!"-badge en telt in reserveringsteller.
