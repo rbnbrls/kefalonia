@@ -34,6 +34,26 @@ const ALL_KEYS = [...REQUIRED_KEYS, ...OPTIONAL_KEYS];
 const CAT_ORDER = ['stranden', 'cultuur', 'natuur', 'eten', 'hotel', 'bday'];
 const ALLOWED_DURATIONS = [0, 45, 60, 90, 120, 150, 180, 240, 360, 480];
 
+// ── Kefalonia-bbox ──────────────────────────────────────────────────────────
+// Bron: OSM-relatie 957828 (het eiland Κεφαλονιά). Nominatim geeft voor die
+// relatie S 38.0565936 · N 38.4754952 · W 20.3367018 · E 20.8159477. De waarden
+// hieronder zijn naar BUITEN afgerond (0.0001°) zodat een punt dat OSM zelf
+// binnen de eiland-bbox vindt nooit onterecht wordt geweigerd.
+//
+// Voorheen stond hier 37.5–39 / 19.5–21.5. Die box is ~90 km te ruim: hij laat
+// het vasteland en de Amvrakikos-golf door (issue #8: c13 stond op 38.9555 /
+// 20.8739, bij Vonitsa). Let op: een bbox is een noodzakelijke, geen voldoende
+// voorwaarde — de hoeken van de box bevatten zee.
+const KEFALONIA_BBOX = {
+  minLat: 38.0565, maxLat: 38.4756,
+  minLng: 20.3366, maxLng: 20.8160,
+};
+
+// Elke mapUrl moet de template-vorm hebben (zie activities/README.md), zodat
+// een link altijd naar de gevalideerde lat/lng wijst in plaats van naar een
+// losse naam of het verouderde maps.google.com/maps?q=… (issue #8, punt 2).
+const MAPURL_PREFIX = 'https://www.google.com/maps/search/?api=1&query=';
+
 // Verzamel alle validatiefouten zodat we ze in één keer kunnen tonen.
 const errors = [];
 const seenIds = new Map(); // id -> bestandsnaam (voor duplicaat-detectie)
@@ -79,11 +99,14 @@ function validate(file, a) {
   }
   if ('location' in a && !isString(a.location)) fail(file, '"location" moet een niet-lege string zijn');
   if ('mapUrl' in a && !isString(a.mapUrl)) fail(file, '"mapUrl" moet een niet-lege string zijn');
-  if ('lat' in a && (!isNumber(a.lat) || a.lat < 37.5 || a.lat > 39)) {
-    fail(file, '"lat" moet een breedtegraad op/rond Kefalonia zijn (≈ 37.5–39)');
+  if (isString(a.mapUrl) && !a.mapUrl.startsWith(MAPURL_PREFIX)) {
+    fail(file, `"mapUrl" moet de template-vorm hebben: "${MAPURL_PREFIX}<lat>,<lng>"`);
   }
-  if ('lng' in a && (!isNumber(a.lng) || a.lng < 19.5 || a.lng > 21.5)) {
-    fail(file, '"lng" moet een lengtegraad op/rond Kefalonia zijn (≈ 19.5–21.5)');
+  if ('lat' in a && (!isNumber(a.lat) || a.lat < KEFALONIA_BBOX.minLat || a.lat > KEFALONIA_BBOX.maxLat)) {
+    fail(file, `"lat" moet binnen de Kefalonia-bbox liggen (${KEFALONIA_BBOX.minLat}–${KEFALONIA_BBOX.maxLat})`);
+  }
+  if ('lng' in a && (!isNumber(a.lng) || a.lng < KEFALONIA_BBOX.minLng || a.lng > KEFALONIA_BBOX.maxLng)) {
+    fail(file, `"lng" moet binnen de Kefalonia-bbox liggen (${KEFALONIA_BBOX.minLng}–${KEFALONIA_BBOX.maxLng})`);
   }
   if ('reservation' in a && typeof a.reservation !== 'boolean') fail(file, '"reservation" moet true/false zijn');
   if ('special' in a && typeof a.special !== 'boolean') fail(file, '"special" moet true/false zijn');

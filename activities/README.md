@@ -95,10 +95,12 @@ Minimale geldige activiteit (verplichte velden, geen optionele):
   // ↑ Google Maps-link; vervang de coördinaten door de echte lat,lng hieronder.
 
   "lat": 38.300,
-  // ↑ Breedtegraad (decimaal, ~5 decimalen). Kefalonia ligt tussen ≈ 37.5 en 39.0.
+  // ↑ Breedtegraad (decimaal, ~5 decimalen). Moet binnen de Kefalonia-bbox
+  //   liggen: ≈ 38.0565–38.4756 (eiland-bbox, zie "Coördinaten" hieronder).
 
   "lng": 20.500,
-  // ↑ Lengtegraad (decimaal, ~5 decimalen). Kefalonia ligt tussen ≈ 19.5 en 21.5.
+  // ↑ Lengtegraad (decimaal, ~5 decimalen). Moet binnen de Kefalonia-bbox
+  //   liggen: ≈ 20.3366–20.8160.
 
   "reservation": false,
   // ↑ true = toont "📋 Reserveer vooraf!"-badge en telt in reserveringsteller.
@@ -145,9 +147,9 @@ Minimale geldige activiteit (verplichte velden, geen optionele):
 | `tip`         | string    | ✅        | Praktisch advies in de detail-modal.                                          |
 | `cost`        | number    | ✅        | Geschatte kosten in € (geheel getal ≥ 0; `0` = gratis).                       |
 | `location`    | string    | ✅        | Leesbare locatie voor tooltip en overzicht.                                   |
-| `mapUrl`      | string    | ✅        | Google Maps-link die opent bij klik op de locatienaam.                        |
-| `lat`         | number    | ✅        | Breedtegraad (decimaal, ~5 decimalen) voor Leaflet + OSRM. Rond Kefalonia (≈ 37.5–39). |
-| `lng`         | number    | ✅        | Lengtegraad (decimaal, ~5 decimalen). Rond Kefalonia (≈ 19.5–21.5).           |
+| `mapUrl`      | string    | ✅        | Google Maps-link die opent bij klik op de locatienaam. **Moet met `https://www.google.com/maps/search/?api=1&query=` beginnen** (build weigert andere vormen). |
+| `lat`         | number    | ✅        | Breedtegraad (decimaal, ~5 decimalen) voor Leaflet + OSRM. Binnen `38.0565–38.4756`. |
+| `lng`         | number    | ✅        | Lengtegraad (decimaal, ~5 decimalen). Binnen `20.3366–20.8160`.               |
 | `reservation`        | boolean   | —         | `true` = toont "📋 Reserveer vooraf!"-badge en telt in de reserveringsteller. Default `false`. |
 | `special`            | boolean   | —         | `true` = gouden "Verjaardagsidee"-stijl. **Alleen toegestaan bij `cat: "bday"`.** Default `false`. |
 | `googleRating`       | number    | —         | Google Maps steroordeel (0.0–5.0). **Altijd samen met `googleReviewCount` opgeven.** |
@@ -170,6 +172,33 @@ Minimale geldige activiteit (verplichte velden, geen optionele):
 
 `0` = "geen tijdsindicatie" (bijv. hotel/spa). Waarden ≥ 420 worden weergegeven
 als "Hele dag" en blokkeren andere activiteiten op dezelfde dag.
+
+## Coördinaten en mapUrl
+
+De build weigert `lat`/`lng` buiten de **Kefalonia-bbox**: de bounding box van
+het eiland volgens OpenStreetMap (relatie
+[957828](https://www.openstreetmap.org/relation/957828)).
+
+| Veld  | min     | max     |
+|-------|---------|---------|
+| `lat` | 38.0565 | 38.4756 |
+| `lng` | 20.3366 | 20.8160 |
+
+Die box is bewust krap. De oude grens (37.5–39 / 19.5–21.5) liet het vasteland
+en de Amvrakikos-golf door, waardoor een activiteit ~90 km buiten Kefalonia kon
+liggen zonder dat de build klaagde (issue #8). Let op: een bbox is een
+noodzakelijke, geen voldoende voorwaarde — de hoeken van de box bevatten zee.
+
+Controleer een locatie altijd op een kaart (bijv.
+[nominatim.openstreetmap.org](https://nominatim.openstreetmap.org/)) in plaats
+van te schatten. Staat een zaak niet in OpenStreetMap, gebruik dan het
+geverifieerde middelpunt van het dorp dat in `location` staat.
+
+`mapUrl` moet de template-vorm hebben en dus naar dezelfde coördinaten wijzen:
+
+```json
+"mapUrl": "https://www.google.com/maps/search/?api=1&query=<lat>,<lng>"
+```
 
 ## Volgorde in de UI
 
