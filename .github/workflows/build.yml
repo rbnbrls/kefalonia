@@ -1,0 +1,29 @@
+name: build
+
+# De Coolify-deploy bouwt met `npm run build` (Nixpacks). Tot nu toe draaide die
+# validatie alleen tijdens de deploy, waardoor een kapot activiteitenbestand pas
+# op productie zichtbaar werd (issue #6). Deze workflow draait exact dezelfde
+# stap al op de PR, zodat dezelfde fout niet meer main kan bereiken.
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+jobs:
+  validate-activities:
+    name: validate activities + generated registry
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      # build.js heeft geen dependencies — geen npm ci nodig.
+      - name: Valideer activities/*.json (zelfde stap als de Coolify-build)
+        run: npm test
+
+      - name: activities.generated.js moet meegecommit zijn
+        run: git diff --exit-code -- activities.generated.js

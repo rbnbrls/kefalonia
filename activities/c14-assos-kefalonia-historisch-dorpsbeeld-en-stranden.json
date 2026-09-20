@@ -1,6 +1,6 @@
 {
   "id": "c14",
-  "cat": "c",
+  "cat": "cultuur",
   "icon": "🏛️",
   "title": "Assos (Kefalonia) - Historisch dorpsbeeld en stranden",
   "duration": 180,
@@ -13,15 +13,15 @@
   "lng": 20.530148,
   "reservation": false,
   "special": false,
-  "timeOfDay": "morgens",
+  "timeOfDay": "morning",
   "highlights": [
     "Assos zetelplaats van Venetiaanse heerschappij (1593-1797)",
     "Panoramische zeeuitzichten vanaf ockerhuizen",
     "Myrtos-beach 36 km noordwest"
   ],
   "combineWith": [
-    "naturafbeeldingen",
-    "kastelen"
+    "c2",
+    "s1"
   ],
   "googleRating": 4.6,
   "googleReviewCount": 2525
