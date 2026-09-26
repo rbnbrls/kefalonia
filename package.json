@@ -6,7 +6,8 @@
   "scripts": {
     "build": "node build.js",
     "dev": "node build.js && npx serve .",
-    "test": "node build.js && node --test"
+    "test": "node build.js && node --test",
+    "coverage": "c8 npm test"
   },
   "repository": {
     "type": "git",
@@ -17,6 +18,7 @@
   "license": "ISC",
   "type": "commonjs",
   "devDependencies": {
+    "c8": "^12.0.0",
     "playwright": "^1.60.0"
   }
 }

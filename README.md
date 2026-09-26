@@ -96,7 +96,10 @@ kefalonia/
 │   └── …                    ← 39 activiteiten
 ├── activities.generated.js  ← GEGENEREERD door build.js (window.ACTIVITIES = […])
 ├── build.js                 ← zero-dependency Node-script: valideert + bundelt activities/
-├── package.json             ← npm-scripts (build/dev) + Playwright als devDependency
+├── test/                    ← regressietests op node:test (`npm test`)
+├── .c8rc.json               ← coverage-config van c8 (`npm run coverage`)
+├── coverage/lcov.info       ← GEGENEREERD lcov-rapport — meegecommit, bron van waarheid
+├── package.json             ← npm-scripts (build/dev/test/coverage) + devDependencies
 ├── README.md
 └── .gitignore
 ```
@@ -112,8 +115,9 @@ inleest). `app.js` blijft een *classic script* in global scope, zodat de inline
 > caching: wijzig je alleen een activiteit, dan verandert enkel `activities.generated.js`
 > en blijven `styles.css`/`app.js` in de browsercache staan.
 
-> De app heeft geen runtime-dependencies. `package.json` bevat enkel Playwright,
-> bedoeld voor end-to-end tests. `build.js` gebruikt **uitsluitend de Node-standaardlib**.
+> De app heeft geen runtime-dependencies. `package.json` bevat alleen dev-tools:
+> `c8` voor de coverage-run (`npm run coverage`) en `playwright` (legacy, voor
+> end-to-end tests). `build.js` gebruikt **uitsluitend de Node-standaardlib**.
 
 ## Externe diensten (via CDN / API, geen eigen backend)
 
@@ -157,6 +161,27 @@ open index.html      # daarna direct te openen (alle scripts laden lokaal, geen 
 
 > Je hoeft `npm run build` alleen te draaien als je iets in `activities/` hebt veranderd.
 > `activities.generated.js` wordt **meegecommit**, dus een verse clone werkt meteen.
+
+### Tests en coverage
+
+```bash
+npm test             # node build.js + node --test — dezelfde stap als CI en de Coolify-build
+npm run coverage     # hetzelfde, maar onder c8: print de line total en schrijft coverage/lcov.info
+```
+
+`npm run coverage` leest zijn instellingen uit [`.c8rc.json`](.c8rc.json): de
+reporters (`text` + `lcovonly`), de uitsluitingen en de drempel (`lines: 80` — de
+run faalt daaronder). Het rapport `coverage/lcov.info` is het **duurzame**
+dekkingsbewijs: het wordt meegecommit en de build-workflow controleert dat het
+actueel is (`git diff --exit-code`). Wijzig je `build.js`, draai dan
+`npm run coverage` en commit het rapport mee — net als bij
+`activities.generated.js`.
+
+> **Scope van het rapport.** Gemeten wordt `build.js`, de Node-tooling die de
+> tests echt uitvoeren. De browserkant (`app.js`, `index.html`) wordt hier niet
+> gemeten en dus ook **niet als 0%** gerapporteerd: daar is geen DOM-harness
+> voor, dus een percentage zou schijnprecisie zijn. Een aparte browser-suite is
+> nodig om die kant te dekken.
 
 ## Deployen op Coolify (blijft statisch)
 
