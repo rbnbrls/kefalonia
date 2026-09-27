@@ -5,6 +5,7 @@
   "main": "index.html",
   "scripts": {
     "build": "node build.js",
+    "start": "node server.js",
     "dev": "node build.js && npx serve .",
     "test": "node build.js && node --test",
     "coverage": "c8 npm test",

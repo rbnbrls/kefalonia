@@ -74,7 +74,7 @@ module.exports = [
 
   {
     // Node-scripts (build, favicon-generatie, tests) en deze config zelf.
-    files: ['build.js', 'generate-favicons.js', 'test/**/*.js', 'eslint.config.js'],
+    files: ['build.js', 'generate-favicons.js', 'server.js', 'test/**/*.js', 'eslint.config.js'],
     languageOptions: {
       globals: {
         ...globals.node,
