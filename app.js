@@ -1,3 +1,25 @@
+/*
+ * app.js — Kefalonia Vakantie Planner (klassiek browserscript, geen module).
+ * ─────────────────────────────────────────────────────────────────────────
+ * Alles op topniveau is de globale API van de pagina: index.html roept deze
+ * functies aan vanuit inline onclick-handlers, en app.js bouwt zelf HTML die
+ * dezelfde handlers bevat. ESLint kan die aanroepen niet zien, dus staan ze
+ * hier expliciet als `exported` — anders leest elke handler als dode code.
+ * Echt ongebruikte topniveau-code blijft zo wél een lintfout.
+ */
+/* exported
+   applyRouteProposal, closeDaySheet, closeMapOverlay, closeMenuSheet,
+   closeSessionCodeModal, copyPlanCode, copySessionCode, createSyncSession,
+   detailSelectActivity, dismissRouteProposal, exportToIcal, goBackFromCatalog,
+   handleBackdropClick, handleDetailBackdropClick, handleFeedbackBackdropClick,
+   joinSyncSession, mobileNextDay, mobilePrevDay, openActivityDetailFromCatalog,
+   openAddActivityModal, openDaySheet, openFeedbackModal, openMapOverlay,
+   openMenuSheet, printPlan, resetAll, resumeFromCode, resumeSaved, showCatalog,
+   showOptimalRouteProposal, showOverview, sortCatalog, startFresh,
+   submitActivityRequest, submitFeedbackRequest, toggleResumeForm,
+   toggleSyncJoinForm, updateSyncStatusBadge
+*/
+
 // ═══════════════════════════════════════════════════════
 //  DATA
 // ═══════════════════════════════════════════════════════
@@ -37,6 +59,21 @@ const CAT_LABELS = {
 // ═══════════════════════════════════════════════════════
 //  STATE
 // ═══════════════════════════════════════════════════════
+
+/**
+ * Eén dag in het plan: de activiteiten die erop staan (met een door de app
+ * gezette `startTime`).
+ * @typedef {{ activities: Activity[] }} DayPlan
+ *
+ * `currentDay` is óf een dagnummer (0-13) óf de reis-tabbladen 'heen'/'terug'.
+ * Dat is bewust `any` en niet de union `number | 'heen' | 'terug'`: de app
+ * vergelijkt en rekent op ~25 plekken met deze waarde zonder te narrowen, en
+ * dat eerst uitrefactoren hoort niet in dezelfde wijziging als het aanzetten
+ * van de typecontrole. Zie README → "Vervolgstappen".
+ * @typedef {{ name: string, currentDay: any, plan: DayPlan[] }} AppState
+ */
+
+/** @type {AppState} */
 let state = {
   name: '',
   currentDay: 'heen',
@@ -53,6 +90,23 @@ function escapeHtml(str) {
     .replace(/</g, '&lt;')
     .replace(/>/g, '&gt;')
     .replace(/"/g, '&quot;');
+}
+
+/**
+ * Formulier-elementen (input, select, textarea) worden in deze app via hun id
+ * opgezocht en daarna met `.value`/`.disabled` gebruikt. `getElementById()`
+ * levert `HTMLElement`, waar die eigenschappen niet op staan; deze twee helpers
+ * zetten de cast één keer neer in plaats van op elke vindplaats.
+ * @param {string} id
+ * @returns {HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement}
+ */
+function formEl(id) {
+  return /** @type {HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement} */ (document.getElementById(id));
+}
+
+/** @param {string} id @returns {HTMLButtonElement} */
+function buttonEl(id) {
+  return /** @type {HTMLButtonElement} */ (document.getElementById(id));
 }
 
 // ═══════════════════════════════════════════════════════
@@ -132,7 +186,7 @@ async function loadWeather() {
       try {
         const raw = localStorage.getItem(WEATHER_CACHE_KEY);
         if (raw) weatherData = JSON.parse(raw).days;
-      } catch (__) {}
+      } catch (__) { /* genegeerd: we vallen terug op wat er al is */ }
     }
   } finally {
     weatherLoading = false;
@@ -263,7 +317,7 @@ function saveState() {
   const serialized = serializePlan(state);
   try {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(serialized));
-  } catch (e) {
+  } catch (_) {
     // private mode / quota — stilletjes negeren
   }
   if (!isApplyingRemoteUpdate) {
@@ -276,7 +330,7 @@ function loadState() {
     const raw = localStorage.getItem(STORAGE_KEY);
     if (!raw) return null;
     return hydratePlan(JSON.parse(raw));
-  } catch (e) {
+  } catch (_) {
     return null;
   }
 }
@@ -284,7 +338,7 @@ function loadState() {
 function clearSavedState() {
   try {
     localStorage.removeItem(STORAGE_KEY);
-  } catch (e) {}
+  } catch (_) { /* private mode — niets op te ruimen */ }
 }
 
 // ── Terugkeer-code (zelfbevattend, base64url, geen backend) ──
@@ -305,7 +359,7 @@ function decodePlanCode(code) {
     const bytes = new Uint8Array([...binary].map(c => c.charCodeAt(0)));
     const json = new TextDecoder().decode(bytes);
     return hydratePlan(JSON.parse(json));
-  } catch (e) {
+  } catch (_) {
     return null;
   }
 }
@@ -359,26 +413,8 @@ let activitySearchQuery = '';
 let timelineView = false;
 let routeProposal = null; // { dayIndex, proposedOrder, savedKm, alreadyOptimal } | null
 
-// Track which activities are used
-function usedIds() {
-  const ids = new Set();
-  state.plan.forEach(d => {
-    d.activities.forEach(a => ids.add(a.id));
-  });
-  return ids;
-}
-
-function availableActivities(isSpecialDay) {
-  const used = usedIds();
-  return ACTIVITIES.filter(a => {
-    if (used.has(a.id) && a.id !== 'e9') return false;
-    if (isSpecialDay && a.cat === 'bday') return true;
-    if (!isSpecialDay && a.cat === 'bday') return false;
-    return true;
-  });
-}
-
-// Like availableActivities but includes the current day's own selections
+// Activiteiten die op deze dag nog te kiezen zijn: selecties van de dag zelf
+// tellen niet als bezet, die van andere dagen wel.
 function availableForDay(dayIndex, isSpecialDay) {
   const usedElsewhere = new Set();
   state.plan.forEach((d, i) => {
@@ -396,8 +432,8 @@ function availableForDay(dayIndex, isSpecialDay) {
 // ═══════════════════════════════════════════════════════
 //  WELCOME
 // ═══════════════════════════════════════════════════════
-const nameInput = document.getElementById('planner-name');
-const startBtn = document.getElementById('btn-start');
+const nameInput = formEl('planner-name');
+const startBtn = buttonEl('btn-start');
 
 function updateStartButtonState() {
   if (startBtn && nameInput) {
@@ -420,7 +456,7 @@ if (nameInput) {
 }
 
 function startPlanning() {
-  const nameEl = document.getElementById('planner-name');
+  const nameEl = formEl('planner-name');
   state.name = nameEl ? (nameEl.value.trim() || 'Jij') : 'Jij';
   state.currentDay = 'heen';
   showScreen('screen-planner');
@@ -475,7 +511,7 @@ function toggleResumeForm() {
 }
 
 function resumeFromCode() {
-  const input = document.getElementById('code-input');
+  const input = formEl('code-input');
   const err = document.getElementById('resume-error');
   const restored = decodePlanCode(input.value);
   if (!restored || !planHasContent(restored)) {
@@ -598,7 +634,7 @@ window.setActivitySearch = function(query) {
   activitySearchQuery = query;
   renderPlannerDay(state.currentDay);
   // Restore focus & cursor position after re-render
-  const el = document.getElementById('activity-search-input');
+  const el = /** @type {HTMLInputElement} */ (document.getElementById('activity-search-input'));
   if (el) {
     el.focus();
     el.value = query;
@@ -882,7 +918,7 @@ async function updateRouteStatsCard(dayIndex) {
   numbersEl.innerHTML = `<div style="font-size:0.75rem;color:var(--muted);">Berekenen…</div>`;
 
   const [hotelLat, hotelLng] = HOTEL_COORDS;
-  let totalDistance = 0, totalTime = 0, allExact = true;
+  let totalDistance, totalTime, allExact = true;
 
   try {
     if (acts.length === 1) {
@@ -905,7 +941,7 @@ async function updateRouteStatsCard(dayIndex) {
       totalTime = segments.reduce((s, seg) => s + seg.time, 0);
       if (segments.some(s => !s.exact)) allExact = false;
     }
-  } catch (e) {
+  } catch (_) {
     const el = document.getElementById(`route-stats-numbers-${dayIndex}`);
     if (el) el.innerHTML = `<div style="font-size:0.75rem;color:var(--muted);">Niet beschikbaar</div>`;
     return;
@@ -1020,7 +1056,7 @@ function updateMap(dayIndex) {
   const coords = [HOTEL_COORDS];
   const rmBtnStyle = 'width:100%; font-size:0.65rem; padding:4px 8px; background:#c53030; color:white; border:none; border-radius:4px; cursor:pointer; font-weight:500; margin-top:6px;';
 
-  plan.activities.forEach((act, idx) => {
+  plan.activities.forEach(act => {
     coords.push([act.lat, act.lng]);
     const actMarker = L.marker([act.lat, act.lng], {
       icon: L.divIcon({
@@ -1386,6 +1422,7 @@ function buildTimelineHtml(dayIndex, activities) {
     `;
   });
 
+  /** @type {[number, string][]} */
   const ticks = [[0,'09:00'],[120,'11:00'],[240,'13:00'],[360,'15:00'],[480,'17:00'],[540,'18:00']];
   const ruler = ticks.map(([m, lbl]) =>
     `<span class="tl-tick" style="left:${(m / TOTAL_MIN) * 100}%;">${lbl}</span>`
@@ -1584,7 +1621,9 @@ function renderPlannerDay(i) {
   const budgetColor = isOverBudget ? 'var(--terracotta)' : budgetPct >= 70 ? '#d97706' : 'var(--olive)';
 
   // Build stats card (real distances fetched async after render)
-  let statsHtml = '';
+  // Beide takken van de if hieronder zetten statsHtml; de lege beginwaarde werd
+  // nooit gelezen (no-useless-assignment).
+  let statsHtml;
   let regionTip = '';
 
   if (plan.activities.length > 0) {
@@ -1746,11 +1785,11 @@ function renderPlannerDay(i) {
       <span style="font-size:0.72rem; text-transform:uppercase; letter-spacing:0.12em; color:var(--muted); flex-shrink:0;">Sorteren op:</span>
       <div style="display:flex; gap:6px;">
         <button onclick="setSortMode('category')"
-          style="font-size:0.78rem; padding:5px 14px; border-radius:100px; border:1.5px solid ${sortMode === 'category' ? 'var(--sea-deep)' : 'var(--sand-dark)'}; background:${sortMode === 'category' ? 'var(--sea-deep)' : 'var(--white)'}; color:${sortMode === 'category' ? 'white' : 'var(--muted)'}; cursor:pointer; font-family:\'DM Sans\',sans-serif; font-weight:500; transition:all 0.15s;">
+          style="font-size:0.78rem; padding:5px 14px; border-radius:100px; border:1.5px solid ${sortMode === 'category' ? 'var(--sea-deep)' : 'var(--sand-dark)'}; background:${sortMode === 'category' ? 'var(--sea-deep)' : 'var(--white)'}; color:${sortMode === 'category' ? 'white' : 'var(--muted)'}; cursor:pointer; font-family:'DM Sans',sans-serif; font-weight:500; transition:all 0.15s;">
           📂 Per categorie
         </button>
         <button onclick="setSortMode('distance')"
-          style="font-size:0.78rem; padding:5px 14px; border-radius:100px; border:1.5px solid ${sortMode === 'distance' ? 'var(--sea-deep)' : 'var(--sand-dark)'}; background:${sortMode === 'distance' ? 'var(--sea-deep)' : 'var(--white)'}; color:${sortMode === 'distance' ? 'white' : 'var(--muted)'}; cursor:pointer; font-family:\'DM Sans\',sans-serif; font-weight:500; transition:all 0.15s;">
+          style="font-size:0.78rem; padding:5px 14px; border-radius:100px; border:1.5px solid ${sortMode === 'distance' ? 'var(--sea-deep)' : 'var(--sand-dark)'}; background:${sortMode === 'distance' ? 'var(--sea-deep)' : 'var(--white)'}; color:${sortMode === 'distance' ? 'white' : 'var(--muted)'}; cursor:pointer; font-family:'DM Sans',sans-serif; font-weight:500; transition:all 0.15s;">
           📍 Op afstand
         </button>
       </div>
@@ -1917,7 +1956,6 @@ function updateMobileBar() {
   const cd = state.currentDay;
   const isHeen = cd === 'heen';
   const isTerug = cd === 'terug';
-  const isNum = typeof cd === 'number';
 
   const labelEl = document.getElementById('mobile-day-label');
   const fillEl = document.getElementById('mobile-budget-fill');
@@ -1936,7 +1974,6 @@ function updateMobileBar() {
   } else {
     const day = DAYS[cd];
     labelEl.textContent = `Dag ${cd + 1} — ${day.name}`;
-    const plan = state.plan[cd];
     const usedMin = dayUsedMinutes(cd);
     const pct = Math.min(100, (usedMin / DAY_BUDGET_MINUTES) * 100);
     const isOver = usedMin > DAY_BUDGET_MINUTES;
@@ -1952,8 +1989,8 @@ function updateMobileBar() {
     }
   }
 
-  document.getElementById('mobile-prev-btn').disabled = isHeen;
-  document.getElementById('mobile-next-btn').disabled = isTerug;
+  buttonEl('mobile-prev-btn').disabled = isHeen;
+  buttonEl('mobile-next-btn').disabled = isTerug;
 }
 
 function mobilePrevDay() {
@@ -2293,7 +2330,7 @@ function openActivityDetail(dayIndex, actId) {
     ` : ''}
   `;
 
-  const selectBtn = document.getElementById('btn-detail-select');
+  const selectBtn = buttonEl('btn-detail-select');
   if (isBlocked) {
     selectBtn.textContent = 'Niet combineerbaar';
     selectBtn.disabled = true;
@@ -2439,9 +2476,9 @@ function resetAll() {
   pendingSaved = null;
   document.getElementById('welcome-banner').classList.remove('open');
   document.getElementById('code-box').classList.remove('open');
-  const nameEl = document.getElementById('planner-name');
+  const nameEl = formEl('planner-name');
   if (nameEl) nameEl.value = '';
-  const startEl = document.getElementById('btn-start');
+  const startEl = buttonEl('btn-start');
   if (startEl && nameEl) startEl.disabled = true;
   showScreen('screen-welcome');
 }
@@ -2499,6 +2536,10 @@ function exportToIcal() {
     'X-WR-TIMEZONE:Europe/Athens',
   ];
 
+  /**
+   * @param {{ uid: string, dtStart: string, dtEnd: string, summary: string,
+   *           location?: string, description?: string, alarm?: string }} ev
+   */
   const addEvent = ({ uid, dtStart, dtEnd, summary, location, description, alarm }) => {
     lines.push('BEGIN:VEVENT');
     lines.push(`UID:${uid}`);
@@ -2646,10 +2687,10 @@ function sortCatalog(col) {
 }
 
 function applyCatalogFilters() {
-  const search = (document.getElementById('catalog-search').value || '').toLowerCase().trim();
-  const cat    = document.getElementById('catalog-cat').value;
-  const cost   = document.getElementById('catalog-cost').value;
-  const res    = document.getElementById('catalog-res').value;
+  const search = (formEl('catalog-search').value || '').toLowerCase().trim();
+  const cat    = formEl('catalog-cat').value;
+  const cost   = formEl('catalog-cost').value;
+  const res    = formEl('catalog-res').value;
 
   let filtered = ACTIVITIES.filter(a => {
     if (search) {
@@ -2786,10 +2827,10 @@ function openActivityDetailFromCatalog(actId) {
 //  ADD-ACTIVITY MODAL
 // ═══════════════════════════════════════════════════════
 function openAddActivityModal() {
-  document.getElementById('act-title-input').value = '';
-  document.getElementById('act-desc-input').value = '';
+  formEl('act-title-input').value = '';
+  formEl('act-desc-input').value = '';
   document.getElementById('modal-status').textContent = '';
-  document.getElementById('btn-submit-activity').disabled = false;
+  buttonEl('btn-submit-activity').disabled = false;
   document.getElementById('modal-add-activity').classList.add('open');
   setTimeout(() => document.getElementById('act-title-input').focus(), 50);
 }
@@ -2805,10 +2846,10 @@ function handleBackdropClick(e) {
 }
 
 async function submitActivityRequest() {
-  const title = document.getElementById('act-title-input').value.trim();
-  const desc  = document.getElementById('act-desc-input').value.trim();
+  const title = formEl('act-title-input').value.trim();
+  const desc  = formEl('act-desc-input').value.trim();
   const status = document.getElementById('modal-status');
-  const btn = document.getElementById('btn-submit-activity');
+  const btn = buttonEl('btn-submit-activity');
 
   if (!title) {
     status.style.color = 'var(--terracotta)';
@@ -2883,7 +2924,8 @@ function onRemoteUpdate(remotePlanObj) {
   state = merged;
   isApplyingRemoteUpdate = true;
   try {
-    try { localStorage.setItem(STORAGE_KEY, JSON.stringify(serializePlan(state))); } catch (e) {}
+    // localStorage kan vol of geblokkeerd zijn — een mislukte cache is niet fataal.
+    try { localStorage.setItem(STORAGE_KEY, JSON.stringify(serializePlan(state))); } catch (_) { /* bewust leeg */ }
     renderSidebar();
     const currentIdx = typeof state.currentDay === 'number' ? state.currentDay : -1;
     if (changedDays.includes(currentIdx)) {
@@ -2952,13 +2994,13 @@ function toggleSyncJoinForm() {
 }
 
 async function joinSyncSession() {
-  const input = document.getElementById('sync-code-input');
+  const input = formEl('sync-code-input');
   const err = document.getElementById('sync-join-error');
   const code = (input.value || '').trim().toUpperCase();
   if (!code) { err.textContent = 'Voer een code in.'; return; }
   err.textContent = 'Zoeken…';
   try {
-    const nameEl = document.getElementById('planner-name');
+    const nameEl = formEl('planner-name');
     const name = nameEl ? ((nameEl.value || '').trim() || 'Jij') : 'Jij';
     const result = await sync.loadSession(code);
     if (!result) { err.textContent = 'Code niet gevonden.'; return; }
@@ -2967,13 +3009,13 @@ async function joinSyncSession() {
     state = { ...hydrated, name };
     sync.subscribe(result.recordId, onRemoteUpdate);
     enterPlanner();
-  } catch (e) {
+  } catch (_) {
     err.textContent = 'Code niet gevonden. Controleer de spelling.';
   }
 }
 
 async function createSyncSession() {
-  const nameInput = document.getElementById('planner-name');
+  const nameInput = formEl('planner-name');
   const name = (nameInput ? nameInput.value : '').trim() || 'Jij';
   state.name = name;
   state.currentDay = 'heen';
@@ -2981,7 +3023,7 @@ async function createSyncSession() {
     const { code, recordId } = await sync.createSession(serializePlan(state));
     sync.subscribe(recordId, onRemoteUpdate);
     showSessionCodeModal(code);
-  } catch (e) {
+  } catch (_) {
     alert('Kon geen sessie aanmaken. Controleer de verbinding.');
   }
 }
@@ -3028,10 +3070,10 @@ function copySessionCode() {
 let currentFeedbackRating = 0;
 
 function openFeedbackModal() {
-  document.getElementById('feedback-name-input').value = state.name || '';
-  document.getElementById('feedback-text-input').value = '';
+  formEl('feedback-name-input').value = state.name || '';
+  formEl('feedback-text-input').value = '';
   document.getElementById('feedback-status').textContent = '';
-  document.getElementById('btn-submit-feedback').disabled = false;
+  buttonEl('btn-submit-feedback').disabled = false;
   
   setFeedbackRating(0); // Reset stars
   
@@ -3062,10 +3104,10 @@ function setFeedbackRating(rating) {
 }
 
 async function submitFeedbackRequest() {
-  const name = document.getElementById('feedback-name-input').value.trim();
-  const text = document.getElementById('feedback-text-input').value.trim();
+  const name = formEl('feedback-name-input').value.trim();
+  const text = formEl('feedback-text-input').value.trim();
   const status = document.getElementById('feedback-status');
-  const btn = document.getElementById('btn-submit-feedback');
+  const btn = buttonEl('btn-submit-feedback');
 
   if (currentFeedbackRating === 0 && !text) {
     status.style.color = 'var(--terracotta)';

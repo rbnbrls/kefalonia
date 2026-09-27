@@ -42,7 +42,7 @@
       this._suppressDepth++;
       try {
         await pb.collection('sessions').update(this.recordId, { plan: serializedPlan });
-      } catch (e) {
+      } catch (_) {
         this._suppressDepth--;
       }
     },
@@ -130,7 +130,7 @@
       try {
         const raw = localStorage.getItem(SYNC_KEY);
         return raw ? JSON.parse(raw) : null;
-      } catch (e) {
+      } catch (_) {
         return null;
       }
     },

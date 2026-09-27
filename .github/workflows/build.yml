@@ -9,6 +9,11 @@ name: build
 # line total wordt geprint, de drempel uit .c8rc.json wordt afgedwongen en
 # coverage/lcov.info wordt als actueel bewijs meegecommit (niet alleen een
 # logregel — die is niet duurzaam).
+#
+# De job `static-analysis` zet daar de twee statische controles naast: ESLint
+# (eslint.config.js) voor de lint-regels en de TypeScript-compiler in
+# `tsc --noEmit`-modus (tsconfig.json, checkJs) voor de types. Beide falen de
+# build, dus een schending kan main niet bereiken.
 
 on:
   pull_request:
@@ -42,3 +47,24 @@ jobs:
 
       - name: coverage/lcov.info moet meegecommit zijn
         run: git diff --exit-code -- coverage/lcov.info
+
+  static-analysis:
+    name: lint (ESLint) + typecheck (tsc --noEmit)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+
+      # ESLint, TypeScript en @types/node staan in devDependencies.
+      - name: Installeer dev-dependencies (ESLint, tsc)
+        run: npm ci
+
+      - name: Lint (eslint .)
+        run: npm run lint
+
+      - name: Typecontrole (tsc --noEmit)
+        run: npm run typecheck
