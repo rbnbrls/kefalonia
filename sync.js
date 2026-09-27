@@ -88,7 +88,10 @@
           throw e;
         }
       }
-      if (!code) throw new Error('Session code collision after 5 attempts');
+      // `code` is na elke poging gevuld; alleen `record` bewijst dat de
+      // aanroep gelukt is. Zonder deze check gooit de regel hieronder een
+      // TypeError op `record.id` in plaats van deze melding.
+      if (!record) throw new Error('Session code collision after 5 attempts');
       this.sessionCode = code;
       this.recordId = record.id;
       try {
