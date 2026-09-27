@@ -54,7 +54,7 @@ async function withServer(callback) {
       server.stdout.on('data', (chunk) => {
         if (chunk.toString().includes('listening')) {
           clearTimeout(timeout);
-          resolve();
+          resolve(undefined);
         }
       });
       server.on('error', reject);
