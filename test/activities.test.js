@@ -23,10 +23,48 @@ const assert = require('node:assert/strict');
 const fs = require('node:fs');
 const os = require('node:os');
 const path = require('node:path');
-const { spawnSync } = require('node:child_process');
+const { spawn, spawnSync } = require('node:child_process');
+const http = require('node:http');
 
 const ROOT = path.join(__dirname, '..');
 const ACT_DIR = path.join(ROOT, 'activities');
+
+function get(url) {
+  return new Promise((resolve, reject) => {
+    const request = http.get(url, (response) => {
+      let body = '';
+      response.setEncoding('utf8');
+      response.on('data', (chunk) => { body += chunk; });
+      response.on('end', () => resolve({ status: response.statusCode, body }));
+    });
+    request.on('error', reject);
+  });
+}
+
+async function withServer(callback) {
+  const port = 34000 + Math.floor(Math.random() * 1000);
+  const server = spawn(process.execPath, ['server.js'], {
+    cwd: ROOT,
+    env: { ...process.env, HOST: '127.0.0.1', PORT: String(port) },
+    stdio: ['ignore', 'pipe', 'pipe'],
+  });
+  try {
+    await new Promise((resolve, reject) => {
+      const timeout = setTimeout(() => reject(new Error('server did not start')), 3000);
+      server.stdout.on('data', (chunk) => {
+        if (chunk.toString().includes('listening')) {
+          clearTimeout(timeout);
+          resolve();
+        }
+      });
+      server.on('error', reject);
+      server.on('exit', (code) => reject(new Error(`server exited before start: ${code}`)));
+    });
+    return await callback(`http://127.0.0.1:${port}`);
+  } finally {
+    server.kill();
+  }
+}
 
 // ── Onafhankelijke referentie ──────────────────────────────────────────────
 // Bbox van de OSM-relatie "Κεφαλονιά" (island), opgehaald 2026-09-20 via
@@ -155,4 +193,16 @@ test('activities.generated.js is in sync met activities/*.json', () => {
   assert.equal(res.status, 0, res.stderr);
   const committed = fs.readFileSync(path.join(ROOT, 'activities.generated.js'), 'utf8');
   assert.equal(res.generated, committed, 'run `npm run build` en commit het resultaat');
+});
+
+test('start server serves the static app on Coolify PORT', async () => {
+  await withServer(async (baseUrl) => {
+    const home = await get(`${baseUrl}/`);
+    assert.equal(home.status, 200);
+    assert.match(home.body, /<!DOCTYPE html>/i);
+
+    const generated = await get(`${baseUrl}/activities.generated.js`);
+    assert.equal(generated.status, 200);
+    assert.match(generated.body, /window\.ACTIVITIES/);
+  });
 });
