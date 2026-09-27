@@ -1,0 +1,13 @@
+{
+  "reporter": ["text", "lcovonly"],
+  "report-dir": "coverage",
+  "exclude": [
+    "coverage/**",
+    "node_modules/**",
+    "test/**",
+    "**/*.test.js",
+    "**/kefalonia-build-*/**"
+  ],
+  "check-coverage": true,
+  "lines": 80
+}

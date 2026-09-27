@@ -42,7 +42,7 @@
       this._suppressDepth++;
       try {
         await pb.collection('sessions').update(this.recordId, { plan: serializedPlan });
-      } catch (e) {
+      } catch (_) {
         this._suppressDepth--;
       }
     },
@@ -88,7 +88,10 @@
           throw e;
         }
       }
-      if (!code) throw new Error('Session code collision after 5 attempts');
+      // `code` is na elke poging gevuld; alleen `record` bewijst dat de
+      // aanroep gelukt is. Zonder deze check gooit de regel hieronder een
+      // TypeError op `record.id` in plaats van deze melding.
+      if (!record) throw new Error('Session code collision after 5 attempts');
       this.sessionCode = code;
       this.recordId = record.id;
       try {
@@ -130,7 +133,7 @@
       try {
         const raw = localStorage.getItem(SYNC_KEY);
         return raw ? JSON.parse(raw) : null;
-      } catch (e) {
+      } catch (_) {
         return null;
       }
     },

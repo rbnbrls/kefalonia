@@ -4,6 +4,16 @@ name: build
 # validatie alleen tijdens de deploy, waardoor een kapot activiteitenbestand pas
 # op productie zichtbaar werd (issue #6). Deze workflow draait exact dezelfde
 # stap al op de PR, zodat dezelfde fout niet meer main kan bereiken.
+#
+# Sinds de coverage-tooling draait deze workflow ook `npm run coverage`: de
+# line total wordt geprint, de drempel uit .c8rc.json wordt afgedwongen en
+# coverage/lcov.info wordt als actueel bewijs meegecommit (niet alleen een
+# logregel — die is niet duurzaam).
+#
+# De job `static-analysis` zet daar de twee statische controles naast: ESLint
+# (eslint.config.js) voor de lint-regels en de TypeScript-compiler in
+# `tsc --noEmit`-modus (tsconfig.json, checkJs) voor de types. Beide falen de
+# build, dus een schending kan main niet bereiken.
 
 on:
   pull_request:
@@ -20,10 +30,41 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: '22'
+          cache: npm
 
-      # build.js heeft geen dependencies — geen npm ci nodig.
+      # c8 (de coverage-runner) zit in devDependencies, dus deze stap is nodig.
+      - name: Installeer dev-dependencies (c8)
+        run: npm ci
+
       - name: Valideer activities/*.json (zelfde stap als de Coolify-build)
         run: npm test
 
       - name: activities.generated.js moet meegecommit zijn
         run: git diff --exit-code -- activities.generated.js
+
+      - name: Coverage report (line total + drempel uit .c8rc.json)
+        run: npm run coverage
+
+      - name: coverage/lcov.info moet meegecommit zijn
+        run: git diff --exit-code -- coverage/lcov.info
+
+  static-analysis:
+    name: lint (ESLint) + typecheck (tsc --noEmit)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+
+      # ESLint, TypeScript en @types/node staan in devDependencies.
+      - name: Installeer dev-dependencies (ESLint, tsc)
+        run: npm ci
+
+      - name: Lint (eslint .)
+        run: npm run lint
+
+      - name: Typecontrole (tsc --noEmit)
+        run: npm run typecheck

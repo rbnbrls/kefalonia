@@ -96,7 +96,13 @@ kefalonia/
 │   └── …                    ← 39 activiteiten
 ├── activities.generated.js  ← GEGENEREERD door build.js (window.ACTIVITIES = […])
 ├── build.js                 ← zero-dependency Node-script: valideert + bundelt activities/
-├── package.json             ← npm-scripts (build/dev) + Playwright als devDependency
+├── test/                    ← regressietests op node:test (`npm test`)
+├── .c8rc.json               ← coverage-config van c8 (`npm run coverage`)
+├── coverage/lcov.info       ← GEGENEREERD lcov-rapport — meegecommit, bron van waarheid
+├── eslint.config.js         ← lint-config (ESLint flat config, `npm run lint`)
+├── tsconfig.json            ← typecontrole-config (`npm run typecheck` = tsc --noEmit)
+├── types/globals.d.ts       ← ambient types: CDN-libs, Activity, gedeelde globals
+├── package.json             ← npm-scripts (build/dev/test/coverage/lint/typecheck) + devDependencies
 ├── README.md
 └── .gitignore
 ```
@@ -112,8 +118,11 @@ inleest). `app.js` blijft een *classic script* in global scope, zodat de inline
 > caching: wijzig je alleen een activiteit, dan verandert enkel `activities.generated.js`
 > en blijven `styles.css`/`app.js` in de browsercache staan.
 
-> De app heeft geen runtime-dependencies. `package.json` bevat enkel Playwright,
-> bedoeld voor end-to-end tests. `build.js` gebruikt **uitsluitend de Node-standaardlib**.
+> De app heeft geen runtime-dependencies. `package.json` bevat alleen dev-tools:
+> `c8` voor de coverage-run (`npm run coverage`), `eslint` + `@eslint/js` + `globals`
+> voor de lint (`npm run lint`), `typescript` + `@types/node` voor de typecontrole
+> (`npm run typecheck`) en `playwright` (legacy, voor end-to-end tests). `build.js`
+> gebruikt **uitsluitend de Node-standaardlib**.
 
 ## Externe diensten (via CDN / API, geen eigen backend)
 
@@ -157,6 +166,82 @@ open index.html      # daarna direct te openen (alle scripts laden lokaal, geen 
 
 > Je hoeft `npm run build` alleen te draaien als je iets in `activities/` hebt veranderd.
 > `activities.generated.js` wordt **meegecommit**, dus een verse clone werkt meteen.
+
+### Tests en coverage
+
+```bash
+npm test             # node build.js + node --test — dezelfde stap als CI en de Coolify-build
+npm run coverage     # hetzelfde, maar onder c8: print de line total en schrijft coverage/lcov.info
+```
+
+`npm run coverage` leest zijn instellingen uit [`.c8rc.json`](.c8rc.json): de
+reporters (`text` + `lcovonly`), de uitsluitingen en de drempel (`lines: 80` — de
+run faalt daaronder). Het rapport `coverage/lcov.info` is het **duurzame**
+dekkingsbewijs: het wordt meegecommit en de build-workflow controleert dat het
+actueel is (`git diff --exit-code`). Wijzig je `build.js`, draai dan
+`npm run coverage` en commit het rapport mee — net als bij
+`activities.generated.js`.
+
+> **Scope van het rapport.** Gemeten wordt `build.js`, de Node-tooling die de
+> tests echt uitvoeren. De browserkant (`app.js`, `index.html`) wordt hier niet
+> gemeten en dus ook **niet als 0%** gerapporteerd: daar is geen DOM-harness
+> voor, dus een percentage zou schijnprecisie zijn. Een aparte browser-suite is
+> nodig om die kant te dekken.
+
+### Lint en typecontrole
+
+```bash
+npm run lint         # eslint .            — config: eslint.config.js
+npm run typecheck    # tsc --noEmit        — config: tsconfig.json (+ types/globals.d.ts)
+```
+
+Beide draaien in CI (job `static-analysis` in
+[`.github/workflows/build.yml`](.github/workflows/build.yml)) en falen de build,
+dus een overtreding kan `main` niet bereiken. Vereist `npm ci` — ESLint,
+TypeScript en `@types/node` staan in `devDependencies`.
+
+**Lint (`eslint.config.js`).** Flat config met `@eslint/js` recommended, plus per
+bestandsgroep de juiste omgeving: browser-globals voor `app.js`/`sync.js`
+(klassieke scripts), service-worker-globals voor `service-worker.js` en
+Node-globals voor `build.js`, `generate-favicons.js` en `test/`. De CDN-globals
+`L` (Leaflet), `PocketBase` en de app-eigen `sync` staan expliciet in de config.
+
+Twee keuzes zijn bewust:
+
+- `app.js` opent met een `/* exported … */`-blok. Die functies zijn de globale
+  API van de pagina: `index.html` roept ze aan vanuit inline `onclick`-handlers
+  en `app.js` bouwt zelf HTML met dezelfde handlers. ESLint kan die aanroepen
+  niet zien, dus zonder dat blok leest elke handler als dode code.
+- `catch (_)` is de conventie voor een bewust genegeerde fout
+  (`caughtErrorsIgnorePattern: '^_'`).
+
+**Typecontrole (`tsconfig.json`).** `tsc --noEmit` over alle JS-bestanden
+(`allowJs` + `checkJs`), inclusief het gegenereerde `activities.generated.js`.
+`strict` staat uit: deze codebase heeft geen JSDoc-annotaties op elke functie en
+`strict: true` zou honderden meldingen over bestaande, werkende code opleveren.
+Wat wél gecontroleerd wordt: niet-bestaande namen en eigenschappen, verkeerde
+argumenten, onmogelijke vergelijkingen en rekenkundige bewerkingen op
+niet-numerieke waarden. `types/globals.d.ts` verklaart wat alleen op runtime
+bestaat: de CDN-libraries, het `Activity`-type uit `activities/`, de gedeelde
+globals tussen `app.js` en `sync.js` en de service-worker-API's. Waar een
+DOM-opzoeking de cast nodig heeft die TypeScript zelf niet kan maken
+(`.value`/`.disabled` op een `HTMLElement`) staan de helpers `formEl()` en
+`buttonEl()` in `app.js`.
+
+## Vervolgstappen
+
+Bewust buiten deze wijziging gehouden, in volgorde van opbrengst:
+
+- **`L` (Leaflet) is `any`.** Er zijn geen officiële types geïnstalleerd; met
+  `@types/leaflet` worden de ~23 kaartaanroepen in `app.js` echt gecontroleerd.
+- **`state.currentDay` is `any`.** Die waarde is óf een dagnummer (0-13) óf
+  `'heen'`/`'terug'`; de app vergelijkt en rekent ermee op ~25 plekken zonder te
+  narrowen. Eerst die plekken langsgaan en dan `number | 'heen' | 'terug'`
+  invoeren maakt het type echt.
+- **`strict: true`.** Vergt JSDoc-annotaties op de functies van `app.js`
+  (parameters en returns), in tranches per sectie.
+- **Browserkant meten.** Coverage én een DOM-harness voor `app.js` ontbreken;
+  de Playwright-dependency staat al in `package.json`.
 
 ## Deployen op Coolify (blijft statisch)
 

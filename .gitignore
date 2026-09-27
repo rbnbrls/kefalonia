@@ -27,3 +27,11 @@ Temporary Items
 
 # Playwright MCP session files
 .playwright-mcp/
+
+# Node-dependencies: CI draait `npm ci`, dus node_modules wordt niet meecommit.
+node_modules/
+
+# Coverage-uitvoer van `npm run coverage`: het lcov-rapport is de bron van
+# waarheid en wordt meegecommit, de (her)genereerbare rest niet.
+coverage/*
+!coverage/lcov.info
