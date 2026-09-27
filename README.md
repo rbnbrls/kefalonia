@@ -99,7 +99,10 @@ kefalonia/
 ├── test/                    ← regressietests op node:test (`npm test`)
 ├── .c8rc.json               ← coverage-config van c8 (`npm run coverage`)
 ├── coverage/lcov.info       ← GEGENEREERD lcov-rapport — meegecommit, bron van waarheid
-├── package.json             ← npm-scripts (build/dev/test/coverage) + devDependencies
+├── eslint.config.js         ← lint-config (ESLint flat config, `npm run lint`)
+├── tsconfig.json            ← typecontrole-config (`npm run typecheck` = tsc --noEmit)
+├── types/globals.d.ts       ← ambient types: CDN-libs, Activity, gedeelde globals
+├── package.json             ← npm-scripts (build/dev/test/coverage/lint/typecheck) + devDependencies
 ├── README.md
 └── .gitignore
 ```
@@ -116,8 +119,10 @@ inleest). `app.js` blijft een *classic script* in global scope, zodat de inline
 > en blijven `styles.css`/`app.js` in de browsercache staan.
 
 > De app heeft geen runtime-dependencies. `package.json` bevat alleen dev-tools:
-> `c8` voor de coverage-run (`npm run coverage`) en `playwright` (legacy, voor
-> end-to-end tests). `build.js` gebruikt **uitsluitend de Node-standaardlib**.
+> `c8` voor de coverage-run (`npm run coverage`), `eslint` + `@eslint/js` + `globals`
+> voor de lint (`npm run lint`), `typescript` + `@types/node` voor de typecontrole
+> (`npm run typecheck`) en `playwright` (legacy, voor end-to-end tests). `build.js`
+> gebruikt **uitsluitend de Node-standaardlib**.
 
 ## Externe diensten (via CDN / API, geen eigen backend)
 
@@ -182,6 +187,61 @@ actueel is (`git diff --exit-code`). Wijzig je `build.js`, draai dan
 > gemeten en dus ook **niet als 0%** gerapporteerd: daar is geen DOM-harness
 > voor, dus een percentage zou schijnprecisie zijn. Een aparte browser-suite is
 > nodig om die kant te dekken.
+
+### Lint en typecontrole
+
+```bash
+npm run lint         # eslint .            — config: eslint.config.js
+npm run typecheck    # tsc --noEmit        — config: tsconfig.json (+ types/globals.d.ts)
+```
+
+Beide draaien in CI (job `static-analysis` in
+[`.github/workflows/build.yml`](.github/workflows/build.yml)) en falen de build,
+dus een overtreding kan `main` niet bereiken. Vereist `npm ci` — ESLint,
+TypeScript en `@types/node` staan in `devDependencies`.
+
+**Lint (`eslint.config.js`).** Flat config met `@eslint/js` recommended, plus per
+bestandsgroep de juiste omgeving: browser-globals voor `app.js`/`sync.js`
+(klassieke scripts), service-worker-globals voor `service-worker.js` en
+Node-globals voor `build.js`, `generate-favicons.js` en `test/`. De CDN-globals
+`L` (Leaflet), `PocketBase` en de app-eigen `sync` staan expliciet in de config.
+
+Twee keuzes zijn bewust:
+
+- `app.js` opent met een `/* exported … */`-blok. Die functies zijn de globale
+  API van de pagina: `index.html` roept ze aan vanuit inline `onclick`-handlers
+  en `app.js` bouwt zelf HTML met dezelfde handlers. ESLint kan die aanroepen
+  niet zien, dus zonder dat blok leest elke handler als dode code.
+- `catch (_)` is de conventie voor een bewust genegeerde fout
+  (`caughtErrorsIgnorePattern: '^_'`).
+
+**Typecontrole (`tsconfig.json`).** `tsc --noEmit` over alle JS-bestanden
+(`allowJs` + `checkJs`), inclusief het gegenereerde `activities.generated.js`.
+`strict` staat uit: deze codebase heeft geen JSDoc-annotaties op elke functie en
+`strict: true` zou honderden meldingen over bestaande, werkende code opleveren.
+Wat wél gecontroleerd wordt: niet-bestaande namen en eigenschappen, verkeerde
+argumenten, onmogelijke vergelijkingen en rekenkundige bewerkingen op
+niet-numerieke waarden. `types/globals.d.ts` verklaart wat alleen op runtime
+bestaat: de CDN-libraries, het `Activity`-type uit `activities/`, de gedeelde
+globals tussen `app.js` en `sync.js` en de service-worker-API's. Waar een
+DOM-opzoeking de cast nodig heeft die TypeScript zelf niet kan maken
+(`.value`/`.disabled` op een `HTMLElement`) staan de helpers `formEl()` en
+`buttonEl()` in `app.js`.
+
+## Vervolgstappen
+
+Bewust buiten deze wijziging gehouden, in volgorde van opbrengst:
+
+- **`L` (Leaflet) is `any`.** Er zijn geen officiële types geïnstalleerd; met
+  `@types/leaflet` worden de ~23 kaartaanroepen in `app.js` echt gecontroleerd.
+- **`state.currentDay` is `any`.** Die waarde is óf een dagnummer (0-13) óf
+  `'heen'`/`'terug'`; de app vergelijkt en rekent ermee op ~25 plekken zonder te
+  narrowen. Eerst die plekken langsgaan en dan `number | 'heen' | 'terug'`
+  invoeren maakt het type echt.
+- **`strict: true`.** Vergt JSDoc-annotaties op de functies van `app.js`
+  (parameters en returns), in tranches per sectie.
+- **Browserkant meten.** Coverage én een DOM-harness voor `app.js` ontbreken;
+  de Playwright-dependency staat al in `package.json`.
 
 ## Deployen op Coolify (blijft statisch)
 

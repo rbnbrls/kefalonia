@@ -1,0 +1,20 @@
+{
+  "//": "Typecontrole voor de statische site + Node-scripts (tsc --noEmit, geen build).",
+  "compilerOptions": {
+    "target": "ES2022",
+    "lib": ["ES2022", "DOM", "DOM.Iterable", "WebWorker"],
+    "module": "nodenext",
+    "moduleResolution": "nodenext",
+    "types": ["node"],
+    "allowJs": true,
+    "checkJs": true,
+    "noEmit": true,
+    "strict": false,
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true,
+    "resolveJsonModule": true,
+    "noFallthroughCasesInSwitch": true
+  },
+  "include": ["*.js", "test/**/*.js", "types/**/*.d.ts"],
+  "exclude": ["node_modules", "coverage"]
+}

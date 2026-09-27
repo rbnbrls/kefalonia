@@ -7,7 +7,9 @@
     "build": "node build.js",
     "dev": "node build.js && npx serve .",
     "test": "node build.js && node --test",
-    "coverage": "c8 npm test"
+    "coverage": "c8 npm test",
+    "lint": "eslint .",
+    "typecheck": "tsc --noEmit"
   },
   "repository": {
     "type": "git",
@@ -18,7 +20,12 @@
   "license": "ISC",
   "type": "commonjs",
   "devDependencies": {
+    "@eslint/js": "^10.0.1",
+    "@types/node": "^22.0.0",
     "c8": "^12.0.0",
-    "playwright": "^1.60.0"
+    "eslint": "^10.11.0",
+    "globals": "^17.12.0",
+    "playwright": "^1.60.0",
+    "typescript": "^7.0.2"
   }
 }
